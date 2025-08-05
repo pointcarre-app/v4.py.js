@@ -15,7 +15,21 @@ The engine is designed for educational and technical applications where precise,
 
 ## 🚀 Quick Start
 
-To see the visualization engine in action, you can run the local test suite, which renders 17 different example graphs.
+### Live Demo
+
+▶️ **View the live demo at: https://[your-username].github.io/pca-v4.py.js/scenery/**
+
+The demo runs entirely in your browser using Pyodide (Python in WebAssembly) - no server required!
+
+### Deployment to GitHub Pages
+
+1. **Enable GitHub Pages**: Go to Settings → Pages → Source → Select "GitHub Actions"
+2. **Push to main branch**: The workflow will automatically deploy your site
+3. **Access your site**: Visit `https://[your-username].github.io/pca-v4.py.js/scenery/`
+
+### Local Development
+
+To run the visualization engine locally:
 
 **1. Set up the environment:**
 
@@ -63,6 +77,26 @@ The repository is organized following modern Python packaging standards.
 - **`src/pca_graph_viz`**: This is the main Python package, `pca_graph_viz`. It contains all the logic for parsing the graph dictionaries and generating SVG output.
 - **`scenery/index.html`**: A simple HTML file that uses the Nagini JS library to execute the Python code and display the generated graphs. It serves as the primary testbed for the visualization engine.
 - **`pyproject.toml`**: Defines all project dependencies and build configurations. `requirements.txt` is not needed, as all dependencies are managed here.
+
+## 🔧 Dependencies
+
+### JavaScript Dependencies (CDN)
+
+The browser interface (`scenery/`) uses the following external libraries loaded from CDN:
+
+- **[Nagini](https://github.com/pointcarre-app/nagini) v0.0.17**: Python-in-browser execution wrapper for Pyodide
+  - Main library: `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/nagini.js`
+  - Worker script: `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/pyodide/worker/worker-dist.js`
+- **[KaTeX](https://katex.org/)**: Fast math typesetting library for LaTeX rendering
+- **[Pyodide](https://pyodide.org/)**: Python runtime in WebAssembly (loaded via Nagini)
+
+### Python Dependencies
+
+Server-side development and testing dependencies (installed via `pip install .`):
+
+- **numpy** ≥1.20.0: Numerical computing
+- **svgwrite** ≥1.4.0: SVG generation
+- **pydantic** ≥2.0.0: Data validation and models
 
 ## 🎨 Example Usage
 

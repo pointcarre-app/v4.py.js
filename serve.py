@@ -27,7 +27,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 with socketserver.TCPServer(("", PORT), MyHTTPRequestHandler) as httpd:
     print(f"Server running at http://localhost:{PORT}/")
-    print(f"View the test page at http://localhost:{PORT}/test_graphs.html")
+    print(f"View the demo at http://localhost:{PORT}/scenery/")
     print("Press Ctrl+C to stop the server")
     try:
         httpd.serve_forever()
