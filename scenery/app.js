@@ -4,7 +4,19 @@ const WORKER_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/sr
 
 // Automatically detect if running locally or on GitHub Pages
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const PYTHON_FILES_BASE = isLocal ? 'http://127.0.0.1:8022/' : '../';
+
+// For GitHub Pages, we need absolute URLs for the worker
+let PYTHON_FILES_BASE;
+if (isLocal) {
+    PYTHON_FILES_BASE = 'http://127.0.0.1:8022/';
+} else {
+    // Construct the absolute URL for GitHub Pages
+    // We're at /v4.py.js/scenery/ and need to access /v4.py.js/src/
+    PYTHON_FILES_BASE = 'https://pointcarre-app.github.io/v4.py.js/';
+}
+
+console.log('📍 Base URL for Python files:', PYTHON_FILES_BASE);
+console.log('📍 Example file URL:', PYTHON_FILES_BASE + 'src/pca_graph_viz/__init__.py');
 
 let manager;
 let allGraphs = {};
