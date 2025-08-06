@@ -195,14 +195,16 @@ arc_path = f"M {arc_x[0]} {arc_y[0]}"
 for i in range(1, len(arc_x)):
     arc_path += f" L {arc_x[i]} {arc_y[i]}"
 
-lines.append({
-    "type": "path",
-    "d": arc_path,
-    "fill": "none",
-    "stroke": angle_color,
-    "stroke-width": 2,
-    "class": "angle-arc",
-})
+lines.append(
+    {
+        "type": "path",
+        "d": arc_path,
+        "fill": "none",
+        "stroke": angle_color,
+        "stroke-width": 2,
+        "class": "angle-arc",
+    }
+)
 
 foreign_objects = [
     {
@@ -277,18 +279,26 @@ foreign_objects = [
     },
 ]
 
+
 def get_graph_dict():
     """Return the graph dictionary for vector geometry."""
     return {
-        "lines": lines,
-        "foreign_objects": foreign_objects,
+        "id": "graph17",
+        "title": "Vector Geometry and Dot Product",
+        "description": "Visualization of vectors and their dot product",
         "svg": {
-            "size": 400,
-            "margin": 5,
-            "bg_color": bg_color,
+            "width": 340,
+            "height": 340,
+            "viewBox": "0 0 340 340",
+            "style": {"background-color": bg_color},
         },
         "settings": {
-            "show_grid": False,
+            "margin": 5,
             "show_axes": False,
+            "show_grid": True,
+            "grid_color": grid_color,
+            "axes_color": "#424242",
         },
-    } 
+        "lines": lines,
+        "foreign_objects": foreign_objects,
+    }

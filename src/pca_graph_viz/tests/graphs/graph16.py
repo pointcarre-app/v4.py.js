@@ -1,5 +1,3 @@
-import numpy as np
-
 # Graph 16: Probability Distribution and Expected Value
 # Discrete probability distribution: X = {1, 2, 3, 4, 5, 6}
 # P(X=1) = 0.1, P(X=2) = 0.15, P(X=3) = 0.2, P(X=4) = 0.25, P(X=5) = 0.2, P(X=6) = 0.1
@@ -81,28 +79,32 @@ lines = [
 # Add probability bars
 for i, (x, p) in enumerate(zip(x_values, probabilities)):
     # Bar rectangle
-    lines.append({
-        "type": "path",
-        "d": f"M {x-0.3} 0 L {x-0.3} {p} L {x+0.3} {p} L {x+0.3} 0 Z",
-        "fill": bar_color,
-        "fill-opacity": "0.7",
-        "stroke": "#7b1fa2",
-        "stroke-width": 1.5,
-        "class": "probability-bar",
-    })
+    lines.append(
+        {
+            "type": "path",
+            "d": f"M {x - 0.3} 0 L {x - 0.3} {p} L {x + 0.3} {p} L {x + 0.3} 0 Z",
+            "fill": bar_color,
+            "fill-opacity": "0.7",
+            "stroke": "#7b1fa2",
+            "stroke-width": 1.5,
+            "class": "probability-bar",
+        }
+    )
 
 # Expected value line
-lines.append({
-    "type": "line",
-    "x1": expected_value,
-    "y1": 0,
-    "x2": expected_value,
-    "y2": 0.28,
-    "stroke": expected_color,
-    "stroke-width": 3,
-    "stroke-dasharray": "5,3",
-    "class": "expected-value-line",
-})
+lines.append(
+    {
+        "type": "line",
+        "x1": expected_value,
+        "y1": 0,
+        "x2": expected_value,
+        "y2": 0.28,
+        "stroke": expected_color,
+        "stroke-width": 3,
+        "stroke-dasharray": "5,3",
+        "class": "expected-value-line",
+    }
+)
 
 foreign_objects = [
     {
@@ -208,18 +210,26 @@ foreign_objects = [
     },
 ]
 
+
 def get_graph_dict():
     """Return the graph dictionary for probability distribution."""
     return {
-        "lines": lines,
-        "foreign_objects": foreign_objects,
+        "id": "graph16",
+        "title": "Probability Distribution and Expected Value",
+        "description": "Discrete probability distribution with expected value visualization",
         "svg": {
-            "size": 400,
-            "margin": 5,
-            "bg_color": bg_color,
+            "width": 340,
+            "height": 340,
+            "viewBox": "0 0 340 340",
+            "style": {"background-color": bg_color},
         },
         "settings": {
-            "show_grid": False,
+            "margin": 5,
             "show_axes": False,
+            "show_grid": True,
+            "grid_color": grid_color,
+            "axes_color": axis_color,
         },
-    } 
+        "lines": lines,
+        "foreign_objects": foreign_objects,
+    }

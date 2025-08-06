@@ -378,16 +378,16 @@ def create_svg_scene(
     # Use explicit bounds if provided, otherwise use data bounds with padding
     if x_min is None:
         x_range = data_x_max - data_x_min
-        x_min = data_x_min - x_range * 0.02
+        x_min = data_x_min - (x_range * 0.02 if x_range != 0 else 1)
     if x_max is None:
         x_range = data_x_max - data_x_min
-        x_max = data_x_max + x_range * 0.02
+        x_max = data_x_max + (x_range * 0.02 if x_range != 0 else 1)
     if y_min is None:
         y_range = data_y_max - data_y_min
-        y_min = data_y_min - y_range * 0.02
+        y_min = data_y_min - (y_range * 0.02 if y_range != 0 else 1)
     if y_max is None:
         y_range = data_y_max - data_y_min
-        y_max = data_y_max + y_range * 0.02
+        y_max = data_y_max + (y_range * 0.02 if y_range != 0 else 1)
 
     # Transform functions without margin (will use g transform)
     def transform_x(x):
@@ -681,16 +681,16 @@ def create_multi_curve_svg(
         # Use explicit values if provided, otherwise use data bounds with padding
         if x_min is None:
             x_range = data_x_max - data_x_min
-            x_min = data_x_min - x_range * 0.02
+            x_min = data_x_min - (x_range * 0.02 if x_range != 0 else 1)
         if x_max is None:
             x_range = data_x_max - data_x_min
-            x_max = data_x_max + x_range * 0.02
+            x_max = data_x_max + (x_range * 0.02 if x_range != 0 else 1)
         if y_min is None:
             y_range = data_y_max - data_y_min
-            y_min = data_y_min - y_range * 0.02
+            y_min = data_y_min - (y_range * 0.02 if y_range != 0 else 1)
         if y_max is None:
             y_range = data_y_max - data_y_min
-            y_max = data_y_max + y_range * 0.02
+            y_max = data_y_max + (y_range * 0.02 if y_range != 0 else 1)
 
     # Transform functions without margin (will use g transform)
     def transform_x(x):

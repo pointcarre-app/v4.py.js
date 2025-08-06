@@ -4,15 +4,15 @@ import numpy as np
 # f(x) = 2(x - 1)² - 3 (vertex form)
 # f(x) = 2x² - 4x - 1 (standard form)
 x = np.linspace(-2, 4, 200)
-y = 2 * (x - 1)**2 - 3
+y = 2 * (x - 1) ** 2 - 3
 
 # Find roots using quadratic formula
 # 2x² - 4x - 1 = 0
 # a=2, b=-4, c=-1
 # Δ = b² - 4ac = 16 - 4(2)(-1) = 16 + 8 = 24
 # x = (4 ± √24) / 4 = (4 ± 2√6) / 4 = 1 ± √6/2
-root1 = float(1 - np.sqrt(6)/2)
-root2 = float(1 + np.sqrt(6)/2)
+root1 = float(1 - np.sqrt(6) / 2)
+root2 = float(1 + np.sqrt(6) / 2)
 
 # Colors
 bg_color = "#fff8e1"
@@ -188,18 +188,26 @@ foreign_objects = [
     },
 ]
 
+
 def get_graph_dict():
     """Return the graph dictionary for quadratic function analysis."""
     return {
-        "lines": lines,
-        "foreign_objects": foreign_objects,
+        "id": "graph15",
+        "title": "Quadratic Functions - Vertex Form",
+        "description": "Vertex form and discriminant analysis of quadratic functions",
         "svg": {
-            "size": 400,
-            "margin": 5,
-            "bg_color": bg_color,
+            "width": 340,
+            "height": 340,
+            "viewBox": "0 0 340 340",
+            "style": {"background-color": bg_color},
         },
         "settings": {
-            "show_grid": False,
+            "margin": 5,
             "show_axes": False,
+            "show_grid": True,
+            "grid_color": grid_color,
+            "axes_color": axis_color,
         },
-    } 
+        "lines": lines,
+        "foreign_objects": foreign_objects,
+    }

@@ -5,9 +5,9 @@ import numpy as np
 n_arith = np.arange(0, 8)
 u_arith = 2 + 3 * n_arith
 
-# Geometric sequence: v_n = 3 * (1.5)^n (first 8 terms)  
+# Geometric sequence: v_n = 3 * (1.5)^n (first 8 terms)
 n_geom = np.arange(0, 8)
-v_geom = 3 * (1.5 ** n_geom)
+v_geom = 3 * (1.5**n_geom)
 
 # Colors
 bg_color = "#f8f9fa"
@@ -79,56 +79,64 @@ lines = [
 # Add arithmetic sequence points and connecting lines
 for i, (n, u) in enumerate(zip(n_arith, u_arith)):
     # Point
-    lines.append({
-        "type": "circle",
-        "cx": float(n),
-        "cy": float(u),
-        "r": 3,
-        "fill": arith_color,
-        "stroke": "#0056b3",
-        "stroke-width": 1.5,
-        "class": "arith-point",
-    })
-    
+    lines.append(
+        {
+            "type": "circle",
+            "cx": float(n),
+            "cy": float(u),
+            "r": 3,
+            "fill": arith_color,
+            "stroke": "#0056b3",
+            "stroke-width": 1.5,
+            "class": "arith-point",
+        }
+    )
+
     # Connecting line (except for last point)
     if i < len(n_arith) - 1:
-        lines.append({
-            "type": "line",
-            "x1": float(n),
-            "y1": float(u),
-            "x2": float(n_arith[i+1]),
-            "y2": float(u_arith[i+1]),
-            "stroke": arith_color,
-            "stroke-width": 2,
-            "class": "arith-line",
-        })
+        lines.append(
+            {
+                "type": "line",
+                "x1": float(n),
+                "y1": float(u),
+                "x2": float(n_arith[i + 1]),
+                "y2": float(u_arith[i + 1]),
+                "stroke": arith_color,
+                "stroke-width": 2,
+                "class": "arith-line",
+            }
+        )
 
 # Add geometric sequence points and connecting lines
 for i, (n, v) in enumerate(zip(n_geom, v_geom)):
     # Point
-    lines.append({
-        "type": "circle",
-        "cx": float(n),
-        "cy": float(v),
-        "r": 3,
-        "fill": geom_color,
-        "stroke": "#1e7e34",
-        "stroke-width": 1.5,
-        "class": "geom-point",
-    })
-    
+    lines.append(
+        {
+            "type": "circle",
+            "cx": float(n),
+            "cy": float(v),
+            "r": 3,
+            "fill": geom_color,
+            "stroke": "#1e7e34",
+            "stroke-width": 1.5,
+            "class": "geom-point",
+        }
+    )
+
     # Connecting line (except for last point)
     if i < len(n_geom) - 1:
-        lines.append({
-            "type": "line",
-            "x1": float(n),
-            "y1": float(v),
-            "x2": float(n_geom[i+1]),
-            "y2": float(v_geom[i+1]),
-            "stroke": geom_color,
-            "stroke-width": 2,
-            "class": "geom-line",
-        })
+        lines.append(
+            {
+                "type": "line",
+                "x1": float(n),
+                "y1": float(v),
+                "x2": float(n_geom[i + 1]),
+                "y2": float(v_geom[i + 1]),
+                "stroke": geom_color,
+                "stroke-width": 2,
+                "class": "geom-line",
+            }
+        )
 
 foreign_objects = [
     {
@@ -183,18 +191,26 @@ foreign_objects = [
     },
 ]
 
+
 def get_graph_dict():
     """Return the graph dictionary for arithmetic and geometric sequences."""
     return {
-        "lines": lines,
-        "foreign_objects": foreign_objects,
+        "id": "graph14",
+        "title": "Arithmetic and Geometric Sequences",
+        "description": "Teaching discrete mathematics with sequence visualization",
         "svg": {
-            "size": 400,
-            "margin": 5,
-            "bg_color": bg_color,
+            "width": 340,
+            "height": 340,
+            "viewBox": "0 0 340 340",
+            "style": {"background-color": bg_color},
         },
         "settings": {
-            "show_grid": False,
+            "margin": 5,
             "show_axes": False,
+            "show_grid": True,
+            "grid_color": grid_color,
+            "axes_color": "#495057",
         },
-    } 
+        "lines": lines,
+        "foreign_objects": foreign_objects,
+    }
