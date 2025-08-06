@@ -3,6 +3,30 @@
 
 # Changelog
 
+## v0.0.3-unstable
+
+⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️
+
+### Changes from v0.0.2
+- **Fixed GitHub Pages URLs**: Corrected repository name from `pca-v4.py.js` to `v4.py.js` in all documentation
+- **Simplified README**: 
+  - Removed redundant deployment instructions (users don't need to re-host our repo)
+  - Focused on live demo access
+  - Added developer section for those who want to fork/customize
+- **Added verification tools**: Created `VERIFY_GITHUB_PAGES.md` for troubleshooting deployment issues
+
+### Documentation
+- Streamlined README to be more user-focused
+- Clear separation between user access and developer customization
+- Better organization of content
+
+### Known Issues (Ongoing)
+- All previous instability warnings still apply
+- **NOT SUITABLE FOR PRODUCTION USE**
+- Expect API changes without notice
+
+---
+
 ## v0.0.2-unstable
 
 ⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️

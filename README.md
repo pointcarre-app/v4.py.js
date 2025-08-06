@@ -1,6 +1,6 @@
 # 🎨 PCA Graph Visualization Engine
 
-> ⚠️ **UNSTABLE VERSION**: This is v0.0.2-unstable - an extremely experimental release with frequent breaking changes. Not recommended for production use. Expect bugs, API changes, and incomplete features.
+> ⚠️ **UNSTABLE VERSION**: This is v0.0.3-unstable - an extremely experimental release with frequent breaking changes. Not recommended for production use. Expect bugs, API changes, and incomplete features.
 
 A comprehensive mathematical visualization library for educational content, featuring 40+ interactive graphs covering the French Première Spécialité Mathématiques curriculum. The engine runs entirely in the browser using Python via **Pyodide**, generating clean SVG visualizations with LaTeX annotations.
 
