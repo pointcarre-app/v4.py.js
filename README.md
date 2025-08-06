@@ -25,10 +25,10 @@ This repository provides ready-to-use mathematical visualizations including trig
 
 ### Live Demo
 
-▶️ **View the live demo at: https://pointcarre-app.github.io/pca-v4.py.js/**
+▶️ **View the live demo at: https://pointcarre-app.github.io/v4.py.js/**
 
 The demo will automatically redirect to the scenery page, or you can directly visit:
-- https://pointcarre-app.github.io/pca-v4.py.js/scenery/
+- https://pointcarre-app.github.io/v4.py.js/scenery/
 
 The demo runs entirely in your browser using Pyodide (Python in WebAssembly) - no server required!
 
@@ -44,9 +44,9 @@ The demo runs entirely in your browser using Pyodide (Python in WebAssembly) - n
    - Wait ~2-5 minutes for the deployment to complete
    
 3. **Access your site**: 
-   - Main page: `https://[your-username].github.io/pca-v4.py.js/`
-   - Demo page: `https://[your-username].github.io/pca-v4.py.js/scenery/`
-   - Test page: `https://[your-username].github.io/pca-v4.py.js/test-file-access.html`
+   - Main page: `https://[your-username].github.io/v4.py.js/`
+   - Demo page: `https://[your-username].github.io/v4.py.js/scenery/`
+   - Test page: `https://[your-username].github.io/v4.py.js/test-file-access.html`
 
 **Note**: The entire repository is served as static files. The `.nojekyll` file ensures GitHub Pages serves all files without Jekyll processing.
 
