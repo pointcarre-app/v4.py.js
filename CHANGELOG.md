@@ -3,6 +3,21 @@
 
 # Changelog
 
+## v0.0.4-unstable
+
+⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️
+
+### Changes from v0.0.3
+- **Fixed browser caching issues**: Added cache-busting version parameter to app.js
+- **Improved debugging**: Added console logging to track file loading
+- **Worker URL fixes**: Ensured absolute URLs are used for GitHub Pages deployment
+
+### Known Issues (Ongoing)
+- All previous instability warnings still apply
+- **NOT SUITABLE FOR PRODUCTION USE**
+
+---
+
 ## v0.0.3-unstable
 
 ⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️

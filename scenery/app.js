@@ -104,6 +104,7 @@ async function main() {
             path: file.replace('src/', '')
         }));
 
+        console.log('📦 First file to load:', filesToLoad[0]);
         console.log('🚀 Initializing Nagini with Pyodide backend...');
         manager = await Nagini.createManager(
             'pyodide',
