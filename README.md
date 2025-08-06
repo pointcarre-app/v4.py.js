@@ -21,34 +21,15 @@ This repository provides ready-to-use mathematical visualizations including trig
 - **Declarative API**: Simple Python dictionary format for defining graphs
 - **Educational Focus**: Designed specifically for mathematics education
 
-## 🚀 Quick Start
+## 🚀 Live Demo
 
-### Live Demo
-
-▶️ **View the live demo at: https://pointcarre-app.github.io/v4.py.js/**
-
-The demo will automatically redirect to the scenery page, or you can directly visit:
-- https://pointcarre-app.github.io/v4.py.js/scenery/
+▶️ **View the interactive demo: https://pointcarre-app.github.io/v4.py.js/**
 
 The demo runs entirely in your browser using Pyodide (Python in WebAssembly) - no server required!
 
-### Deployment to GitHub Pages
-
-1. **Enable GitHub Pages**: 
-   - Go to Settings → Pages
-   - Under "Source", select "GitHub Actions"
-   
-2. **Deploy the site**:
-   - Push your changes to the main branch
-   - The GitHub Actions workflow will automatically deploy
-   - Wait ~2-5 minutes for the deployment to complete
-   
-3. **Access your site**: 
-   - Main page: `https://[your-username].github.io/v4.py.js/`
-   - Demo page: `https://[your-username].github.io/v4.py.js/scenery/`
-   - Test page: `https://[your-username].github.io/v4.py.js/test-file-access.html`
-
-**Note**: The entire repository is served as static files. The `.nojekyll` file ensures GitHub Pages serves all files without Jekyll processing.
+Direct links:
+- 📊 **Graph Gallery**: https://pointcarre-app.github.io/v4.py.js/scenery/
+- 🧪 **Test Page**: https://pointcarre-app.github.io/v4.py.js/test-file-access.html
 
 ### Available Visualizations
 
@@ -62,9 +43,11 @@ The demo includes 40+ interactive mathematical graphs organized by topic:
 - **Coordinate geometry**: Circles, lines, distance formulas
 - **Special topics**: 3D coordinates, parametric curves, optimization
 
-### Local Development
+## 💻 Development
 
-To run the visualization engine locally:
+### Running Locally
+
+To run the visualization engine locally for development:
 
 **1. Set up the environment:**
 
@@ -179,3 +162,18 @@ graph_dict = {
 ```
 
 All 40+ graphs follow this structure and are available in `src/pca_graph_viz/tests/graphs/`.
+
+## 🔧 For Developers
+
+### Forking & Customization
+
+If you want to create your own version with custom visualizations:
+
+1. Fork this repository
+2. Modify the graphs in `src/pca_graph_viz/tests/graphs/`
+3. Deploy to your own GitHub Pages following the `.github/workflows/deploy.yml` workflow
+4. Update URLs in `README.md` and `404.html` to match your repository name
+
+### Contributing
+
+Pull requests are welcome! Please ensure all graphs follow the existing structure and pass the test suite.
