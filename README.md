@@ -1,23 +1,31 @@
 # 🎨 PCA Graph Visualization Engine
 
-This repository contains a powerful and flexible visualization engine for rendering mathematical graphs and scenes directly in the browser. It uses a Python-based backend, running entirely in the browser via **Pyodide**, to generate clean, static SVG images from a declarative dictionary format.
+> ⚠️ **UNSTABLE VERSION**: This is v0.0.1-unstable - an extremely experimental release with frequent breaking changes. Not recommended for production use. Expect bugs, API changes, and incomplete features.
 
-The engine is designed for educational and technical applications where precise, LaTeX-annotated visualizations are critical. It powers the interactive graphical components of the [Nagini](https://github.com/pointcarre-app/nagini) project.
+A comprehensive mathematical visualization library for educational content, featuring 40+ interactive graphs covering the French Première Spécialité Mathématiques curriculum. The engine runs entirely in the browser using Python via **Pyodide**, generating clean SVG visualizations with LaTeX annotations.
+
+This repository provides ready-to-use mathematical visualizations including trigonometry, calculus, probability, geometry, sequences, and more. Perfect for educational platforms, online courses, and interactive mathematics learning.
 
 ## ✨ Features
 
-- **Declarative Scene Definition**: Define complex scenes—including curves, lines, axes, and grids—using a simple Python dictionary.
-- **In-Browser Python**: All SVG generation is handled by Python code running in a web worker, powered by Pyodide. No server-side rendering required.
-- **LaTeX Annotations**: Seamlessly embed mathematical formulas and labels using LaTeX, rendered beautifully with KaTeX.
-- **Static SVG Output**: Generates clean, lightweight, and scalable SVG images that can be easily embedded and manipulated.
-- **Flexible Styling**: Customize colors, strokes, and fills for every element in the scene.
-- **Extensible Models**: The data models are built with Pydantic, making them easy to extend and validate.
+- **40+ Mathematical Visualizations**: Complete coverage of Première Spécialité topics including:
+  - Trigonometry (unit circle, sine/cosine graphs)
+  - Sequences (arithmetic, geometric, recursive with cobweb diagrams)
+  - Calculus (derivatives, tangent lines, variation tables)
+  - Functions (parabolas, transformations, canonical forms)
+  - Vectors and geometry (scalar products, orthogonality)
+  - Probability (Venn diagrams, tree diagrams, distributions)
+- **In-Browser Python**: All SVG generation runs client-side via Pyodide - no server required
+- **LaTeX Annotations**: Mathematical formulas rendered beautifully with KaTeX
+- **Clean SVG Output**: Lightweight, scalable vector graphics
+- **Declarative API**: Simple Python dictionary format for defining graphs
+- **Educational Focus**: Designed specifically for mathematics education
 
 ## 🚀 Quick Start
 
 ### Live Demo
 
-▶️ **View the live demo at: https://[your-username].github.io/pca-v4.py.js/scenery/**
+▶️ **View the live demo at: https://pointcarre-app.github.io/pca-v4.py.js/scenery/**
 
 The demo runs entirely in your browser using Pyodide (Python in WebAssembly) - no server required!
 
@@ -26,6 +34,18 @@ The demo runs entirely in your browser using Pyodide (Python in WebAssembly) - n
 1. **Enable GitHub Pages**: Go to Settings → Pages → Source → Select "GitHub Actions"
 2. **Push to main branch**: The workflow will automatically deploy your site
 3. **Access your site**: Visit `https://[your-username].github.io/pca-v4.py.js/scenery/`
+
+### Available Visualizations
+
+The demo includes 40+ interactive mathematical graphs organized by topic:
+- **Trigonometry**: Unit circle, sine/cosine functions, angle wrapping
+- **Sequences**: Arithmetic, geometric, recursive sequences with cobweb diagrams
+- **Derivatives**: Tangent lines, function derivatives, variation tables
+- **Second-degree functions**: Parabolas, canonical forms, sign tables
+- **Vectors**: Scalar products, orthogonal vectors, projections
+- **Probability**: Venn diagrams, tree diagrams, normal distributions
+- **Coordinate geometry**: Circles, lines, distance formulas
+- **Special topics**: 3D coordinates, parametric curves, optimization
 
 ### Local Development
 
@@ -100,33 +120,47 @@ Server-side development and testing dependencies (installed via `pip install .`)
 
 ## 🎨 Example Usage
 
-The core of the engine is the `graph_from_dict` function, which takes a Python dictionary and returns an SVG string.
-
-Here's a simple example of how to define a graph:
+Each visualization is defined using a Python dictionary structure. Here's an example from the included graphs:
 
 ```python
-from pca_graph_viz import graph_from_dict
+import numpy as np
 
-# Define a scene with a single blue curve
+# Example: Parabola with vertex and transformations
+x = np.linspace(-3, 3, 100)
+y_basic = x**2
+y_transformed = 0.5 * (x - 1)**2 - 2  # Canonical form
+
 graph_dict = {
-    "title": "Simple Sine Curve",
-    "curves": [
+    "title": "Parabola Transformations",
+    "description": "Showing transformations from y=x² to canonical form",
+    "svg": {
+        "width": 340,
+        "height": 340,
+        "viewBox": "0 0 340 340"
+    },
+    "lines": [
         {
             "type": "curve",
-            "data": {"x": [0, 1, 2, 3], "y": [0, 1, 0, -1]},
-            "stroke": "#1976d2",
-            "stroke_width": 2
+            "data": {"x": x.tolist(), "y": y_basic.tolist()},
+            "stroke": "#3498db",
+            "stroke-width": 2
+        },
+        {
+            "type": "curve",
+            "data": {"x": x.tolist(), "y": y_transformed.tolist()},
+            "stroke": "#e74c3c",
+            "stroke-width": 3
         }
     ],
-    "axes": {"x_axis": True, "y_axis": True}
+    "foreign_objects": [
+        {
+            "x": 1, "y": -2,
+            "latex": r"y = \frac{1}{2}(x-1)^2 - 2",
+            "width": 120,
+            "height": 25
+        }
+    ]
 }
-
-# Generate the SVG string
-svg_output = graph_from_dict(graph_dict)
-
-# You can now save svg_output to a file or embed it in a web page
-with open("sine_curve.svg", "w") as f:
-    f.write(svg_output)
 ```
 
-This declarative approach makes it easy to generate a wide variety of mathematical visualizations with minimal code.
+All 40+ graphs follow this structure and are available in `src/pca_graph_viz/tests/graphs/`.
