@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test File Access on GitHub Pages</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .success {
+            border-left: 4px solid green;
+        }
+
+        .error {
+            border-left: 4px solid red;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>GitHub Pages File Access Test</h1>
+    <div id="results"></div>
+
+    <script>
+        const resultsDiv = document.getElementById('results');
+
+        // Test files to check
+        const testFiles = [
+            'src/pca_graph_viz/__init__.py',
+            'src/pca_graph_viz/core/svg_utils.py',
+            'scenery/app.js',
+            'index.html',
+            'README.md'
+        ];
+
+        async function testFileAccess(filePath) {
+            const div = document.createElement('div');
+            div.className = 'test-result';
+
+            try {
+                const response = await fetch(filePath);
+                if (response.ok) {
+                    const size = response.headers.get('content-length');
+                    div.className += ' success';
+                    div.innerHTML = `✅ ${filePath} - OK (${size ? size + ' bytes' : 'size unknown'})`;
+                } else {
+                    div.className += ' error';
+                    div.innerHTML = `❌ ${filePath} - HTTP ${response.status}`;
+                }
+            } catch (error) {
+                div.className += ' error';
+                div.innerHTML = `❌ ${filePath} - ${error.message}`;
+            }
+
+            resultsDiv.appendChild(div);
+        }
+
+        // Run tests
+        testFiles.forEach(testFileAccess);
+
+        // Show current URL info
+        const urlInfo = document.createElement('div');
+        urlInfo.className = 'test-result';
+        urlInfo.innerHTML = `
+            <strong>Current URL Info:</strong><br />
+            Origin: ${window.location.origin}<br />
+            Pathname: ${window.location.pathname}<br />
+            Host: ${window.location.host}
+        `;
+        resultsDiv.insertBefore(urlInfo, resultsDiv.firstChild);
+    </script>
+  </body>
+</html>

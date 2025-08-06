@@ -3,6 +3,32 @@
 
 # Changelog
 
+## v0.0.2-unstable
+
+⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️
+
+### Changes from v0.0.1
+- **Fixed GitHub Pages deployment**: 
+  - Added `.nojekyll` file to serve entire repository as static files
+  - Updated `app.js` to automatically detect environment (local vs GitHub Pages)
+  - Fixed Python module loading paths for browser deployment
+- **Updated all placeholder graphs**: Replaced 6 remaining placeholder visualizations with meaningful mathematical content
+- **Added test utilities**: Created diagnostic pages for verifying deployment
+- **Documentation improvements**: Enhanced README with clearer deployment instructions
+
+### Fixes
+- Fixed cobweb diagram iteration points rendering
+- Fixed file paths for static hosting on GitHub Pages
+- Added 404 error page with navigation
+- Improved environment detection for local vs production
+
+### Known Issues (Ongoing)
+- All v0.0.1 instability warnings still apply
+- **NOT SUITABLE FOR PRODUCTION USE**
+- API changes and breaking updates expected in every release
+
+---
+
 ## v0.0.1-unstable
 
 ⚠️ **HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️

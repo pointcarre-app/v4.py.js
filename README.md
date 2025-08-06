@@ -1,6 +1,6 @@
 # 🎨 PCA Graph Visualization Engine
 
-> ⚠️ **UNSTABLE VERSION**: This is v0.0.1-unstable - an extremely experimental release with frequent breaking changes. Not recommended for production use. Expect bugs, API changes, and incomplete features.
+> ⚠️ **UNSTABLE VERSION**: This is v0.0.2-unstable - an extremely experimental release with frequent breaking changes. Not recommended for production use. Expect bugs, API changes, and incomplete features.
 
 A comprehensive mathematical visualization library for educational content, featuring 40+ interactive graphs covering the French Première Spécialité Mathématiques curriculum. The engine runs entirely in the browser using Python via **Pyodide**, generating clean SVG visualizations with LaTeX annotations.
 
@@ -25,15 +25,30 @@ This repository provides ready-to-use mathematical visualizations including trig
 
 ### Live Demo
 
-▶️ **View the live demo at: https://pointcarre-app.github.io/pca-v4.py.js/scenery/**
+▶️ **View the live demo at: https://pointcarre-app.github.io/pca-v4.py.js/**
+
+The demo will automatically redirect to the scenery page, or you can directly visit:
+- https://pointcarre-app.github.io/pca-v4.py.js/scenery/
 
 The demo runs entirely in your browser using Pyodide (Python in WebAssembly) - no server required!
 
 ### Deployment to GitHub Pages
 
-1. **Enable GitHub Pages**: Go to Settings → Pages → Source → Select "GitHub Actions"
-2. **Push to main branch**: The workflow will automatically deploy your site
-3. **Access your site**: Visit `https://[your-username].github.io/pca-v4.py.js/scenery/`
+1. **Enable GitHub Pages**: 
+   - Go to Settings → Pages
+   - Under "Source", select "GitHub Actions"
+   
+2. **Deploy the site**:
+   - Push your changes to the main branch
+   - The GitHub Actions workflow will automatically deploy
+   - Wait ~2-5 minutes for the deployment to complete
+   
+3. **Access your site**: 
+   - Main page: `https://[your-username].github.io/pca-v4.py.js/`
+   - Demo page: `https://[your-username].github.io/pca-v4.py.js/scenery/`
+   - Test page: `https://[your-username].github.io/pca-v4.py.js/test-file-access.html`
+
+**Note**: The entire repository is served as static files. The `.nojekyll` file ensures GitHub Pages serves all files without Jekyll processing.
 
 ### Available Visualizations
 

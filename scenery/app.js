@@ -1,7 +1,10 @@
 // ===== URL CONFIGURATION =====
 const NAGINI_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/nagini.js';
 const WORKER_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/pyodide/worker/worker-dist.js';
-const PYTHON_FILES_BASE = `http://127.0.0.1:8022/`;
+
+// Automatically detect if running locally or on GitHub Pages
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const PYTHON_FILES_BASE = isLocal ? 'http://127.0.0.1:8022/' : '../';
 
 let manager;
 let allGraphs = {};
