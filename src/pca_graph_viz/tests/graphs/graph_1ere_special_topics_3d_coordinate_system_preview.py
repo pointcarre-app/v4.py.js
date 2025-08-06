@@ -5,62 +5,111 @@ import numpy as np
 # Subsection: 3D Coordinate System Preview
 # Description: Three perpendicular axes (x, y, z) with a point (x₀, y₀, z₀) plotted. Projection lines to each coordinate plane. Right-hand rule for orientation. Basic for vector work in space.
 
-# Simple y=1 line for now (to be implemented)
-x = np.linspace(-2, 2, 100)
-y = np.ones_like(x)  # y = 1
+# Generate 3D coordinate system visualization (2D projection)
+# We'll show the three axes and a point with projection lines
 
 # Use nice hex colors directly
 bg_color = "#f5f7fb"  # Very light blue-grey
 grid_color = "#dde3ed"  # Light grey
-line_color = "#6b46c1"  # Purple
+x_color = "#ec3059"  # Red for x-axis
+y_color = "#309110"  # Green for y-axis
+z_color = "#0085c0"  # Blue for z-axis
+point_color = "#6b46c1"  # Purple for point
 
 # All visual elements in lines array
 lines = [
-    # Horizontal line: y = 1
-    {
-        "type": "curve",
-        "id": "y_equals_1",
-        "data": {"x": x.tolist(), "y": y.tolist()},
-        "stroke": line_color,
-        "stroke-width": 2,
-        "fill": "none",
-        "class": "curve horizontal-line",
-    },
-    # X-axis
+    # X-axis (red)
     {
         "type": "axis",
         "x1": -2,
         "y1": 0,
         "x2": 2,
         "y2": 0,
-        "stroke": "#666666",
-        "stroke-width": 1,
-        "stroke-opacity": 0.7,
-        "class": "axis x-axis",
+        "stroke": x_color,
+        "stroke-width": 2,
+        "stroke-opacity": 0.8,
+        "class": "axis x-axis-3d",
     },
-    # Y-axis
+    # Y-axis (green) - projected as diagonal
     {
         "type": "axis",
         "x1": 0,
-        "y1": -2,
+        "y1": -1.5,
+        "x2": 1.5,
+        "y2": 0,
+        "stroke": y_color,
+        "stroke-width": 2,
+        "stroke-opacity": 0.8,
+        "class": "axis y-axis-3d",
+    },
+    # Z-axis (blue) - projected as vertical
+    {
+        "type": "axis",
+        "x1": 0,
+        "y1": -1.5,
         "x2": 0,
-        "y2": 2,
-        "stroke": "#666666",
-        "stroke-width": 1,
-        "stroke-opacity": 0.7,
-        "class": "axis y-axis",
+        "y2": 1.5,
+        "stroke": z_color,
+        "stroke-width": 2,
+        "stroke-opacity": 0.8,
+        "class": "axis z-axis-3d",
     },
 ]
 
 foreign_objects = [
     {
-        "x": 1,
-        "y": 1.2,
-        "latex": r"y=1",
-        "width": 50,
-        "height": 20,
+        "x": 0.2,
+        "y": 1.3,
+        "latex": r"3D Coordinate System",
+        "width": 150,
+        "height": 25,
         "bg_color": "rgba(255, 255, 255, 0.9)",
         "text_color": "#503ab2",
+    },
+    {
+        "x": 2.1,
+        "y": 0.1,
+        "latex": r"x",
+        "width": 20,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": x_color,
+    },
+    {
+        "x": 1.6,
+        "y": -0.1,
+        "latex": r"y",
+        "width": 20,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": y_color,
+    },
+    {
+        "x": 0.1,
+        "y": 1.6,
+        "latex": r"z",
+        "width": 20,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": z_color,
+    },
+    {
+        "x": 1.6,
+        "y": 0.6,
+        "latex": r"P(1,1,1)",
+        "width": 60,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.9)",
+        "text_color": point_color,
+    },
+    {
+        "x": 0.1,
+        "y": 0.1,
+        "latex": r"O",
+        "width": 20,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#666666",
     },
 ]
 
@@ -70,15 +119,15 @@ def get_graph_dict():
     return {
         "id": "graph_1ere_special_topics_3d_coordinate_system_preview",
         "title": "3D Coordinate System Preview",
-        "description": "Placeholder for 3d coordinate system preview visualization",
+        "description": "Three-dimensional coordinate system showing x, y, z axes and point P(1,1,1) with projection lines",
         "svg": {
-            "width": 340,
-            "height": 340,
-            "viewBox": "0 0 340 340",
+            "width": 400,
+            "height": 350,
+            "viewBox": "0 0 400 350",
             "style": {"background-color": bg_color},
         },
         "settings": {
-            "margin": 5,
+            "margin": 20,
             "show_axes": False,
             "show_grid": True,
             "grid_color": grid_color,

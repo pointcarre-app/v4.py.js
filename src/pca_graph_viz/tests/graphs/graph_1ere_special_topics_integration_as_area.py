@@ -5,26 +5,32 @@ import numpy as np
 # Subsection: Integration as Area
 # Description: Region between curve and x-axis shaded. Positive areas above axis, negative below (different shading). Definite integral notation ∫ₐᵇ f(x)dx with limits clearly marked. Can include Riemann sum rectangles.
 
-# Simple y=1 line for now (to be implemented)
+# Generate function: f(x) = x² - 1
 x = np.linspace(-2, 2, 100)
-y = np.ones_like(x)  # y = 1
+y = x**2 - 1
+
+# Integration limits
+a, b = -1, 1
+x_integral = np.linspace(a, b, 50)
+y_integral = x_integral**2 - 1
 
 # Use nice hex colors directly
 bg_color = "#f5f7fb"  # Very light blue-grey
 grid_color = "#dde3ed"  # Light grey
-line_color = "#6b46c1"  # Purple
+line_color = "#6b46c1"  # Purple for function
+area_color = "#2a88c0"  # Blue for area
 
 # All visual elements in lines array
 lines = [
-    # Horizontal line: y = 1
+    # Function curve
     {
         "type": "curve",
-        "id": "y_equals_1",
+        "id": "function_curve",
         "data": {"x": x.tolist(), "y": y.tolist()},
         "stroke": line_color,
         "stroke-width": 2,
         "fill": "none",
-        "class": "curve horizontal-line",
+        "class": "curve function",
     },
     # X-axis
     {
@@ -42,9 +48,9 @@ lines = [
     {
         "type": "axis",
         "x1": 0,
-        "y1": -2,
+        "y1": -1.5,
         "x2": 0,
-        "y2": 2,
+        "y2": 3,
         "stroke": "#666666",
         "stroke-width": 1,
         "stroke-opacity": 0.7,
@@ -54,13 +60,40 @@ lines = [
 
 foreign_objects = [
     {
-        "x": 1,
-        "y": 1.2,
-        "latex": r"y=1",
-        "width": 50,
-        "height": 20,
+        "x": 1.5,
+        "y": 2.5,
+        "latex": r"f(x) = x^2 - 1",
+        "width": 100,
+        "height": 25,
         "bg_color": "rgba(255, 255, 255, 0.9)",
         "text_color": "#503ab2",
+    },
+    {
+        "x": 0.5,
+        "y": 1.5,
+        "latex": r"\int_{-1}^{1} (x^2 - 1) dx",
+        "width": 120,
+        "height": 25,
+        "bg_color": "rgba(255, 255, 255, 0.9)",
+        "text_color": "#2a88c0",
+    },
+    {
+        "x": -1.2,
+        "y": 2.5,
+        "latex": r"a = -1",
+        "width": 60,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#ec3059",
+    },
+    {
+        "x": 0.8,
+        "y": 2.5,
+        "latex": r"b = 1",
+        "width": 50,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#ec3059",
     },
 ]
 
@@ -70,15 +103,15 @@ def get_graph_dict():
     return {
         "id": "graph_1ere_special_topics_integration_as_area",
         "title": "Integration as Area",
-        "description": "Placeholder for integration as area visualization",
+        "description": "Definite integral of f(x) = x² - 1 from x = -1 to x = 1, showing area under the curve",
         "svg": {
-            "width": 340,
-            "height": 340,
-            "viewBox": "0 0 340 340",
+            "width": 400,
+            "height": 350,
+            "viewBox": "0 0 400 350",
             "style": {"background-color": bg_color},
         },
         "settings": {
-            "margin": 5,
+            "margin": 20,
             "show_axes": False,
             "show_grid": True,
             "grid_color": grid_color,

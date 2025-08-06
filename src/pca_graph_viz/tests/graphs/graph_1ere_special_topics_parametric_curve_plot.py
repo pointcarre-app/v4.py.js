@@ -5,33 +5,34 @@ import numpy as np
 # Subsection: Parametric Curve Plot
 # Description: A curve in x-y plane traced by parametric equations. Direction of increasing parameter t shown with arrows. Several points labeled with their parameter values. Both x(t) and y(t) equations displayed.
 
-# Simple y=1 line for now (to be implemented)
-x = np.linspace(-2, 2, 100)
-y = np.ones_like(x)  # y = 1
+# Generate parametric curve: x(t) = cos(t), y(t) = sin(2t) for t ∈ [0, 2π]
+t = np.linspace(0, 2*np.pi, 100)
+x = np.cos(t)
+y = np.sin(2*t)
 
 # Use nice hex colors directly
 bg_color = "#f5f7fb"  # Very light blue-grey
 grid_color = "#dde3ed"  # Light grey
-line_color = "#6b46c1"  # Purple
+line_color = "#6b46c1"  # Purple for curve
 
 # All visual elements in lines array
 lines = [
-    # Horizontal line: y = 1
+    # Parametric curve
     {
         "type": "curve",
-        "id": "y_equals_1",
+        "id": "parametric_curve",
         "data": {"x": x.tolist(), "y": y.tolist()},
         "stroke": line_color,
         "stroke-width": 2,
         "fill": "none",
-        "class": "curve horizontal-line",
+        "class": "curve parametric",
     },
     # X-axis
     {
         "type": "axis",
-        "x1": -2,
+        "x1": -1.5,
         "y1": 0,
-        "x2": 2,
+        "x2": 1.5,
         "y2": 0,
         "stroke": "#666666",
         "stroke-width": 1,
@@ -42,9 +43,9 @@ lines = [
     {
         "type": "axis",
         "x1": 0,
-        "y1": -2,
+        "y1": -1.5,
         "x2": 0,
-        "y2": 2,
+        "y2": 1.5,
         "stroke": "#666666",
         "stroke-width": 1,
         "stroke-opacity": 0.7,
@@ -54,13 +55,31 @@ lines = [
 
 foreign_objects = [
     {
-        "x": 1,
-        "y": 1.2,
-        "latex": r"y=1",
-        "width": 50,
-        "height": 20,
+        "x": 0.2,
+        "y": 1.3,
+        "latex": r"Parametric Curve",
+        "width": 150,
+        "height": 25,
         "bg_color": "rgba(255, 255, 255, 0.9)",
         "text_color": "#503ab2",
+    },
+    {
+        "x": -1.2,
+        "y": 1.1,
+        "latex": r"x(t) = \cos(t)",
+        "width": 100,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": line_color,
+    },
+    {
+        "x": -1.2,
+        "y": 0.9,
+        "latex": r"y(t) = \sin(2t)",
+        "width": 100,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": line_color,
     },
 ]
 
@@ -70,15 +89,15 @@ def get_graph_dict():
     return {
         "id": "graph_1ere_special_topics_parametric_curve_plot",
         "title": "Parametric Curve Plot",
-        "description": "Placeholder for parametric curve plot visualization",
+        "description": "Parametric curve with x(t) = cos(t) and y(t) = sin(2t) for t ∈ [0, 2π]",
         "svg": {
-            "width": 340,
-            "height": 340,
-            "viewBox": "0 0 340 340",
+            "width": 400,
+            "height": 350,
+            "viewBox": "0 0 400 350",
             "style": {"background-color": bg_color},
         },
         "settings": {
-            "margin": 5,
+            "margin": 20,
             "show_axes": False,
             "show_grid": True,
             "grid_color": grid_color,

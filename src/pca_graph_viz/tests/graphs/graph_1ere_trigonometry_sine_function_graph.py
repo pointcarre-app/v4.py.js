@@ -5,9 +5,9 @@ import numpy as np
 # Subsection: Sine Function Graph
 # Description: A smooth wave oscillating between -1 and 1. Period of 2π clearly marked. Key points at 0, π/2, π, 3π/2, 2π. X-axis in radians or degrees. Amplitude = 1, shows one complete cycle minimum.
 
-# Simple y=1 line for now (to be implemented)
-x = np.linspace(-2, 2, 100)
-y = np.ones_like(x)  # y = 1
+# Generate sine function data
+x = np.linspace(-2*np.pi, 2*np.pi, 100)
+y = np.sin(x)
 
 # Use nice hex colors directly
 bg_color = "#f5f7fb"  # Very light blue-grey
@@ -16,22 +16,22 @@ line_color = "#6b46c1"  # Purple
 
 # All visual elements in lines array
 lines = [
-    # Horizontal line: y = 1
+    # Sine curve
     {
         "type": "curve",
-        "id": "y_equals_1",
+        "id": "sine_curve",
         "data": {"x": x.tolist(), "y": y.tolist()},
         "stroke": line_color,
         "stroke-width": 2,
         "fill": "none",
-        "class": "curve horizontal-line",
+        "class": "curve sine-wave",
     },
     # X-axis
     {
         "type": "axis",
-        "x1": -2,
+        "x1": -2*np.pi,
         "y1": 0,
-        "x2": 2,
+        "x2": 2*np.pi,
         "y2": 0,
         "stroke": "#666666",
         "stroke-width": 1,
@@ -42,9 +42,9 @@ lines = [
     {
         "type": "axis",
         "x1": 0,
-        "y1": -2,
+        "y1": -1.5,
         "x2": 0,
-        "y2": 2,
+        "y2": 1.5,
         "stroke": "#666666",
         "stroke-width": 1,
         "stroke-opacity": 0.7,
@@ -54,13 +54,31 @@ lines = [
 
 foreign_objects = [
     {
-        "x": 1,
+        "x": 0.5,
         "y": 1.2,
-        "latex": r"y=1",
-        "width": 50,
+        "latex": r"f(x) = \sin(x)",
+        "width": 80,
         "height": 20,
         "bg_color": "rgba(255, 255, 255, 0.9)",
         "text_color": "#503ab2",
+    },
+    {
+        "x": np.pi/2,
+        "y": -0.3,
+        "latex": r"\frac{\pi}{2}",
+        "width": 50,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#666666",
+    },
+    {
+        "x": np.pi,
+        "y": -0.3,
+        "latex": r"\pi",
+        "width": 30,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#666666",
     },
 ]
 
@@ -70,15 +88,15 @@ def get_graph_dict():
     return {
         "id": "graph_1ere_trigonometry_sine_function_graph",
         "title": "Sine Function Graph",
-        "description": "Placeholder for sine function graph visualization",
+        "description": "Sine function f(x) = sin(x) showing one complete cycle with key points marked",
         "svg": {
-            "width": 340,
-            "height": 340,
-            "viewBox": "0 0 340 340",
+            "width": 400,
+            "height": 300,
+            "viewBox": "0 0 400 300",
             "style": {"background-color": bg_color},
         },
         "settings": {
-            "margin": 5,
+            "margin": 20,
             "show_axes": False,
             "show_grid": True,
             "grid_color": grid_color,

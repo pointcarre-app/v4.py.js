@@ -5,62 +5,97 @@ import numpy as np
 # Subsection: Related Rates Visualization
 # Description: A changing geometric situation (e.g., ladder sliding down wall). Multiple positions shown with time stamps. Rates of change (dx/dt, dy/dt) indicated with arrows. Pythagorean or other relationship highlighted.
 
-# Simple y=1 line for now (to be implemented)
-x = np.linspace(-2, 2, 100)
-y = np.ones_like(x)  # y = 1
+# Generate related rates problem: Ladder sliding down wall
+# Ladder length = 10, positions at different times
+# x² + y² = 100 (Pythagorean theorem)
+
+# Different positions of the ladder
+x_positions = [8, 6, 4, 2]  # x-coordinates
+y_positions = [np.sqrt(100 - x**2) for x in x_positions]  # y-coordinates
 
 # Use nice hex colors directly
 bg_color = "#f5f7fb"  # Very light blue-grey
 grid_color = "#dde3ed"  # Light grey
-line_color = "#6b46c1"  # Purple
+ladder_color = "#6b46c1"  # Purple for ladder
 
 # All visual elements in lines array
 lines = [
-    # Horizontal line: y = 1
+    # Wall (y-axis)
     {
-        "type": "curve",
-        "id": "y_equals_1",
-        "data": {"x": x.tolist(), "y": y.tolist()},
-        "stroke": line_color,
-        "stroke-width": 2,
-        "fill": "none",
-        "class": "curve horizontal-line",
-    },
-    # X-axis
-    {
-        "type": "axis",
-        "x1": -2,
+        "type": "line",
+        "x1": 0,
         "y1": 0,
-        "x2": 2,
+        "x2": 0,
+        "y2": 10,
+        "stroke": "#666666",
+        "stroke-width": 3,
+        "class": "wall",
+    },
+    # Ground (x-axis)
+    {
+        "type": "line",
+        "x1": 0,
+        "y1": 0,
+        "x2": 10,
         "y2": 0,
         "stroke": "#666666",
-        "stroke-width": 1,
-        "stroke-opacity": 0.7,
-        "class": "axis x-axis",
-    },
-    # Y-axis
-    {
-        "type": "axis",
-        "x1": 0,
-        "y1": -2,
-        "x2": 0,
-        "y2": 2,
-        "stroke": "#666666",
-        "stroke-width": 1,
-        "stroke-opacity": 0.7,
-        "class": "axis y-axis",
+        "stroke-width": 3,
+        "class": "ground",
     },
 ]
 
+# Add ladder positions
+for i, (x, y) in enumerate(zip(x_positions, y_positions)):
+    lines.append(
+        {
+            "type": "line",
+            "x1": 0,
+            "y1": y,
+            "x2": x,
+            "y2": 0,
+            "stroke": ladder_color,
+            "stroke-width": 2,
+            "stroke-opacity": 0.7 - i * 0.15,
+            "class": f"ladder-position-{i}",
+        }
+    )
+
 foreign_objects = [
     {
-        "x": 1,
-        "y": 1.2,
-        "latex": r"y=1",
-        "width": 50,
-        "height": 20,
+        "x": 0.5,
+        "y": 9.5,
+        "latex": r"Related Rates: Ladder Problem",
+        "width": 200,
+        "height": 25,
         "bg_color": "rgba(255, 255, 255, 0.9)",
         "text_color": "#503ab2",
+    },
+    {
+        "x": 0.5,
+        "y": 9,
+        "latex": r"x^2 + y^2 = 100",
+        "width": 120,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#666666",
+    },
+    {
+        "x": 8.5,
+        "y": 6,
+        "latex": r"t = 0",
+        "width": 40,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": ladder_color,
+    },
+    {
+        "x": 6.5,
+        "y": 8,
+        "latex": r"t = 1",
+        "width": 40,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": ladder_color,
     },
 ]
 
@@ -70,15 +105,15 @@ def get_graph_dict():
     return {
         "id": "graph_1ere_special_topics_related_rates_visualization",
         "title": "Related Rates Visualization",
-        "description": "Placeholder for related rates visualization visualization",
+        "description": "Ladder sliding down wall problem showing multiple positions over time",
         "svg": {
-            "width": 340,
-            "height": 340,
-            "viewBox": "0 0 340 340",
+            "width": 400,
+            "height": 400,
+            "viewBox": "0 0 400 400",
             "style": {"background-color": bg_color},
         },
         "settings": {
-            "margin": 5,
+            "margin": 20,
             "show_axes": False,
             "show_grid": True,
             "grid_color": grid_color,

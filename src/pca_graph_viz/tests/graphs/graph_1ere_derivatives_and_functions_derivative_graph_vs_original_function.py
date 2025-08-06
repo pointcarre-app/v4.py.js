@@ -5,33 +5,48 @@ import numpy as np
 # Subsection: Derivative Graph vs Original Function
 # Description: Two coordinate systems stacked vertically: top shows original function f(x), bottom shows derivative f'(x). Where f has maximum/minimum, f' crosses x-axis. Where f increases, f' is positive (above x-axis). Where f decreases, f' is negative.
 
-# Simple y=1 line for now (to be implemented)
-x = np.linspace(-2, 2, 100)
-y = np.ones_like(x)  # y = 1
+# Generate derivative comparison
+# Original: f(x) = x^2 - 2x
+# Derivative: f'(x) = 2x - 2
+x = np.linspace(-1, 3, 100)
+y_original = x**2 - 2 * x
+y_derivative = 2 * x - 2
 
 # Use nice hex colors directly
 bg_color = "#f5f7fb"  # Very light blue-grey
 grid_color = "#dde3ed"  # Light grey
-line_color = "#6b46c1"  # Purple
+original_color = "#6b46c1"  # Purple for original
+derivative_color = "#ec3059"  # Red for derivative
 
 # All visual elements in lines array
 lines = [
-    # Horizontal line: y = 1
+    # Original function: f(x) = x^2 - 2x
     {
         "type": "curve",
-        "id": "y_equals_1",
-        "data": {"x": x.tolist(), "y": y.tolist()},
-        "stroke": line_color,
+        "id": "original",
+        "data": {"x": x.tolist(), "y": y_original.tolist()},
+        "stroke": original_color,
         "stroke-width": 2,
         "fill": "none",
-        "class": "curve horizontal-line",
+        "class": "curve original",
+    },
+    # Derivative function: f'(x) = 2x - 2
+    {
+        "type": "curve",
+        "id": "derivative",
+        "data": {"x": x.tolist(), "y": y_derivative.tolist()},
+        "stroke": derivative_color,
+        "stroke-width": 2,
+        "stroke-dasharray": "5,5",
+        "fill": "none",
+        "class": "curve derivative",
     },
     # X-axis
     {
         "type": "axis",
-        "x1": -2,
+        "x1": -1,
         "y1": 0,
-        "x2": 2,
+        "x2": 3,
         "y2": 0,
         "stroke": "#666666",
         "stroke-width": 1,
@@ -42,9 +57,9 @@ lines = [
     {
         "type": "axis",
         "x1": 0,
-        "y1": -2,
+        "y1": -3,
         "x2": 0,
-        "y2": 2,
+        "y2": 3,
         "stroke": "#666666",
         "stroke-width": 1,
         "stroke-opacity": 0.7,
@@ -55,12 +70,39 @@ lines = [
 foreign_objects = [
     {
         "x": 1,
-        "y": 1.2,
-        "latex": r"y=1",
-        "width": 50,
-        "height": 20,
+        "y": 3.5,
+        "latex": r"Derivative vs Original",
+        "width": 160,
+        "height": 25,
         "bg_color": "rgba(255, 255, 255, 0.9)",
         "text_color": "#503ab2",
+    },
+    {
+        "x": 1,
+        "y": 3,
+        "latex": r"f(x) = x^2 - 2x",
+        "width": 120,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": original_color,
+    },
+    {
+        "x": 1,
+        "y": 2.5,
+        "latex": r"f'(x) = 2x - 2",
+        "width": 110,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": derivative_color,
+    },
+    {
+        "x": 1,
+        "y": 2,
+        "latex": r"Min at x = 1",
+        "width": 90,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#666666",
     },
 ]
 
@@ -70,15 +112,15 @@ def get_graph_dict():
     return {
         "id": "graph_1ere_derivatives_and_functions_derivative_graph_vs_original_function",
         "title": "Derivative Graph vs Original Function",
-        "description": "Placeholder for derivative graph vs original function visualization",
+        "description": "Comparison of original function f(x) = x² - 2x and its derivative f'(x) = 2x - 2",
         "svg": {
-            "width": 340,
-            "height": 340,
-            "viewBox": "0 0 340 340",
+            "width": 400,
+            "height": 400,
+            "viewBox": "0 0 400 400",
             "style": {"background-color": bg_color},
         },
         "settings": {
-            "margin": 5,
+            "margin": 20,
             "show_axes": False,
             "show_grid": True,
             "grid_color": grid_color,

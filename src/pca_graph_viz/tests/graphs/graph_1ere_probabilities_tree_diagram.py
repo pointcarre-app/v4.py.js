@@ -7,65 +7,152 @@ import numpy as np
 # Each branch is labeled with its probability, and the sum of probabilities from any node equals 1.
 # Multiple levels show sequential events, with conditional probabilities on second-level branches.
 
-# Simple y=1 line for now (to be implemented)
-x = np.linspace(-2, 2, 100)
-y = np.ones_like(x)  # y = 1
+# Generate probability tree diagram
+# Example: Coin flip followed by dice roll
+# Level 1: Heads (0.5) or Tails (0.5)
+# Level 2: If Heads, roll 1-3 (0.5) or 4-6 (0.5)
+# Level 2: If Tails, roll 1-2 (0.33) or 3-6 (0.67)
 
 # Use nice hex colors directly
 bg_color = "#f5f7fb"  # Very light blue-grey
 grid_color = "#dde3ed"  # Light grey
-line_color = "#6b46c1"  # Purple
+line_color = "#6b46c1"  # Purple for branches
 
 # All visual elements in lines array
 lines = [
-    # Horizontal line: y = 1
+    # Root to Heads
     {
-        "type": "curve",
-        "id": "y_equals_1",
-        "data": {"x": x.tolist(), "y": y.tolist()},
+        "type": "line",
+        "x1": 0,
+        "y1": 0,
+        "x2": -1,
+        "y2": -1,
         "stroke": line_color,
         "stroke-width": 2,
-        "fill": "none",
-        "class": "curve horizontal-line",
+        "class": "branch heads",
     },
-    # X-axis
+    # Root to Tails
     {
-        "type": "axis",
-        "x1": -2,
-        "y1": 0,
-        "x2": 2,
-        "y2": 0,
-        "stroke": "#666666",
-        "stroke-width": 1,
-        "stroke-opacity": 0.7,
-        "class": "axis x-axis",
-    },
-    # Y-axis
-    {
-        "type": "axis",
+        "type": "line",
         "x1": 0,
-        "y1": -2,
-        "x2": 0,
-        "y2": 2,
-        "stroke": "#666666",
-        "stroke-width": 1,
-        "stroke-opacity": 0.7,
-        "class": "axis y-axis",
+        "y1": 0,
+        "x2": 1,
+        "y2": -1,
+        "stroke": line_color,
+        "stroke-width": 2,
+        "class": "branch tails",
+    },
+    # Heads to 1-3
+    {
+        "type": "line",
+        "x1": -1,
+        "y1": -1,
+        "x2": -1.5,
+        "y2": -2,
+        "stroke": line_color,
+        "stroke-width": 2,
+        "class": "branch dice-1-3",
+    },
+    # Heads to 4-6
+    {
+        "type": "line",
+        "x1": -1,
+        "y1": -1,
+        "x2": -0.5,
+        "y2": -2,
+        "stroke": line_color,
+        "stroke-width": 2,
+        "class": "branch dice-4-6",
+    },
+    # Tails to 1-2
+    {
+        "type": "line",
+        "x1": 1,
+        "y1": -1,
+        "x2": 0.5,
+        "y2": -2,
+        "stroke": line_color,
+        "stroke-width": 2,
+        "class": "branch dice-1-2",
+    },
+    # Tails to 3-6
+    {
+        "type": "line",
+        "x1": 1,
+        "y1": -1,
+        "x2": 1.5,
+        "y2": -2,
+        "stroke": line_color,
+        "stroke-width": 2,
+        "class": "branch dice-3-6",
     },
 ]
 
 foreign_objects = [
     {
-        "x": 1,
-        "y": 1.2,
-        "latex": r"y=1",
+        "x": 0,
+        "y": 0.3,
+        "latex": r"Start",
         "width": 50,
         "height": 20,
         "bg_color": "rgba(255, 255, 255, 0.9)",
         "text_color": "#503ab2",
     },
+    {
+        "x": -1,
+        "y": -0.7,
+        "latex": r"Heads (0.5)",
+        "width": 80,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": line_color,
+    },
+    {
+        "x": 1,
+        "y": -0.7,
+        "latex": r"Tails (0.5)",
+        "width": 80,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": line_color,
+    },
+    {
+        "x": -1.5,
+        "y": -1.7,
+        "latex": r"1-3 (0.5)",
+        "width": 70,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#2a88c0",
+    },
+    {
+        "x": -0.5,
+        "y": -1.7,
+        "latex": r"4-6 (0.5)",
+        "width": 70,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#2a88c0",
+    },
+    {
+        "x": 0.5,
+        "y": -1.7,
+        "latex": r"1-2 (0.33)",
+        "width": 80,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#2a88c0",
+    },
+    {
+        "x": 1.5,
+        "y": -1.7,
+        "latex": r"3-6 (0.67)",
+        "width": 80,
+        "height": 20,
+        "bg_color": "rgba(255, 255, 255, 0.8)",
+        "text_color": "#2a88c0",
+    },
 ]
-
 
 
 def get_graph_dict():
@@ -73,15 +160,15 @@ def get_graph_dict():
     return {
         "id": "graph_1ere_probabilities_tree_diagram",
         "title": "Probability Tree Diagram",
-        "description": "Placeholder for probability tree visualization",
+        "description": "Probability tree showing coin flip followed by conditional dice roll outcomes",
         "svg": {
-            "width": 340,
-            "height": 340,
-            "viewBox": "0 0 340 340",
+            "width": 400,
+            "height": 300,
+            "viewBox": "0 0 400 300",
             "style": {"background-color": bg_color},
         },
         "settings": {
-            "margin": 5,
+            "margin": 20,
             "show_axes": False,
             "show_grid": True,
             "grid_color": grid_color,
