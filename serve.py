@@ -1,35 +1,63 @@
 #!/usr/bin/env python3
-"""Simple HTTP server for testing the visualization."""
-
-import http.server
-import os
 import socketserver
+import sys
+from http.server import SimpleHTTPRequestHandler
+
+
+class CORSRequestHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "*")
+        # Enable SharedArrayBuffer and cross-origin isolation for Pyodide
+        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        # Allow this resource to be fetched from other origins (needed for importScripts in workers)
+        self.send_header("Cross-Origin-Resource-Policy", "cross-origin")
+        super().end_headers()
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.end_headers()
+
+
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
 
 PORT = 8022
 
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        try:
+            PORT = int(sys.argv[1])
+        except ValueError:
+            print("Invalid port number. Using default port 8010.")
 
-class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    def end_headers(self):
-        # Add CORS headers to allow loading modules
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        # Prevent caching of Python files
-        if self.path.endswith(".py"):
-            self.send_header("Content-Type", "text/plain")
-            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-            self.send_header("Pragma", "no-cache")
-            self.send_header("Expires", "0")
-        super().end_headers()
+    # Big red startup message with emojis and ASCII art
+    print("\n" + "=" * 60)
+    print("🐍 " + "\033[1;31m" + "NAGINI SERVER STARTING" + "\033[0m" + " 🐍")
+    print("=" * 60)
+    print(
+        "📡 "
+        + "\033[1;33m"
+        + "PORT REUSE ENABLED"
+        + "\033[0m"
+        + " - No more 'Address already in use' errors! 🎉"
+    )
+    print("🌐 " + "\033[1;36m" + "CORS ENABLED" + "\033[0m" + " - Cross-origin requests allowed 🔓")
+    print("=" * 60)
 
+    with ReusableTCPServer(("", PORT), CORSRequestHandler) as httpd:
+        print(f"🔥 \033[1;32mServer blazing at http://localhost:{PORT}/\033[0m 🔥")
+        print("⚡ \033[1;35mPress Ctrl+C to stop the server\033[0m ⚡")
+        print("=" * 60 + "\n")
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-with socketserver.TCPServer(("", PORT), MyHTTPRequestHandler) as httpd:
-    print(f"Server running at http://localhost:{PORT}/")
-    print(f"View the demo at http://localhost:{PORT}/scenery/")
-    print("Press Ctrl+C to stop the server")
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print("\nServer stopped.")
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\n" + "=" * 60)
+            print("🛑 " + "\033[1;31m" + "SERVER STOPPED" + "\033[0m" + " 🛑")
+            print("👋 " + "\033[1;33m" + "Thanks for using Nagini Server!" + "\033[0m" + " 👋")
+            print("=" * 60)
+            httpd.shutdown()

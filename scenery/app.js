@@ -37,6 +37,7 @@ async function main() {
             'src/pca_graph_viz/models/line_object.py',
             'src/pca_graph_viz/models/foreign_object.py',
             'src/pca_graph_viz/tests/graphs/__init__.py',
+            'src/pca_graph_viz/tests/graphs/graph_sujets0_spe_sujet1_automatismes_question7.py',
             'src/pca_graph_viz/tests/graphs/graph1.py',
             'src/pca_graph_viz/tests/graphs/graph2.py',
             'src/pca_graph_viz/tests/graphs/graph3.py',
@@ -134,6 +135,34 @@ async function main() {
 
 async function loadAllGraphs() {
     allGraphs = {};
+    
+    // Load the new Question 7 graph FIRST
+    console.log('Loading Question 7 graph...');
+    try {
+        const namespace = { __name__: 'graph_question7_namespace' };
+        const result = await manager.executeAsync('load_question7.py', `
+import json
+from pca_graph_viz.tests.graphs.graph_sujets0_spe_sujet1_automatismes_question7 import get_graph_dict
+graph_dict = get_graph_dict()
+missive({"graph": graph_dict})
+print("Loaded Question 7 graph successfully!")
+        `, namespace);
+
+        if (result.missive) {
+            const missiveData = typeof result.missive === 'string' ? JSON.parse(result.missive) : result.missive;
+            if (missiveData.graph) {
+                allGraphs['graph_sujets0_spe_sujet1_automatismes_question7'] = missiveData.graph;
+                console.log(`✅ Loaded Question 7 graph: ${missiveData.graph.title || 'No title'}`);
+            } else {
+                console.error('No graph data in missive for Question 7:', missiveData);
+            }
+        } else {
+            console.error('No missive in result for Question 7:', result);
+        }
+    } catch (error) {
+        console.error('Error loading Question 7 graph:', error);
+        showError(`Failed to load Question 7 graph: ${error.message}`);
+    }
     
     // Load original graphs (graph1 to graph17)
     const graphNumbers = Array.from({ length: 17 }, (_, i) => i + 1);
@@ -364,7 +393,7 @@ async function displayAllGraphs() {
     }
 
     const graphCount = Object.keys(allGraphs).length;
-    const expectedCount = 59; // 17 original + 42 new 1ere graphs
+    const expectedCount = 60; // 1 Question 7 + 17 original + 42 new 1ere graphs
     if (graphCount !== expectedCount) {
         showError(`WARNING: Expected ${expectedCount} graphs but found ${graphCount}!`);
         console.error('Graphs loaded:', Object.keys(allGraphs));
@@ -375,7 +404,14 @@ async function displayAllGraphs() {
     let successCount = 0;
     let errorCount = 0;
     
-    for (const [graphId, graphDict] of Object.entries(allGraphs)) {
+    // Ensure Question 7 graph is displayed first
+    const orderedEntries = Object.entries(allGraphs).sort((a, b) => {
+        if (a[0] === 'graph_sujets0_spe_sujet1_automatismes_question7') return -1;
+        if (b[0] === 'graph_sujets0_spe_sujet1_automatismes_question7') return 1;
+        return 0;
+    });
+    
+    for (const [graphId, graphDict] of orderedEntries) {
         try {
             await displayGraph(graphId, graphDict, container);
             successCount++;

@@ -3,6 +3,45 @@
 
 # Changelog
 
+## [Unreleased]
+
+---
+
+## v0.0.5-unstable
+
+⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️
+
+### Added
+- **New Question 7 graph**: Visualization of inequality x² ≥ 10 on parabola y = x²
+  - File: `graph_sujets0_spe_sujet1_automatismes_question7.py`
+  - Shows solution regions x ≤ -√10 or x ≥ √10
+  - Named with pattern: [sujets0][spé][sujet-1][automatismes][question-7]
+- **Dedicated Sujets 0 page**: Simplified visualization page for individual exam questions
+  - File: `scenery/sujets0.html` - Clean two-column layout matching main visualization page
+  - File: `scenery/sujets0-app.js` - Standalone loader for Sujets 0 graphs
+  - Uses same rendering approach as main page but filtered to single graph
+- **Template for Sujets 0 graphs**: Created `template_sujets0.py` to facilitate adding new exam questions
+
+### Fixed
+- **Resolved circular import issue**: Fixed Python module loading in Pyodide
+  - Removed problematic `__init__.py` files from test modules
+  - Implemented direct file fetching and execution via `exec()` to bypass import system
+  - Uses base64 encoding to safely transfer Python source code
+- **Improved error handling**: Added comprehensive logging for debugging Python execution errors
+- **Simplified loading approach**: Aligned sujets0-app.js with proven app.js methodology
+
+### Technical Improvements
+- Fetch Python graph files directly via HTTP instead of relying on imports
+- Execute graph code in isolated namespace to avoid module conflicts
+- Better error reporting with Python traceback capture via missive
+
+### Known Issues (Ongoing)
+- All previous instability warnings still apply
+- **NOT SUITABLE FOR PRODUCTION USE**
+- Expect API changes without notice
+
+---
+
 ## v0.0.4-unstable
 
 ⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️
