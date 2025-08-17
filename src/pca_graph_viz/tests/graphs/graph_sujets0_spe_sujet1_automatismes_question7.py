@@ -111,9 +111,9 @@ def get_graph_dict():
         "title": "Parabola y = x² with y = 1",
         "description": "Simple visualization of parabola with horizontal line",
         "svg": {
-            "width": 400,
-            "height": 400,
-            "viewBox": "0 0 400 400",
+            "width": 340,
+            "height": 340,
+            "viewBox": "0 0 340 340",
             "style": {"background-color": bg_color},
         },
         "settings": {
