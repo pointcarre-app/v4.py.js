@@ -32,12 +32,12 @@ const ESSENTIAL_FILES = [
 // Hardcoded graph files - load these separately
 const GRAPH_FILES = {
   // Question 7
-  "q7_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_canonical.py",
-  "q7_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_small.py",
+//   "q7_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_canonical.py",
+//   "q7_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_small.py",
   
   // Question 8  
-  "q8_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_08_question_canonical.py",
-  "q8_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_08_question_small.py",
+//   "q8_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_08_question_canonical.py",
+//   "q8_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_08_question_small.py",
   
   // Dispatch module (needed by parabola graphs)
   "dispatch": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_dispatch.py",
@@ -45,15 +45,11 @@ const GRAPH_FILES = {
   // Parabola graphs with s=1
   "parabola_s1_a0": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_0.py",
   "parabola_s1_am5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_m5.py",
-  "parabola_s1_am10": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_m10.py",
   "parabola_s1_ap5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_p5.py",
-  "parabola_s1_ap10": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_p10.py",
   
   // Parabola graphs with s=-1
   "parabola_sm1_a0": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_0.py",
   "parabola_sm1_am5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m5.py",
-  "parabola_sm1_am10": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m10.py",
-  "parabola_sm1_ap5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p5.py",
   "parabola_sm1_ap10": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p10.py",
 };
 

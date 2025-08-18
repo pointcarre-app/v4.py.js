@@ -5,11 +5,8 @@ x = np.linspace(-1, 1, 100)
 y_identity = x  # y = x
 y_minus_identity = -x  # y = -x
 
-# Use nice hex colors directly
-bg_color = "#f5f7fb"  # Very light blue-grey
-grid_color = "#dde3ed"  # Light grey
-curve1_color = "#6b46c1"  # Purple
-curve2_color = "#c7366f"  # Red-pink
+# Colors will be handled by CSS classes
+# No need for explicit color definitions when using DaisyUI theme classes
 
 # All visual elements in lines array
 lines = [
@@ -18,20 +15,18 @@ lines = [
         "type": "curve",
         "id": "identity",
         "data": {"x": x.tolist(), "y": y_identity.tolist()},
-        "stroke": curve1_color,
         "stroke-width": 2,
         "fill": "none",
-        "class": "curve identity-curve",
+        "class": "curve identity-curve stroke-primary",
     },
     # Second curve: y = -x
     {
         "type": "curve",
         "id": "minus-identity",
         "data": {"x": x.tolist(), "y": y_minus_identity.tolist()},
-        "stroke": curve2_color,
         "stroke-width": 2,
         "fill": "none",
-        "class": "curve minus-identity-curve",
+        "class": "curve minus-identity-curve stroke-secondary",
     },
     # X-axis
     {
@@ -40,10 +35,8 @@ lines = [
         "y1": 0,
         "x2": 1,
         "y2": 0,
-        "stroke": "#666666",
-        "stroke-width": 1,
-        "stroke-opacity": 0.7,
-        "class": "axis x-axis",
+        "stroke-width": 1.5,
+        "class": "axis x-axis stroke-base-content",
     },
     # Y-axis
     {
@@ -52,10 +45,8 @@ lines = [
         "y1": -1,
         "x2": 0,
         "y2": 1,
-        "stroke": "#666666",
-        "stroke-width": 1,
-        "stroke-opacity": 0.7,
-        "class": "axis y-axis",
+        "stroke-width": 1.5,
+        "class": "axis y-axis stroke-base-content",
     },
 ]
 
@@ -66,8 +57,7 @@ foreign_objects = [
         "latex": r"y=x",
         "width": 50,
         "height": 20,
-        "bg_color": "rgba(255, 255, 255, 0.9)",
-        "text_color": "#503ab2",
+        "class": "svg-latex text-primary",
     },
     {
         "x": 0.5,
@@ -75,8 +65,7 @@ foreign_objects = [
         "latex": r"y=-x",
         "width": 50,
         "height": 20,
-        "bg_color": "rgba(255, 255, 255, 0.9)",
-        "text_color": "#ab0084",
+        "class": "svg-latex text-secondary",
     },
     {
         "x": -0.5,
@@ -84,8 +73,7 @@ foreign_objects = [
         "latex": r"a^2+b^2=c^2",
         "width": 100,
         "height": 20,
-        "bg_color": "rgba(255, 255, 255, 0.9)",
-        "text_color": "#503ab2",
+        "class": "svg-latex text-primary",
     },
     {
         "x": -0.5,
@@ -93,8 +81,7 @@ foreign_objects = [
         "latex": r"E=mc^2",
         "width": 100,
         "height": 20,
-        "bg_color": "rgba(255, 255, 255, 0.9)",
-        "text_color": "#ab0084",
+        "class": "svg-latex text-secondary",
     },
     {
         "x": 1,
@@ -102,8 +89,7 @@ foreign_objects = [
         "latex": r"x",
         "width": 20,
         "height": 20,
-        "bg_color": "rgba(255, 255, 255, 0.9)",
-        "text_color": "#e6b45d",
+        "class": "svg-latex text-accent",
     },
 ]
 
@@ -118,14 +104,12 @@ def get_graph_dict():
             "width": 340,
             "height": 340,
             "viewBox": "0 0 340 340",
-            "style": {"background-color": bg_color},
+            "class": "fill-base-100",
         },
         "settings": {
             "margin": 5,
             "show_axes": False,  # We define axes in lines
-            "show_grid": True,
-            "grid_color": grid_color,
-            "axes_color": "#333333",
+            "show_grid": False,  # We define grid in lines with classes
         },
         "lines": lines,
         "foreign_objects": foreign_objects,

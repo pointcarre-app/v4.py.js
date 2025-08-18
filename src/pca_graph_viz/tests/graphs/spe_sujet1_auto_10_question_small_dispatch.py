@@ -2,69 +2,168 @@ import numpy as np
 
 # Rendering/domain constants
 SAMPLES = 1000
-_X_BASE_MIN, _X_BASE_MAX = -4, 4
 
 
-def _compute_display_ranges(
-    parabola_sign: int, a_shift: float, x_base_min: float, x_base_max: float
-) -> tuple[float, float, float, float]:
-    """Compute display X/Y ranges for y = sign * x^2 + a.
+def compute_parameters(parabola_sign: int, a_shift: float) -> dict:
+    """Compute ALL parameters for the parabola graph.
 
-    Ensures:
-    - X range has small padding around [x_base_min, x_base_max]
-    - Y range fully contains the function range on that domain
-    - Always includes 0 for axis visibility with adequate margin
+    Returns a dict with all display parameters including ranges, axis positions,
+    label positions, tick marks, etc. Everything is hardcoded for each case.
     """
-    # X range with mild padding
-    x_min_raw, x_max_raw = float(x_base_min), float(x_base_max)
-    x_span = x_max_raw - x_min_raw
-    x_pad = 0.1 * x_span
-    X_MIN, X_MAX = x_min_raw - x_pad, x_max_raw + x_pad
+    # Round a_shift to nearest reference value: -10, -5, 0, 5, or 10
+    reference_values = [-10, -5, 0, 5, 10]
+    closest_a = min(reference_values, key=lambda x: abs(x - a_shift))
 
-    # Analytic Y range on symmetric domain
-    if parabola_sign == 1:
-        func_y_min = a_shift
-        func_y_max = a_shift + (x_base_max**2)
-    else:
-        func_y_max = a_shift
-        func_y_min = a_shift - (x_base_max**2)
+    # Use match statement to handle all cases
+    match (parabola_sign, closest_a):
+        case (1, 0):  # y = x^2
+            params = {
+                "X_MIN": -4.0,
+                "X_MAX": 4.0,
+                "Y_MIN": -5,
+                "Y_MAX": 18,
+                "x_axis_x1": -4.5,  # X_MIN + 0.5
+                "x_axis_y1": 0,
+                "x_axis_x2": 4.5,  # X_MAX - 0.5
+                "x_axis_y2": 0,
+                "y_axis_x1": 0,
+                "y_axis_y1": -4.5,
+                "y_axis_x2": 0,
+                "y_axis_y2": 17,  # Y_MAX - 1
+                "x_label_x": 4.75,  # X_MAX - 0.25
+                "x_label_y": -1,
+                "y_label_x": 0.5,
+                "y_label_y": 17,  # Y_MAX - 1
+            }
 
-    # Handle special cases for extreme shifts to ensure axes are visible
-    if parabola_sign == -1 and a_shift == -10:
-        # Function range is [-26, -10]
-        Y_MIN = -30  # Show the full parabola with padding
-        Y_MAX = 3  # Include 0 with reasonable margin above
-    elif parabola_sign == -1 and a_shift == -5:
-        # Function range is [-21, -5]
-        Y_MIN = -24  # Show the full parabola with padding
-        Y_MAX = 3  # Include 0 with reasonable margin above
-    elif parabola_sign == 1 and a_shift == 10:
-        # Function range is [10, 26]
-        Y_MIN = -3  # Include 0 with reasonable margin below
-        Y_MAX = 30  # Show the full parabola with padding
-    elif parabola_sign == 1 and a_shift == 5:
-        # Function range is [5, 21]
-        Y_MIN = -3  # Include 0 with reasonable margin below
-        Y_MAX = 24  # Show the full parabola with padding
-    else:
-        # Default logic for other cases
-        func_span = max(1.0, func_y_max - func_y_min)
-        pad = 0.15 * func_span
+        case (1, -5):  # y = x^2 - 5
+            params = {
+                "X_MIN": -4.0,
+                "X_MAX": 4.0,
+                "Y_MIN": -5,
+                "Y_MAX": 13,
+                "x_axis_x1": -3,
+                "x_axis_y1": 0,
+                "x_axis_x2": 3,
+                "x_axis_y2": 0,
+                "y_axis_x1": 0,
+                "y_axis_y1": -5.5,  # MUST be >= Y_MIN (-6)
+                "y_axis_x2": 0,
+                "y_axis_y2": 10.5,  # MUST be <= Y_MAX (17)
+                "x_label_x": 3.5,  # MUST be <= X_MAX (5)
+                "x_label_y": -1,
+                "y_label_x": 0.5,
+                "y_label_y": 10.5,  # MUST be <= Y_MAX (17)
+            }
 
-        if func_y_min >= 0.0:
-            # Entirely above zero: ensure we go at least 2 below 0
-            Y_MIN = min(-2.0, func_y_min - pad)
-            Y_MAX = func_y_max + pad
-        elif func_y_max <= 0.0:
-            # Entirely below zero: ensure we go at least 2 above 0
-            Y_MAX = max(2.0, func_y_max + pad)
-            Y_MIN = func_y_min - pad
-        else:
-            # Crosses zero naturally
-            Y_MIN = func_y_min - pad
-            Y_MAX = func_y_max + pad
+        case (1, 5):  # y = x^2 + 5
+            # TODO: clean // enormous cheat: use cause -10 and move the x-axis
+            # case (1, -10):  # y = x^2 - 10
+            params = {
+                "X_MIN": -4.0,
+                "X_MAX": 4.0,
+                "Y_MIN": -10,
+                "Y_MAX": 19,
+                "x_axis_x1": -4,
+                "x_axis_y1": 4,  #### HACK
+                "x_axis_x2": 4,
+                "x_axis_y2": 4,  #### HACK
+                "y_axis_x1": 0,
+                "y_axis_y1": -6,
+                "y_axis_x2": 0,
+                "y_axis_y2": 22,  # MUST be <= Y_MAX
+                "x_label_x": 4,  # MUST be <= X_MAX
+                "x_label_y": 5,  ## HACK
+                "y_label_x": 0.5,
+                "y_label_y": 22,  # MUST be <= Y_MAX (10)
+            }
 
-    return X_MIN, X_MAX, Y_MIN, Y_MAX
+        case (-1, 0):  # y = -x^2
+            params = {
+                "X_MIN": -4.0,
+                "X_MAX": 4.0,
+                "Y_MIN": -20,
+                "Y_MAX": 4,
+                "x_axis_x1": -4,
+                "x_axis_y1": 0,
+                "x_axis_x2": 4,
+                "x_axis_y2": 0,
+                "y_axis_x1": 0,
+                "y_axis_y1": -21.5,
+                "y_axis_x2": 0,
+                "y_axis_y2": 1.25,
+                "x_label_x": 4.5,
+                "x_label_y": -1.0,
+                "y_label_x": 0.5,
+                "y_label_y": 1.25,
+            }
+
+        case (-1, -5):  # y = -x^2
+            params = {
+                "X_MIN": -4.0,
+                "X_MAX": 4.0,
+                "Y_MIN": -20,
+                "Y_MAX": 4,
+                "x_axis_x1": -4.2,
+                "x_axis_y1": -4.2,
+                "x_axis_x2": 4,
+                "x_axis_y2": -4,
+                "y_axis_x1": 0,
+                "y_axis_y1": -21.5,
+                "y_axis_x2": 0,
+                "y_axis_y2": -3.75,
+                "x_label_x": 4.5,
+                "x_label_y": -4.5,
+                "y_label_x": 0.5,
+                "y_label_y": -3.3,
+            }
+
+        # ========== DOWNWARD PARABOLAS (y = -x^2 + a) ==========
+        case (-1, 10):  # y = -x^2 + 10
+            params = {
+                "X_MIN": -5.0,
+                "X_MAX": 5.0,
+                "Y_MIN": -10,
+                "Y_MAX": 12,
+                "x_axis_x1": -4.7,
+                "x_axis_y1": 0,
+                "x_axis_x2": 4.7,
+                "x_axis_y2": 0,
+                "y_axis_x1": 0,
+                "y_axis_y1": -9.5,
+                "y_axis_x2": 0,
+                "y_axis_y2": 11.5,
+                "x_label_x": 5,
+                "x_label_y": -1.5,
+                "y_label_x": 0.75,
+                "y_label_y": 12,
+            }
+
+        # # Default case (shouldn't happen but just in case)
+        # case _:
+        #     params = {
+        #         "X_MIN": -5.0,
+        #         "X_MAX": 5.0,
+        #         "Y_MIN": -10,
+        #         "Y_MAX": 10,
+        #         "x_axis_x1": -4.7,
+        #         "x_axis_y1": 0,
+        #         "x_axis_x2": 4.7,
+        #         "x_axis_y2": 0,
+        #         "y_axis_x1": 0,
+        #         "y_axis_y1": -9.5,
+        #         "y_axis_x2": 0,
+        #         "y_axis_y2": 9.5,
+        #         "x_label_x": 4.5,
+        #         "x_label_y": -1.2,
+        #         "y_label_x": 0.3,
+        #         "y_label_y": 8.5,
+        #         "x_ticks": [-4, -2, 2, 4],
+        #         "y_ticks": [],
+        #         "tick_length": 0.2,
+        #     }
+
+    return params
 
 
 def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
@@ -78,41 +177,98 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
     Returns:
         A dictionary containing the graph data
     """
+    # Get ALL parameters from the centralized function
+    params = compute_parameters(parabola_sign, a_shift)
+
+    X_MIN = params["X_MIN"]
+    X_MAX = params["X_MAX"]
+
     # Generate data
-    x = np.linspace(_X_BASE_MIN, _X_BASE_MAX, SAMPLES)
+    x = np.linspace(X_MIN, X_MAX, SAMPLES)
     y = parabola_sign * (x**2) + a_shift
 
-    # Compute display ranges
-    X_MIN, X_MAX, Y_MIN, Y_MAX = _compute_display_ranges(
-        parabola_sign, a_shift, _X_BASE_MIN, _X_BASE_MAX
-    )
+    # Extract all values from params dict
 
-    x_span = X_MAX - X_MIN
-    y_span = Y_MAX - Y_MIN
+    Y_MIN = params["Y_MIN"]
+    Y_MAX = params["Y_MAX"]
 
-    # Visual elements
+    x_axis_x1 = params["x_axis_x1"]
+    x_axis_y1 = params["x_axis_y1"]
+    x_axis_x2 = params["x_axis_x2"]
+    x_axis_y2 = params["x_axis_y2"]
+
+    y_axis_x1 = params["y_axis_x1"]
+    y_axis_y1 = params["y_axis_y1"]
+    y_axis_x2 = params["y_axis_x2"]
+    y_axis_y2 = params["y_axis_y2"]
+
+    x_label_x = params["x_label_x"]
+    x_label_y = params["x_label_y"]
+    y_label_x = params["y_label_x"]
+    y_label_y = params["y_label_y"]
+
+    # Tick marks are commented out but keeping for future use
+    # x_ticks = params["x_ticks"]
+    # y_ticks = params["y_ticks"]
+    # tick_length = params["tick_length"]
+
+    # ========================================
+    # BUILD AXES AND CURVES
+    # ========================================
+
     lines = [
-        # X-axis
+        # X-axis - horizontal line
         {
             "type": "axis",
-            "x1": X_MIN,
-            "y1": 0,
-            "x2": X_MAX,
-            "y2": 0,
+            "x1": x_axis_x1,
+            "y1": x_axis_y1,
+            "x2": x_axis_x2,
+            "y2": x_axis_y2,
             "stroke-width": 1.5,
             "class": "axis x-axis stroke-base-content",
         },
-        # Y-axis
+        # Y-axis - vertical line
         {
             "type": "axis",
-            "x1": 0,
-            "y1": Y_MIN,
-            "x2": 0,
-            "y2": Y_MAX + 0.2,
+            "x1": y_axis_x1,
+            "y1": y_axis_y1,
+            "x2": y_axis_x2,
+            "y2": y_axis_y2,
             "stroke-width": 1.5,
             "class": "axis y-axis stroke-base-content",
         },
-        # Parabola curve
+    ]
+
+    # # Add tick marks on x-axis
+    # for x_tick in x_ticks:
+    #     lines.append(
+    #         {
+    #             "type": "tick",
+    #             "x1": x_tick,
+    #             "y1": -tick_length,
+    #             "x2": x_tick,
+    #             "y2": tick_length,
+    #             "stroke-width": 1,
+    #             "class": "stroke-base-content",
+    #         }
+    #     )
+
+    # # Add tick marks on y-axis
+    # for y_tick in y_ticks:
+    #     lines.append(
+    #         {
+    #             "type": "tick",
+    #             "x1": -tick_length,
+    #             "y1": y_tick,
+    #             "x2": tick_length,
+    #             "y2": y_tick,
+    #             "stroke-width": 1,
+    #             "class": "stroke-base-content",
+    #         }
+    #     )
+
+    # Add the parabola curve
+    lines.append(
         {
             "type": "curve",
             "id": "parabola",
@@ -120,44 +276,27 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
             "stroke-width": 2,
             "fill": "none",
             "class": "curve stroke-primary",
-        },
-    ]
+        }
+    )
 
-    # Handle label positioning for extreme shifts
-    if parabola_sign == -1 and a_shift in [-10, -5]:
-        # For negative parabolas shifted far below
-        x_label_y = -1.0
-        y_label_y = 2.5
-    elif parabola_sign == 1 and a_shift == 10:
-        # For positive parabola shifted far above
-        x_label_y = -1.0
-        y_label_y = 28.5
-    elif parabola_sign == 1 and a_shift == 5:
-        # For positive parabola shifted moderately above
-        x_label_y = -1.0
-        y_label_y = 22.5
-    else:
-        # Default positioning
-        x_label_y = 0 - 0.06 * y_span
-        y_label_y = Y_MAX - 0.02 * y_span
+    # ========================================
+    # BUILD LABELS
+    # ========================================
+    # Note: Label positions are defined in the CONFIGURABLE section above
 
     foreign_objects = [
-        # X axis label at right end, slightly below the axis
+        # X axis label
         {
-            "x": 3.5
-            if (parabola_sign in [-1, 1] and abs(a_shift) in [5, 10])
-            else X_MAX - 0.04 * x_span,
+            "x": x_label_x,
             "y": x_label_y,
             "latex": "x",
             "width": 20,
             "height": 10,
             "class": "svg-latex fill-base-content",
         },
-        # Y axis label near top, slightly to the right of the axis
+        # Y axis label
         {
-            "x": 0.3
-            if (parabola_sign in [-1, 1] and abs(a_shift) in [5, 10])
-            else 0 + 0.04 * x_span,
+            "x": y_label_x,
             "y": y_label_y,
             "latex": "y",
             "width": 20,
@@ -171,13 +310,13 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
         "title": filename,
         "description": f"Parabola y = {'x^2' if parabola_sign == 1 else '-x^2'} + a with a={a_shift}",
         "svg": {
-            "width": 150,
-            "height": 150,
-            "viewBox": "0 0 150 150",
+            "width": 180,
+            "height": 180,
+            "viewBox": "0 0 180 180",
             "class": "fill-base-100",
         },
         "settings": {
-            "margin": {"top": 10, "right": 10, "bottom": 28, "left": 10},
+            "margin": {"top": 15, "right": 15, "bottom": 15, "left": 15},
             "show_axes": False,
             "show_grid": False,
             "x_range": [X_MIN, X_MAX],

@@ -4,10 +4,8 @@ import numpy as np
 x = np.linspace(-np.pi, np.pi, 200)
 y_sin = np.sin(x)  # y = sin(x)
 
-# Use nice hex colors directly - different from graph1
-bg_color = "#f4f1e8"  # Very light warm grey
-grid_color = "#e0d9c6"  # Light warm grey
-curve1_color = "#4681ea"  # Blue for sine curve
+# Colors will be handled by CSS classes
+# No need for explicit color definitions when using DaisyUI theme classes
 
 # All visual elements in lines array
 lines = []
@@ -22,10 +20,9 @@ for i in range(-4, 5):
             "y1": -2,
             "x2": x_pos,
             "y2": 2,
-            "stroke": "#d0d0d0",
             "stroke-width": 0.5,
             "stroke-opacity": 0.5,
-            "class": "grid-line vertical",
+            "class": "grid-line vertical stroke-base-200",
         }
     )
 
@@ -38,10 +35,9 @@ for y_pos in [-2, -1, 1, 2]:
             "y1": y_pos,
             "x2": np.pi,
             "y2": y_pos,
-            "stroke": "#d0d0d0",
             "stroke-width": 0.5,
             "stroke-opacity": 0.5,
-            "class": "grid-line horizontal",
+            "class": "grid-line horizontal stroke-base-200",
         }
     )
 
@@ -51,10 +47,9 @@ lines.append(
         "type": "curve",
         "id": "sine",
         "data": {"x": x.tolist(), "y": y_sin.tolist()},
-        "stroke": curve1_color,
-        "stroke-width": 1.5,  # Thinner curve
+        "stroke-width": 2,
         "fill": "none",
-        "class": "curve sine-curve",
+        "class": "curve sine-curve stroke-primary",
     }
 )
 
@@ -68,9 +63,8 @@ lines.extend(
             "y1": 0,
             "x2": np.pi,
             "y2": 0,
-            "stroke": "#342f26",  # Dark warm grey
-            "stroke-width": 2,
-            "class": "axis x-axis",
+            "stroke-width": 1.5,
+            "class": "axis x-axis stroke-base-content",
         },
         # Y-axis
         {
@@ -79,9 +73,8 @@ lines.extend(
             "y1": -2,
             "x2": 0,
             "y2": 2,
-            "stroke": "#342f26",  # Dark warm grey
-            "stroke-width": 2,
-            "class": "axis y-axis",
+            "stroke-width": 1.5,
+            "class": "axis y-axis stroke-base-content",
         },
     ]
 )
@@ -107,8 +100,7 @@ for x_val, label in pi_labels:
             "latex": label,
             "width": 40,
             "height": 20,
-            "bg_color": "transparent",
-            "text_color": "#342f26",
+            "class": "svg-latex text-base-content",
         }
     )
 
@@ -120,8 +112,7 @@ foreign_objects.append(
         "latex": r"y = \sin(x)",
         "width": 60,
         "height": 20,
-        "bg_color": "rgba(255, 255, 255, 0.9)",
-        "text_color": "#4681ea",
+        "class": "svg-latex text-primary",
     }
 )
 
@@ -142,14 +133,12 @@ def get_graph_dict():
             "width": 340,
             "height": 340,
             "viewBox": "0 0 340 340",
-            "style": {"background-color": bg_color},
+            "class": "fill-base-100",
         },
         "settings": {
             "margin": 5,
             "show_axes": False,  # We define axes in lines
             "show_grid": False,  # We define grid lines manually
-            "grid_color": grid_color,
-            "axes_color": "#342f26",
         },
         "lines": lines,
         "foreign_objects": foreign_objects,

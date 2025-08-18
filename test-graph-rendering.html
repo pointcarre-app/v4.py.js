@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Graph Rendering with DaisyUI Classes</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* DaisyUI-style CSS variables */
+        :root {
+            --color-primary: #3b82f6;
+            /* Blue */
+            --color-secondary: #8b5cf6;
+            /* Purple */
+            --color-accent: #f59e0b;
+            /* Amber */
+            --color-base-content: #1f2937;
+            /* Dark gray */
+            --color-base-100: #ffffff;
+            /* White */
+            --color-base-200: #e5e7eb;
+            /* Light gray */
+            --color-base-300: #d1d5db;
+            /* Gray */
+        }
+
+        /* Dark theme */
+        [data-theme="dark"] {
+            --color-primary: #60a5fa;
+            /* Light blue */
+            --color-secondary: #a78bfa;
+            /* Light purple */
+            --color-accent: #fbbf24;
+            /* Light amber */
+            --color-base-content: #e5e7eb;
+            /* Light gray */
+            --color-base-100: #1f2937;
+            /* Dark gray */
+            --color-base-200: #374151;
+            /* Medium gray */
+            --color-base-300: #4b5563;
+            /* Gray */
+        }
+
+        /* Apply CSS variables to SVG classes */
+        .stroke-primary {
+            stroke: var(--color-primary) !important;
+        }
+
+        .stroke-secondary {
+            stroke: var(--color-secondary) !important;
+        }
+
+        .stroke-accent {
+            stroke: var(--color-accent) !important;
+        }
+
+        .stroke-base-content {
+            stroke: var(--color-base-content) !important;
+        }
+
+        .fill-primary {
+            fill: var(--color-primary) !important;
+        }
+
+        .fill-secondary {
+            fill: var(--color-secondary) !important;
+        }
+
+        .fill-accent {
+            fill: var(--color-accent) !important;
+        }
+
+        .fill-base-content {
+            fill: var(--color-base-content) !important;
+        }
+
+        .fill-base-100 {
+            fill: var(--color-base-100) !important;
+        }
+
+        .text-primary {
+            color: var(--color-primary) !important;
+        }
+
+        .text-secondary {
+            color: var(--color-secondary) !important;
+        }
+
+        .text-accent {
+            color: var(--color-accent) !important;
+        }
+
+        .test-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .theme-switcher {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f0f0f0;
+        }
+
+        button:hover {
+            background: #e0e0e0;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .info {
+            background: #f0f9ff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Test Graph Rendering with DaisyUI Classes</h1>
+
+    <div class="info">
+      <p>
+        <strong>What this tests:</strong>
+      </p>
+      <ul>
+        <li>✅ Fallback colors are applied (curves should be visible even without CSS)</li>
+        <li>✅ CSS classes are preserved for theming</li>
+        <li>✅ Theme switching works (click buttons below)</li>
+      </ul>
+    </div>
+
+    <div class="theme-switcher">
+      <button onclick="setTheme('light')">Light Theme</button>
+      <button onclick="setTheme('dark')">Dark Theme</button>
+    </div>
+
+    <div class="test-container">
+      <h2>Test SVG (from test_output.svg)</h2>
+      <div id="svg-container">
+        <!-- SVG will be loaded here -->
+      </div>
+    </div>
+
+    <div class="test-container">
+      <h2>Expected Results</h2>
+      <ul>
+        <li>You should see two diagonal lines: y=x (blue/primary) and y=-x (purple/secondary)</li>
+        <li>X and Y axes should be visible (dark gray/base-content)</li>
+        <li>Mathematical formulas should be displayed as text</li>
+        <li>Switching themes should change the colors</li>
+      </ul>
+    </div>
+
+    <script>
+        // Load the SVG file
+        fetch('test_output.svg')
+            .then(response => response.text())
+            .then(svg => {
+                document.getElementById('svg-container').innerHTML = svg;
+            })
+            .catch(error => {
+                document.getElementById('svg-container').innerHTML =
+                    '<p style="color: red;">Error loading SVG: ' + error + '</p>' +
+                    '<p>Make sure test_output.svg exists in the same directory.</p>';
+            });
+
+        // Theme switcher
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.body.style.background = '#1f2937';
+                document.body.style.color = '#e5e7eb';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                document.body.style.background = '#ffffff';
+                document.body.style.color = '#1f2937';
+            }
+        }
+    </script>
+  </body>
+</html>

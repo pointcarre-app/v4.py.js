@@ -15,6 +15,41 @@ def resolve_color(color):
     return color
 
 
+# DaisyUI class to fallback color mapping
+DAISYUI_COLOR_FALLBACKS = {
+    "stroke-primary": "#3b82f6",  # Blue
+    "stroke-secondary": "#8b5cf6",  # Purple
+    "stroke-accent": "#f59e0b",  # Amber
+    "stroke-base-content": "#1f2937",  # Dark gray
+    "stroke-base-100": "#ffffff",  # White
+    "stroke-base-200": "#e5e7eb",  # Light gray
+    "stroke-base-300": "#d1d5db",  # Gray
+    "fill-primary": "#3b82f6",
+    "fill-secondary": "#8b5cf6",
+    "fill-accent": "#f59e0b",
+    "fill-base-content": "#1f2937",
+    "fill-base-100": "#ffffff",
+    "fill-base-200": "#e5e7eb",
+    "fill-base-300": "#d1d5db",
+    "text-primary": "#3b82f6",
+    "text-secondary": "#8b5cf6",
+    "text-accent": "#f59e0b",
+    "text-base-content": "#1f2937",
+}
+
+
+def get_color_from_class(class_string):
+    """Extract fallback color from DaisyUI class string"""
+    if not class_string:
+        return None
+
+    # Check each class in the string
+    for cls in class_string.split():
+        if cls in DAISYUI_COLOR_FALLBACKS:
+            return DAISYUI_COLOR_FALLBACKS[cls]
+    return None
+
+
 def define_arrow_marker(drawing, arrow_id, color, arrow_size):
     """Defines an arrowhead marker."""
     marker = drawing.marker(
@@ -846,7 +881,10 @@ def create_multi_curve_svg(
             # Skip if line has 'no-arrow' class
             if "no-arrow" in line.get("class", ""):
                 continue
-            stroke_color = line.get("stroke", "black")
+            # Get fallback color from class or use provided stroke
+            line_class = line.get("class", "")
+            fallback_color = get_color_from_class(line_class)
+            stroke_color = fallback_color if fallback_color else line.get("stroke", "black")
             marker_id = f"arrow-{stroke_color.replace('#', '')}"
             if marker_id not in arrow_markers_created:
                 define_arrow_marker(dwg, marker_id, stroke_color, 12)  # Bigger arrow markers
@@ -857,11 +895,22 @@ def create_multi_curve_svg(
         # Handle both Line objects and dictionaries
         if hasattr(line, "x1"):
             # Line object
-            line_elem = dwg.line(
-                start=(transform_x(line.x1), transform_y(line.y1)),
-                end=(transform_x(line.x2), transform_y(line.y2)),
-                stroke_width=line.stroke_width,
-            )
+            line_kwargs = {
+                "start": (transform_x(line.x1), transform_y(line.y1)),
+                "end": (transform_x(line.x2), transform_y(line.y2)),
+                "stroke_width": line.stroke_width,
+            }
+
+            # Get fallback color from class if present
+            line_class = getattr(line, "class_", "")
+            fallback_color = get_color_from_class(line_class)
+            if fallback_color:
+                line_kwargs["stroke"] = fallback_color
+            elif hasattr(line, "stroke"):
+                line_kwargs["stroke"] = line.stroke
+
+            line_elem = dwg.line(**line_kwargs)
+
             if line.stroke_opacity is not None:
                 line_elem["stroke-opacity"] = line.stroke_opacity
             if line.stroke_dasharray:
@@ -875,7 +924,9 @@ def create_multi_curve_svg(
             # Check for type field to add arrow
             if hasattr(line, "type") and line.type == "axis":
                 # Use color-specific arrow marker
-                stroke_color = getattr(line, "stroke", "black")
+                stroke_color = (
+                    fallback_color if fallback_color else getattr(line, "stroke", "black")
+                )
                 marker_id = f"arrow-{stroke_color.replace('#', '')}"
                 line_elem["marker-end"] = f"url(#{marker_id})"
             plot_group.add(line_elem)
@@ -885,11 +936,29 @@ def create_multi_curve_svg(
 
             if line_type == "circle":
                 # Handle circle elements
-                circle_elem = dwg.circle(
-                    center=(transform_x(line.get("cx", 0)), transform_y(line.get("cy", 0))),
-                    r=line.get("r", 5),
-                    stroke_width=line.get("stroke-width", 1),
-                )
+                circle_kwargs = {
+                    "center": (transform_x(line.get("cx", 0)), transform_y(line.get("cy", 0))),
+                    "r": line.get("r", 5),
+                    "stroke_width": line.get("stroke-width", 1),
+                }
+
+                # Add fallback colors from classes
+                line_class = line.get("class", "")
+                stroke_fallback = get_color_from_class(line_class)
+                if stroke_fallback and "stroke-" in line_class:
+                    circle_kwargs["stroke"] = stroke_fallback
+                elif line.get("stroke"):
+                    circle_kwargs["stroke"] = line.get("stroke")
+
+                fill_fallback = get_color_from_class(line_class.replace("stroke-", "fill-"))
+                if fill_fallback and "fill-" in line_class:
+                    circle_kwargs["fill"] = fill_fallback
+                elif line.get("fill"):
+                    circle_kwargs["fill"] = line.get("fill")
+                else:
+                    circle_kwargs["fill"] = "none"
+
+                circle_elem = dwg.circle(**circle_kwargs)
                 if line.get("class"):
                     circle_elem["class"] = line.get("class")
                 if line.get("id"):
@@ -900,10 +969,28 @@ def create_multi_curve_svg(
 
             elif line_type == "path":
                 # Handle path elements
-                path_elem = dwg.path(
-                    d=line.get("d", ""),
-                    stroke_width=line.get("stroke-width", 1),
-                )
+                path_kwargs = {
+                    "d": line.get("d", ""),
+                    "stroke_width": line.get("stroke-width", 1),
+                }
+
+                # Add fallback colors from classes
+                line_class = line.get("class", "")
+                stroke_fallback = get_color_from_class(line_class)
+                if stroke_fallback and "stroke-" in line_class:
+                    path_kwargs["stroke"] = stroke_fallback
+                elif line.get("stroke"):
+                    path_kwargs["stroke"] = line.get("stroke")
+
+                fill_fallback = get_color_from_class(line_class.replace("stroke-", "fill-"))
+                if fill_fallback and "fill-" in line_class:
+                    path_kwargs["fill"] = fill_fallback
+                elif line.get("fill"):
+                    path_kwargs["fill"] = line.get("fill")
+                else:
+                    path_kwargs["fill"] = "none"
+
+                path_elem = dwg.path(**path_kwargs)
                 if line.get("fill-opacity"):
                     path_elem["fill-opacity"] = line.get("fill-opacity")
                 if line.get("stroke-opacity"):
@@ -920,11 +1007,22 @@ def create_multi_curve_svg(
 
             else:
                 # Default to line/axis handling
-                line_elem = dwg.line(
-                    start=(transform_x(line.get("x1")), transform_y(line.get("y1"))),
-                    end=(transform_x(line.get("x2")), transform_y(line.get("y2"))),
-                    stroke_width=line.get("stroke-width", line.get("stroke_width", 1)),
-                )
+                line_kwargs = {
+                    "start": (transform_x(line.get("x1")), transform_y(line.get("y1"))),
+                    "end": (transform_x(line.get("x2")), transform_y(line.get("y2"))),
+                    "stroke_width": line.get("stroke-width", line.get("stroke_width", 1)),
+                }
+
+                # Add fallback stroke color if class contains color directive
+                line_class = line.get("class", "")
+                fallback_color = get_color_from_class(line_class)
+                if fallback_color:
+                    line_kwargs["stroke"] = fallback_color
+                elif line.get("stroke"):
+                    line_kwargs["stroke"] = line.get("stroke")
+
+                line_elem = dwg.line(**line_kwargs)
+
                 if line.get("stroke-opacity") is not None:
                     line_elem["stroke-opacity"] = line.get("stroke-opacity")
                 if line.get("stroke-dasharray"):
@@ -939,8 +1037,12 @@ def create_multi_curve_svg(
                 if line_type == "axis":
                     # Skip arrow if line has 'no-arrow' class
                     if "no-arrow" not in line.get("class", ""):
-                        # Use color-specific arrow marker
-                        stroke_color = line.get("stroke", "black")
+                        # Use color-specific arrow marker with fallback
+                        line_class = line.get("class", "")
+                        fallback_color = get_color_from_class(line_class)
+                        stroke_color = (
+                            fallback_color if fallback_color else line.get("stroke", "black")
+                        )
                         marker_id = f"arrow-{stroke_color.replace('#', '')}"
                         line_elem["marker-end"] = f"url(#{marker_id})"
                 plot_group.add(line_elem)
@@ -957,16 +1059,25 @@ def create_multi_curve_svg(
             curve_class = None
             if isinstance(curve_classes, list) and i < len(curve_classes):
                 curve_class = curve_classes[i]
+
+            # Always set a stroke color as fallback
             if curve_class:
+                # Check if class contains a color directive
+                fallback_color = get_color_from_class(curve_class)
+                if fallback_color:
+                    path_kwargs["stroke"] = fallback_color
+                else:
+                    # Use provided color or default
+                    color = resolve_color(colors[i % len(colors)] if colors else None)
+                    path_kwargs["stroke"] = color
                 path_elem = dwg.path(**path_kwargs)
                 path_elem["class"] = curve_class
             else:
-                color = resolve_color(colors[i % len(colors)])
+                color = resolve_color(colors[i % len(colors)] if colors else None)
                 path_kwargs["stroke"] = color
                 path_elem = dwg.path(**path_kwargs)
                 # If no class provided, add default curve class for CSS-based styling
-                if not curve_class:
-                    path_elem["class"] = "curve stroke-primary"
+                path_elem["class"] = "curve stroke-primary"
             plot_group.add(path_elem)
 
     # Add the plot group to the drawing
@@ -1064,6 +1175,7 @@ def graph_from_dict(graph_dict):
     # Extract SVG parameters
     svg_params = graph_dict.get("svg", {})
     size = svg_params.get("width", 340)
+    svg_class = svg_params.get("class", "")  # Get class attribute if present
 
     # Extract settings
     settings = graph_dict.get("settings", {})
@@ -1132,7 +1244,7 @@ def graph_from_dict(graph_dict):
                 ]
             }
 
-            return create_multi_curve_svg(
+            svg_result = create_multi_curve_svg(
                 x_data=x_data,
                 y_data_list=y_data_arrays,
                 size=size,
@@ -1146,6 +1258,10 @@ def graph_from_dict(graph_dict):
                 **{"curve_classes": curve_classes},
                 **multi_curve_settings,
             )
+            # Add class attribute to SVG if specified
+            if svg_class:
+                svg_result = svg_result.replace("<svg ", f'<svg class="{svg_class}" ', 1)
+            return svg_result
         else:
             # Different x arrays - render each curve separately
             # For now, we'll still use the first x as reference
@@ -1170,7 +1286,7 @@ def graph_from_dict(graph_dict):
                 ]
             }
 
-            return create_multi_curve_svg(
+            svg_result = create_multi_curve_svg(
                 x_data=x_data,
                 y_data_list=y_data_arrays,
                 size=size,
@@ -1184,6 +1300,10 @@ def graph_from_dict(graph_dict):
                 **{"curve_classes": curve_classes},
                 **multi_curve_settings,
             )
+            # Add class attribute to SVG if specified
+            if svg_class:
+                svg_result = svg_result.replace("<svg ", f'<svg class="{svg_class}" ', 1)
+            return svg_result
     else:
         # No curves, just render lines and foreign objects
         scene_settings = {
@@ -1205,7 +1325,7 @@ def graph_from_dict(graph_dict):
             ]
         }
 
-        return create_svg_scene(
+        svg_result = create_svg_scene(
             x_data=np.array([]),
             y_data=np.array([]),
             size=size,
@@ -1217,6 +1337,10 @@ def graph_from_dict(graph_dict):
             y_max=domain.get("y_max"),
             **scene_settings,
         )
+        # Add class attribute to SVG if specified
+        if svg_class:
+            svg_result = svg_result.replace("<svg ", f'<svg class="{svg_class}" ', 1)
+        return svg_result
 
 
 def dict_from_graph_params(
