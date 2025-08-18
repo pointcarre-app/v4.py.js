@@ -27,8 +27,8 @@ def define_arrow_marker(drawing, arrow_id, color, arrow_size):
         orient="auto",
         markerUnits="userSpaceOnUse",  # Use absolute units
     )
-    # Less wide, shorter arrow shape
-    marker.add(drawing.path(d="M 0 2 L 6 4 L 0 6 z", fill=color))
+    # Less wide, shorter arrow shape (fallback to black if color is falsy)
+    marker.add(drawing.path(d="M 0 2 L 6 4 L 0 6 z", fill=color or "black"))
     drawing.defs.add(marker)
 
 
@@ -181,14 +181,14 @@ class SVGScene:
         for curve_data in self.curves:
             x_data = curve_data["x_data"]
             y_data = curve_data["y_data"]
-            color = curve_data["color"]
+            # No inline color; rely on classes applied elsewhere
 
             points = [(self.transform_x(x), self.transform_y(y)) for x, y in zip(x_data, y_data)]
             if len(points) > 1:
                 path_data = f"M {points[0][0]},{points[0][1]} "
                 for point in points[1:]:
                     path_data += f"L {point[0]},{point[1]} "
-                drawing.add(drawing.path(d=path_data, stroke=color, stroke_width=2, fill="none"))
+                drawing.add(drawing.path(d=path_data, stroke_width=2, fill="none"))
 
     def draw_lines(self, drawing):
         """Draws all lines."""
@@ -196,12 +196,17 @@ class SVGScene:
             # Handle both Line objects and dictionaries
             if hasattr(line_obj, "to_svg_line"):
                 # Line object
-                line_elem = drawing.line(
-                    start=(self.transform_x(line_obj.x1), self.transform_y(line_obj.y1)),
-                    end=(self.transform_x(line_obj.x2), self.transform_y(line_obj.y2)),
-                    stroke=line_obj.stroke,
-                    stroke_width=line_obj.stroke_width,
-                )
+                # Build kwargs conditionally so CSS classes can control styling
+                line_kwargs = {
+                    "start": (self.transform_x(line_obj.x1), self.transform_y(line_obj.y1)),
+                    "end": (self.transform_x(line_obj.x2), self.transform_y(line_obj.y2)),
+                    "stroke_width": line_obj.stroke_width,
+                }
+                class_value = getattr(line_obj, "class_", "") or ""
+                # Only set inline stroke if no stroke-* class present
+                if "stroke-" not in class_value:
+                    line_kwargs["stroke"] = line_obj.stroke
+                line_elem = drawing.line(**line_kwargs)
                 if line_obj.stroke_opacity is not None:
                     line_elem["stroke-opacity"] = line_obj.stroke_opacity
                 if line_obj.stroke_dasharray:
@@ -217,18 +222,22 @@ class SVGScene:
                     line_elem["marker-end"] = "url(#arrow)"
             else:
                 # Dictionary
-                line_elem = drawing.line(
-                    start=(
+                class_value = line_obj.get("class", "") or ""
+                line_kwargs = {
+                    "start": (
                         self.transform_x(line_obj.get("x1")),
                         self.transform_y(line_obj.get("y1")),
                     ),
-                    end=(
+                    "end": (
                         self.transform_x(line_obj.get("x2")),
                         self.transform_y(line_obj.get("y2")),
                     ),
-                    stroke=line_obj.get("stroke", "black"),
-                    stroke_width=line_obj.get("stroke_width", 1),
-                )
+                    "stroke_width": line_obj.get("stroke-width", line_obj.get("stroke_width", 1)),
+                }
+                # Only set inline stroke if no stroke-* class present
+                if "stroke-" not in class_value:
+                    line_kwargs["stroke"] = line_obj.get("stroke", "black")
+                line_elem = drawing.line(**line_kwargs)
                 if line_obj.get("stroke_opacity") is not None:
                     line_elem["stroke-opacity"] = line_obj.get("stroke_opacity")
                 if line_obj.get("stroke_dasharray"):
@@ -289,9 +298,6 @@ class SVGScene:
     def to_svg(self):
         """Converts the SVGScene object to an SVG string."""
         dwg = svgwrite.Drawing(size=(self.width, self.height))
-        dwg.add(
-            dwg.rect(insert=(0, 0), size=(self.width, self.height), fill=resolve_color("white"))
-        )
 
         self.draw_grid(dwg, color=self.grid_color)
         self.draw_axes(dwg, color=self.axes_color)
@@ -322,11 +328,29 @@ def create_svg_scene(
 ):
     """Minimal SVG creator with lines, curves, and optional LaTeX injection via foreignObject elements"""
     dwg = svgwrite.Drawing(size=(size, size))
-    dwg.add(dwg.rect(insert=(0, 0), size=(size, size), fill=resolve_color(bg_color)))
 
     # Scale data to fit
-    margin = 5  # Fixed margin of 5 as requested
-    plot_size = size - 2 * margin
+    # Handle margin which can be a number or a dict {top,right,bottom,left}; default 0
+    margin_arg = kwargs.get("margin", 0)
+    if isinstance(margin_arg, dict):
+        margin_top = int(margin_arg.get("top", 0))
+        margin_right = int(margin_arg.get("right", 0))
+        margin_bottom = int(margin_arg.get("bottom", 0))
+        margin_left = int(margin_arg.get("left", 0))
+        uniform_margin = max(margin_top, margin_right, margin_bottom, margin_left)
+    else:
+        uniform_margin = int(margin_arg)
+        margin_top = uniform_margin
+        margin_right = uniform_margin
+        margin_bottom = uniform_margin
+        margin_left = uniform_margin
+    # Back-compat explicit per-side keys override if present
+    margin_left = int(kwargs.get("margin_left", margin_left))
+    margin_right = int(kwargs.get("margin_right", margin_right))
+    margin_top = int(kwargs.get("margin_top", margin_top))
+    margin_bottom = int(kwargs.get("margin_bottom", margin_bottom))
+    plot_width = size - (margin_left + margin_right)
+    plot_height = size - (margin_top + margin_bottom)
 
     # Determine data bounds. If x_data / y_data are empty, infer bounds from provided line and foreign object elements.
     if x_data is None or len(x_data) == 0 or y_data is None or len(y_data) == 0:
@@ -391,18 +415,18 @@ def create_svg_scene(
 
     # Transform functions without margin (will use g transform)
     def transform_x(x):
-        return (x - x_min) / (x_max - x_min) * plot_size
+        return (x - x_min) / (x_max - x_min) * plot_width
 
     def transform_y(y):
-        return plot_size - (y - y_min) / (y_max - y_min) * plot_size
+        return plot_height - (y - y_min) / (y_max - y_min) * plot_height
 
     # Resolve colors
-    axes_color = resolve_color(axes_color) if axes_color else "black"
-    grid_color = resolve_color(grid_color) if grid_color else "lightgray"
-    curve_color = resolve_color(curve_color) if curve_color else "blue"
+    axes_color = resolve_color(axes_color) if axes_color else None
+    grid_color = resolve_color(grid_color) if grid_color else None
+    curve_color = resolve_color(curve_color) if curve_color else None
 
     # Create a group element for the plot area with margin transform
-    plot_group = dwg.g(transform=f"translate({margin}, {margin})")
+    plot_group = dwg.g(transform=f"translate({margin_left}, {margin_top})")
 
     # Draw grid first (behind everything)
     if show_grid and grid_color and grid_color != "none":
@@ -410,7 +434,7 @@ def create_svg_scene(
         for x in np.arange(np.ceil(x_min), np.floor(x_max) + 1):
             line_elem = dwg.line(
                 start=(transform_x(x), 0),
-                end=(transform_x(x), plot_size),
+                end=(transform_x(x), plot_height),
                 stroke=grid_color,
                 stroke_width=0.5,
                 stroke_opacity=0.3,
@@ -420,7 +444,7 @@ def create_svg_scene(
         for y in np.arange(np.ceil(y_min), np.floor(y_max) + 1):
             line_elem = dwg.line(
                 start=(0, transform_y(y)),
-                end=(plot_size, transform_y(y)),
+                end=(plot_width, transform_y(y)),
                 stroke=grid_color,
                 stroke_width=0.5,
                 stroke_opacity=0.3,
@@ -431,18 +455,18 @@ def create_svg_scene(
     if show_axes:
         draw_axes(
             plot_group,
-            plot_size,
-            plot_size,
+            plot_width,
+            plot_height,
             x_min,
             x_max,
             y_min,
             y_max,
-            color=axes_color if axes_color else "black",
+            color=axes_color if axes_color else "currentColor",
         )
     else:
         # Even if show_axes is False, we need to define arrow markers for custom axis lines
-        define_arrow_marker(dwg, "arrow-x", axes_color if axes_color else "black", 6)
-        define_arrow_marker(dwg, "arrow-y", axes_color if axes_color else "black", 6)
+        define_arrow_marker(dwg, "arrow-x", axes_color if axes_color else "currentColor", 6)
+        define_arrow_marker(dwg, "arrow-y", axes_color if axes_color else "currentColor", 6)
 
     # Prepare lines list
     all_lines = []
@@ -459,7 +483,6 @@ def create_svg_scene(
             line_elem = dwg.line(
                 start=(transform_x(line.x1), transform_y(line.y1)),
                 end=(transform_x(line.x2), transform_y(line.y2)),
-                stroke=line.stroke,
                 stroke_width=line.stroke_width,
             )
             if line.stroke_opacity is not None:
@@ -486,15 +509,22 @@ def create_svg_scene(
 
             if line_type == "circle":
                 # Handle circle elements
-                circle_elem = dwg.circle(
-                    center=(transform_x(line.get("cx", 0)), transform_y(line.get("cy", 0))),
-                    r=line.get("r", 5),
-                    fill=line.get("fill", "none"),
-                    stroke=line.get("stroke", "black"),
-                    stroke_width=line.get("stroke-width", 1),
-                )
+                class_value = line.get("class", "") or ""
+                circle_kwargs = {
+                    "center": (transform_x(line.get("cx", 0)), transform_y(line.get("cy", 0))),
+                    "r": line.get("r", 5),
+                    "stroke_width": line.get("stroke-width", line.get("stroke_width", 1)),
+                }
+                if "fill-" not in class_value:
+                    circle_kwargs["fill"] = line.get("fill", "none")
+                if "stroke-" not in class_value:
+                    circle_kwargs["stroke"] = line.get("stroke", None)
+                circle_elem = dwg.circle(**circle_kwargs)
+                # Default to base-content stroke if no class provided
                 if line.get("class"):
                     circle_elem["class"] = line.get("class")
+                else:
+                    circle_elem["class"] = "stroke-base-content"
                 if line.get("id"):
                     circle_elem["id"] = line.get("id")
                 if line.get("style"):
@@ -503,12 +533,16 @@ def create_svg_scene(
 
             elif line_type == "path":
                 # Handle path elements
-                path_elem = dwg.path(
-                    d=line.get("d", ""),
-                    fill=line.get("fill", "none"),
-                    stroke=line.get("stroke", "black"),
-                    stroke_width=line.get("stroke-width", 1),
-                )
+                class_value = line.get("class", "") or ""
+                path_kwargs = {
+                    "d": line.get("d", ""),
+                    "stroke_width": line.get("stroke-width", line.get("stroke_width", 1)),
+                }
+                if "fill-" not in class_value:
+                    path_kwargs["fill"] = line.get("fill")
+                if "stroke-" not in class_value:
+                    path_kwargs["stroke"] = line.get("stroke")
+                path_elem = dwg.path(**path_kwargs)
                 if line.get("fill-opacity"):
                     path_elem["fill-opacity"] = line.get("fill-opacity")
                 if line.get("stroke-opacity"):
@@ -517,6 +551,8 @@ def create_svg_scene(
                     path_elem["stroke-dasharray"] = line.get("stroke-dasharray")
                 if line.get("class"):
                     path_elem["class"] = line.get("class")
+                else:
+                    path_elem["class"] = "stroke-base-content"
                 if line.get("id"):
                     path_elem["id"] = line.get("id")
                 if line.get("style"):
@@ -525,18 +561,32 @@ def create_svg_scene(
 
             else:
                 # Default to line/axis handling
-                line_elem = dwg.line(
-                    start=(transform_x(line.get("x1")), transform_y(line.get("y1"))),
-                    end=(transform_x(line.get("x2")), transform_y(line.get("y2"))),
-                    stroke=line.get("stroke", "black"),
-                    stroke_width=line.get("stroke-width", line.get("stroke_width", 1)),
-                )
+                class_value = line.get("class", "") or ""
+                line_kwargs = {
+                    "start": (transform_x(line.get("x1")), transform_y(line.get("y1"))),
+                    "end": (transform_x(line.get("x2")), transform_y(line.get("y2"))),
+                    "stroke_width": line.get("stroke-width", line.get("stroke_width", 1)),
+                }
+                if "stroke-" not in class_value and line.get("stroke") is not None:
+                    line_kwargs["stroke"] = line.get("stroke")
+                line_elem = dwg.line(**line_kwargs)
                 if line.get("stroke-opacity") is not None:
                     line_elem["stroke-opacity"] = line.get("stroke-opacity")
                 if line.get("stroke-dasharray"):
                     line_elem["stroke-dasharray"] = line.get("stroke-dasharray")
+                # Apply default classes if missing
                 if line.get("class"):
                     line_elem["class"] = line.get("class")
+                else:
+                    # Determine axis orientation for sensible defaults
+                    if line_type == "axis":
+                        x1, y1 = line.get("x1", 0), line.get("y1", 0)
+                        x2, y2 = line.get("x2", 0), line.get("y2", 0)
+                        is_vertical = abs(y2 - y1) > abs(x2 - x1)
+                        axis_cls = "y-axis" if is_vertical else "x-axis"
+                        line_elem["class"] = f"axis {axis_cls} stroke-base-content"
+                    else:
+                        line_elem["class"] = "line stroke-secondary"
                 if line.get("id"):
                     line_elem["id"] = line.get("id")
                 if line.get("style"):
@@ -558,7 +608,10 @@ def create_svg_scene(
         path_data = f"M {points[0][0]},{points[0][1]} "
         for point in points[1:]:
             path_data += f"L {point[0]},{point[1]} "
-        plot_group.add(dwg.path(d=path_data, stroke=curve_color, stroke_width=2, fill="none"))
+        path_elem = dwg.path(d=path_data, stroke_width=2, fill="none")
+        # Default curve class styling when not provided elsewhere
+        path_elem["class"] = "curve stroke-primary"
+        plot_group.add(path_elem)
 
     # Add the plot group to the drawing
     dwg.add(plot_group)
@@ -600,10 +653,11 @@ def create_svg_scene(
                 else:
                     style_str = style
 
-                # Add margin to foreign object coordinates since they're outside the transform group
-                margin_offset = 5  # Fixed margin from line 323
+                # Add margin offsets to foreign object coordinates since they're outside the transform group
+                offset_x = margin_left
+                offset_y = margin_top
                 foreign_object_xmls.append(
-                    f'<foreignObject x="{svg_x - width / 2 + margin_offset}" y="{svg_y - height / 2 + margin_offset}" '
+                    f'<foreignObject x="{svg_x - width / 2 + offset_x}" y="{svg_y - height / 2 + offset_y}" '
                     f'width="{width}" height="{height}">'
                     f'<div xmlns="http://www.w3.org/1999/xhtml" class="{classes}" '
                     f'style="{style_str}">{latex}</div>'
@@ -612,7 +666,8 @@ def create_svg_scene(
             else:
                 # Handle object with to_foreign_object_xml method
                 if hasattr(obj, "to_foreign_object_xml"):
-                    margin_offset = 5  # Fixed margin from line 323
+                    # Fallback to a single offset parameter; use left (x) for both axes for compatibility
+                    margin_offset = margin_left
                     foreign_object_xmls.append(
                         obj.to_foreign_object_xml(transform_x, transform_y, margin_offset)
                     )
@@ -652,6 +707,8 @@ def create_multi_curve_svg(
     x_max=None,
     y_min=None,
     y_max=None,
+    curve_classes=None,
+    **kwargs,
 ):
     """Create SVG with multiple curves, lines, and optional foreignObject elements"""
     if colors is None:
@@ -659,11 +716,29 @@ def create_multi_curve_svg(
 
     # Use first curve to set up the SVG
     dwg = svgwrite.Drawing(size=(size, size))
-    dwg.add(dwg.rect(insert=(0, 0), size=(size, size), fill=resolve_color(bg_color)))
 
     # Scale data to fit (use all curves to determine range)
-    margin = 5  # Fixed margin of 5 as requested
-    plot_size = size - 2 * margin
+    # Handle margin which can be a number or a dict {top,right,bottom,left}; default 0
+    margin_arg = kwargs.get("margin", 0)
+    if isinstance(margin_arg, dict):
+        margin_top = int(margin_arg.get("top", 0))
+        margin_right = int(margin_arg.get("right", 0))
+        margin_bottom = int(margin_arg.get("bottom", 0))
+        margin_left = int(margin_arg.get("left", 0))
+        uniform_margin = max(margin_top, margin_right, margin_bottom, margin_left)
+    else:
+        uniform_margin = int(margin_arg)
+        margin_top = uniform_margin
+        margin_right = uniform_margin
+        margin_bottom = uniform_margin
+        margin_left = uniform_margin
+    # Back-compat explicit per-side keys override if present
+    margin_left = int(kwargs.get("margin_left", margin_left))
+    margin_right = int(kwargs.get("margin_right", margin_right))
+    margin_top = int(kwargs.get("margin_top", margin_top))
+    margin_bottom = int(kwargs.get("margin_bottom", margin_bottom))
+    plot_width = size - (margin_left + margin_right)
+    plot_height = size - (margin_top + margin_bottom)
 
     # Use explicit bounds if provided, otherwise calculate from data
     if x_min is None or x_max is None or y_min is None or y_max is None:
@@ -694,17 +769,17 @@ def create_multi_curve_svg(
 
     # Transform functions without margin (will use g transform)
     def transform_x(x):
-        return (x - x_min) / (x_max - x_min) * plot_size
+        return (x - x_min) / (x_max - x_min) * plot_width
 
     def transform_y(y):
-        return plot_size - (y - y_min) / (y_max - y_min) * plot_size
+        return plot_height - (y - y_min) / (y_max - y_min) * plot_height
 
-    # Resolve colors
-    axes_color = resolve_color(axes_color) if axes_color else "black"
-    grid_color = resolve_color(grid_color) if grid_color else "lightgray"
+    # Resolve colors (no hard defaults; allow CSS to drive color via currentColor)
+    axes_color = resolve_color(axes_color) if axes_color else None
+    grid_color = resolve_color(grid_color) if grid_color else None
 
     # Create a group element for the plot area with margin transform
-    plot_group = dwg.g(transform=f"translate({margin}, {margin})")
+    plot_group = dwg.g(transform=f"translate({margin_left}, {margin_top})")
 
     # Draw grid first (behind everything)
     if show_grid and grid_color and grid_color != "none":
@@ -712,7 +787,7 @@ def create_multi_curve_svg(
         for x in np.arange(np.ceil(x_min), np.floor(x_max) + 1):
             line_elem = dwg.line(
                 start=(transform_x(x), 0),
-                end=(transform_x(x), plot_size),
+                end=(transform_x(x), plot_height),
                 stroke=grid_color,
                 stroke_width=0.5,
                 stroke_opacity=0.3,
@@ -722,7 +797,7 @@ def create_multi_curve_svg(
         for y in np.arange(np.ceil(y_min), np.floor(y_max) + 1):
             line_elem = dwg.line(
                 start=(0, transform_y(y)),
-                end=(plot_size, transform_y(y)),
+                end=(plot_width, transform_y(y)),
                 stroke=grid_color,
                 stroke_width=0.5,
                 stroke_opacity=0.3,
@@ -733,13 +808,13 @@ def create_multi_curve_svg(
     if show_axes:
         draw_axes(
             plot_group,
-            plot_size,
-            plot_size,
+            plot_width,
+            plot_height,
             x_min,
             x_max,
             y_min,
             y_max,
-            color=axes_color,
+            color=axes_color if axes_color else "currentColor",
         )
     else:
         # Even if show_axes is False, we need to define arrow markers for custom axis lines
@@ -774,7 +849,6 @@ def create_multi_curve_svg(
             line_elem = dwg.line(
                 start=(transform_x(line.x1), transform_y(line.y1)),
                 end=(transform_x(line.x2), transform_y(line.y2)),
-                stroke=line.stroke,
                 stroke_width=line.stroke_width,
             )
             if line.stroke_opacity is not None:
@@ -803,8 +877,6 @@ def create_multi_curve_svg(
                 circle_elem = dwg.circle(
                     center=(transform_x(line.get("cx", 0)), transform_y(line.get("cy", 0))),
                     r=line.get("r", 5),
-                    fill=line.get("fill", "none"),
-                    stroke=line.get("stroke", "black"),
                     stroke_width=line.get("stroke-width", 1),
                 )
                 if line.get("class"):
@@ -819,8 +891,6 @@ def create_multi_curve_svg(
                 # Handle path elements
                 path_elem = dwg.path(
                     d=line.get("d", ""),
-                    fill=line.get("fill", "none"),
-                    stroke=line.get("stroke", "black"),
                     stroke_width=line.get("stroke-width", 1),
                 )
                 if line.get("fill-opacity"):
@@ -842,7 +912,6 @@ def create_multi_curve_svg(
                 line_elem = dwg.line(
                     start=(transform_x(line.get("x1")), transform_y(line.get("y1"))),
                     end=(transform_x(line.get("x2")), transform_y(line.get("y2"))),
-                    stroke=line.get("stroke", "black"),
                     stroke_width=line.get("stroke-width", line.get("stroke_width", 1)),
                 )
                 if line.get("stroke-opacity") is not None:
@@ -872,8 +941,22 @@ def create_multi_curve_svg(
             path_data = f"M {points[0][0]},{points[0][1]} "
             for point in points[1:]:
                 path_data += f"L {point[0]},{point[1]} "
-            color = resolve_color(colors[i % len(colors)])
-            plot_group.add(dwg.path(d=path_data, stroke=color, stroke_width=2, fill="none"))
+            # Build path with class-based styling support
+            path_kwargs = {"d": path_data, "stroke_width": 2, "fill": "none"}
+            curve_class = None
+            if isinstance(curve_classes, list) and i < len(curve_classes):
+                curve_class = curve_classes[i]
+            if curve_class:
+                path_elem = dwg.path(**path_kwargs)
+                path_elem["class"] = curve_class
+            else:
+                color = resolve_color(colors[i % len(colors)])
+                path_kwargs["stroke"] = color
+                path_elem = dwg.path(**path_kwargs)
+                # If no class provided, add default curve class for CSS-based styling
+                if not curve_class:
+                    path_elem["class"] = "curve stroke-primary"
+            plot_group.add(path_elem)
 
     # Add the plot group to the drawing
     dwg.add(plot_group)
@@ -915,10 +998,11 @@ def create_multi_curve_svg(
                 else:
                     style_str = style
 
-                # Add margin to foreign object coordinates since they're outside the transform group
-                margin_offset = 5  # Fixed margin from line 323
+                # Add margin offsets to foreign object coordinates since they're outside the transform group
+                offset_x = margin_left
+                offset_y = margin_top
                 foreign_object_xmls.append(
-                    f'<foreignObject x="{svg_x - width / 2 + margin_offset}" y="{svg_y - height / 2 + margin_offset}" '
+                    f'<foreignObject x="{svg_x - width / 2 + offset_x}" y="{svg_y - height / 2 + offset_y}" '
                     f'width="{width}" height="{height}">'
                     f'<div xmlns="http://www.w3.org/1999/xhtml" class="{classes}" '
                     f'style="{style_str}">{latex}</div>'
@@ -927,7 +1011,8 @@ def create_multi_curve_svg(
             else:
                 # Handle object with to_foreign_object_xml method
                 if hasattr(obj, "to_foreign_object_xml"):
-                    margin_offset = 5  # Fixed margin from line 323
+                    # Fallback to a single offset parameter; use left (x) for both axes for compatibility
+                    margin_offset = margin_left
                     foreign_object_xmls.append(
                         obj.to_foreign_object_xml(transform_x, transform_y, margin_offset)
                     )
@@ -995,12 +1080,14 @@ def graph_from_dict(graph_dict):
         x_data_arrays = []
         y_data_arrays = []
         colors = []
+        curve_classes = []
 
         for curve in curves:
             curve_data = curve.get("data", {})
             x_data_arrays.append(np.array(curve_data.get("x", [])))
             y_data_arrays.append(np.array(curve_data.get("y", [])))
-            colors.append(curve.get("stroke", "#1976d2"))
+            colors.append(curve.get("stroke"))
+            curve_classes.append(curve.get("class", ""))
 
         # Check if all x arrays are the same
         all_same_x = True
@@ -1019,7 +1106,19 @@ def graph_from_dict(graph_dict):
             multi_curve_settings = {
                 k: v
                 for k, v in settings.items()
-                if k in ["bg_color", "axes_color", "grid_color", "show_axes", "show_grid"]
+                if k
+                in [
+                    "bg_color",
+                    "axes_color",
+                    "grid_color",
+                    "show_axes",
+                    "show_grid",
+                    "margin",
+                    "margin_left",
+                    "margin_right",
+                    "margin_top",
+                    "margin_bottom",
+                ]
             }
 
             return create_multi_curve_svg(
@@ -1033,6 +1132,7 @@ def graph_from_dict(graph_dict):
                 x_max=domain.get("x_max"),
                 y_min=domain.get("y_min"),
                 y_max=domain.get("y_max"),
+                **{"curve_classes": curve_classes},
                 **multi_curve_settings,
             )
         else:
@@ -1044,7 +1144,19 @@ def graph_from_dict(graph_dict):
             multi_curve_settings = {
                 k: v
                 for k, v in settings.items()
-                if k in ["bg_color", "axes_color", "grid_color", "show_axes", "show_grid"]
+                if k
+                in [
+                    "bg_color",
+                    "axes_color",
+                    "grid_color",
+                    "show_axes",
+                    "show_grid",
+                    "margin",
+                    "margin_left",
+                    "margin_right",
+                    "margin_top",
+                    "margin_bottom",
+                ]
             }
 
             return create_multi_curve_svg(
@@ -1058,6 +1170,7 @@ def graph_from_dict(graph_dict):
                 x_max=domain.get("x_max"),
                 y_min=domain.get("y_min"),
                 y_max=domain.get("y_max"),
+                **{"curve_classes": curve_classes},
                 **multi_curve_settings,
             )
     else:
@@ -1066,7 +1179,19 @@ def graph_from_dict(graph_dict):
             k: v
             for k, v in settings.items()
             if k
-            in ["bg_color", "axes_color", "grid_color", "curve_color", "show_axes", "show_grid"]
+            in [
+                "bg_color",
+                "axes_color",
+                "grid_color",
+                "curve_color",
+                "show_axes",
+                "show_grid",
+                "margin",
+                "margin_left",
+                "margin_right",
+                "margin_top",
+                "margin_bottom",
+            ]
         }
 
         return create_svg_scene(
@@ -1114,7 +1239,7 @@ def dict_from_graph_params(
             "style": {"background-color": settings.get("bg_color", "white")},
         },
         "settings": {
-            "margin": 5,  # Fixed margin of 5 as requested
+            "margin": 0,
             "show_axes": settings.get("show_axes", True),
             "show_grid": settings.get("show_grid", True),
             "grid_color": settings.get("grid_color", "lightgray"),

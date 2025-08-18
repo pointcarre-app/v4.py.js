@@ -1,6 +1,6 @@
 // ===== URL CONFIGURATION =====
-const NAGINI_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/nagini.js';
-const WORKER_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/pyodide/worker/worker-dist.js';
+const NAGINI_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.21/src/nagini.js';
+const WORKER_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.21/src/pyodide/worker/worker-dist.js';
 
 // Automatically detect if running locally or on GitHub Pages
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -37,7 +37,7 @@ async function main() {
             'src/pca_graph_viz/models/line_object.py',
             'src/pca_graph_viz/models/foreign_object.py',
             'src/pca_graph_viz/tests/graphs/__init__.py',
-            'src/pca_graph_viz/tests/graphs/graph_sujets0_spe_sujet1_automatismes_question7.py',
+            'src/pca_graph_viz/tests/graphs/graph_sujets0_spe_sujet1_automatismes_question7_canonical.py',
             'src/pca_graph_viz/tests/graphs/graph1.py',
             'src/pca_graph_viz/tests/graphs/graph2.py',
             'src/pca_graph_viz/tests/graphs/graph3.py',
@@ -142,7 +142,7 @@ async function loadAllGraphs() {
         const namespace = { __name__: 'graph_question7_namespace' };
         const result = await manager.executeAsync('load_question7.py', `
 import json
-from pca_graph_viz.tests.graphs.graph_sujets0_spe_sujet1_automatismes_question7 import get_graph_dict
+from pca_graph_viz.tests.graphs.graph_sujets0_spe_sujet1_automatismes_question7_canonical import get_graph_dict
 graph_dict = get_graph_dict()
 missive({"graph": graph_dict})
 print("Loaded Question 7 graph successfully!")
@@ -151,7 +151,7 @@ print("Loaded Question 7 graph successfully!")
         if (result.missive) {
             const missiveData = typeof result.missive === 'string' ? JSON.parse(result.missive) : result.missive;
             if (missiveData.graph) {
-                allGraphs['graph_sujets0_spe_sujet1_automatismes_question7'] = missiveData.graph;
+                allGraphs['graph_sujets0_spe_sujet1_automatismes_question7_canonical'] = missiveData.graph;
                 console.log(`✅ Loaded Question 7 graph: ${missiveData.graph.title || 'No title'}`);
             } else {
                 console.error('No graph data in missive for Question 7:', missiveData);

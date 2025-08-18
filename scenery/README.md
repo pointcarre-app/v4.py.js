@@ -28,7 +28,7 @@ This folder contains interactive visualization pages for mathematical graphs and
 ## Current Graphs in Sujets 0
 
 ### Question 7 - Inéquation x² ≥ 10
-- **File**: `graph_sujets0_spe_sujet1_automatismes_question7.py`
+- **File**: `graph_sujets0_spe_sujet1_automatismes_question7_canonical.py`
 - **Topic**: Fonctions du second degré (Second Degree Functions)
 - **Description**: Visualization of the inequality x² ≥ 10 on the parabola y = x²
 - **Solution**: x ≤ -√10 or x ≥ √10 (option b)

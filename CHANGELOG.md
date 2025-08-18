@@ -13,7 +13,7 @@
 
 ### Added
 - **New Question 7 graph**: Visualization of inequality x² ≥ 10 on parabola y = x²
-  - File: `graph_sujets0_spe_sujet1_automatismes_question7.py`
+  - File: `graph_sujets0_spe_sujet1_automatismes_question7_canonical.py`
   - Shows solution regions x ≤ -√10 or x ≥ √10
   - Named with pattern: [sujets0][spé][sujet-1][automatismes][question-7]
 - **Dedicated Sujets 0 page**: Simplified visualization page for individual exam questions

@@ -1,6 +1,7 @@
 // ===== URL CONFIGURATION =====
-const NAGINI_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/nagini.js';
-const WORKER_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/pyodide/worker/worker-dist.js';
+const NAGINI_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.21/src/nagini.js';
+const WORKER_PATH = 'https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.21/src/pyodide/worker/worker-dist.js';
+const BUST = `v=${Date.now()}`;
 
 // Automatically detect if running locally or on GitHub Pages
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -8,7 +9,8 @@ const isLocal = window.location.hostname === 'localhost' || window.location.host
 // For GitHub Pages, we need absolute URLs for the worker
 let PYTHON_FILES_BASE;
 if (isLocal) {
-    PYTHON_FILES_BASE = 'http://127.0.0.1:8022/';
+    // Use current page origin to avoid localhost vs 127.0.0.1 CORS mismatches
+    PYTHON_FILES_BASE = window.location.origin + '/';
 } else {
     // Construct the absolute URL for GitHub Pages
     // We're at /v4.py.js/scenery/ and need to access /v4.py.js/src/
@@ -20,10 +22,21 @@ console.log('📍 Example file URL:', PYTHON_FILES_BASE + 'src/pca_graph_viz/__i
 
 let manager;
 let allGraphs = {};
+// Per-graph headings/subtitles to render dynamically
+const graphMeta = {
+    graph_sujets0_spe_sujet1_automatismes_question7_canonical: {
+        heading: '[1ere][sujets0][spé][sujet-1][automatismes][question-7]',
+        subtitle: '_canonical.py',
+    },
+    graph_sujets0_spe_sujet1_automatismes_question7_small: {
+        heading: '[1ere][sujets0][spé][sujet-1][automatismes][question-7]',
+        subtitle: '_small.py',
+    },
+};
 
 async function main() {
     try {
-        const { Nagini } = await import(NAGINI_PATH);
+        const { Nagini } = await import(`${NAGINI_PATH}?${BUST}`);
 
         const pythonFiles = [
             'src/pca_graph_viz/__init__.py',
@@ -40,7 +53,7 @@ async function main() {
         ];
 
         const filesToLoad = pythonFiles.map(file => ({
-            url: `${PYTHON_FILES_BASE}${file}`,
+            url: `${PYTHON_FILES_BASE}${file}?${BUST}`,
             path: file.replace('src/', '')
         }));
 
@@ -51,7 +64,7 @@ async function main() {
             ["numpy", "svgwrite", "pydantic"],
             [],
             filesToLoad,
-            WORKER_PATH
+            `${WORKER_PATH}?${BUST}`
         );
 
         await Nagini.waitForReady(manager);
@@ -75,28 +88,35 @@ async function main() {
 async function loadAllGraphs() {
     allGraphs = {};
     
-    // Load Question 7 graph by fetching and executing the file directly (avoid circular imports)
-    console.log('Loading Question 7 graph by fetching source directly...');
-    
-    const graphFile = 'graph_sujets0_spe_sujet1_automatismes_question7.py';
-    const fileUrl = `${PYTHON_FILES_BASE}src/pca_graph_viz/tests/graphs/${graphFile}`;
-    
-    try {
-        // Fetch the Python source directly from server
-        console.log('Fetching:', fileUrl);
-        const response = await fetch(fileUrl, { cache: 'no-store' });
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status} for ${fileUrl}`);
+    // Load multiple graphs by fetching and executing the files directly (avoid circular imports)
+    console.log('Loading Question 7 graphs by fetching sources directly...');
+
+    const graphsToLoad = [
+        {
+            file: 'graph_sujets0_spe_sujet1_automatismes_question7_canonical.py',
+            key: 'graph_sujets0_spe_sujet1_automatismes_question7_canonical'
+        },
+        {
+            file: 'graph_sujets0_spe_sujet1_automatismes_question7_small.py',
+            key: 'graph_sujets0_spe_sujet1_automatismes_question7_small'
         }
-        const pythonSource = await response.text();
-        console.log('Fetched Python source, length:', pythonSource.length);
-        
-        // Convert Python source to base64 to avoid escaping issues
-        const sourceB64 = btoa(unescape(encodeURIComponent(pythonSource)));
-        
-        // Execute the Python source directly
-        const namespace = { __name__: 'graph_question7_namespace' };
-        const result = await manager.executeAsync('load_question7.py', `
+    ];
+
+    for (const entry of graphsToLoad) {
+        const fileUrl = `${PYTHON_FILES_BASE}src/pca_graph_viz/tests/graphs/${entry.file}?${BUST}`;
+        try {
+            console.log('Fetching:', fileUrl);
+            const response = await fetch(fileUrl, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} for ${fileUrl}`);
+            }
+            const pythonSource = await response.text();
+            console.log('Fetched Python source, length:', pythonSource.length);
+
+            const sourceB64 = btoa(unescape(encodeURIComponent(pythonSource)));
+
+            const namespace = { __name__: `load_${entry.key}_namespace` };
+            const result = await manager.executeAsync(`load_${entry.key}.py`, `
 import json
 import traceback
 import base64
@@ -119,7 +139,7 @@ try:
     
     # Send the graph dict
     missive({"graph": graph_dict})
-    print("Loaded Question 7 graph successfully!")
+    print("Loaded graph successfully!")
     
 except Exception as e:
     error_msg = f"Python Error: {e}"
@@ -129,44 +149,43 @@ except Exception as e:
         missive({"error": str(e), "traceback": traceback.format_exc()})
     except:
         print("Could not send error through missive")
-        `, namespace);
+            `, namespace);
 
-        // LOG EVERYTHING TO FIND THE ERROR
-        console.log('🔍 FULL RESULT:', result);
-        console.log('🔍 stdout:', result.stdout);
-        console.log('🔍 stderr:', result.stderr);
-        console.log('🔍 error:', result.error);
-        console.log('🔍 missive:', result.missive);
+            // LOG EVERYTHING TO FIND THE ERROR
+            console.log('🔍 FULL RESULT:', result);
+            console.log('🔍 stdout:', result.stdout);
+            console.log('🔍 stderr:', result.stderr);
+            console.log('🔍 error:', result.error);
+            console.log('🔍 missive:', result.missive);
 
-        if (result.missive) {
-            const missiveData = typeof result.missive === 'string' ? JSON.parse(result.missive) : result.missive;
-            
-            // Check if missive contains an error
-            if (missiveData.error) {
-                console.error('📛 Python error from missive:', missiveData.error);
-                console.error('📛 Python traceback:', missiveData.traceback);
-                showError(`Python Error: ${missiveData.error}`);
-            } else if (missiveData.graph) {
-                allGraphs['graph_sujets0_spe_sujet1_automatismes_question7'] = missiveData.graph;
-                console.log(`✅ Loaded Question 7 graph: ${missiveData.graph.title || 'No title'}`);
+            if (result.missive) {
+                const missiveData = typeof result.missive === 'string' ? JSON.parse(result.missive) : result.missive;
+                if (missiveData.error) {
+                    console.error('📛 Python error from missive:', missiveData.error);
+                    console.error('📛 Python traceback:', missiveData.traceback);
+                    showError(`Python Error: ${missiveData.error}`);
+                } else if (missiveData.graph) {
+                    allGraphs[entry.key] = missiveData.graph;
+                    console.log(`✅ Loaded graph: ${missiveData.graph.title || entry.key}`);
+                } else {
+                    console.error('No graph data in missive:', missiveData);
+                }
             } else {
-                console.error('No graph data in missive for Question 7:', missiveData);
+                console.error('No missive in result:', result);
+                if (result.stderr) {
+                    console.error('PYTHON STDERR:', result.stderr);
+                    showError(`Python Error: ${result.stderr}`);
+                }
+                if (result.stdout) {
+                    console.error('PYTHON STDOUT (might contain error info):', result.stdout);
+                }
             }
-        } else {
-            console.error('No missive in result for Question 7:', result);
-            if (result.stderr) {
-                console.error('PYTHON STDERR:', result.stderr);
-                showError(`Python Error: ${result.stderr}`);
-            }
-            if (result.stdout) {
-                console.error('PYTHON STDOUT (might contain error info):', result.stdout);
-            }
+        } catch (error) {
+            console.error(`JavaScript error loading ${entry.file}:`, error);
+            showError(`Failed to load ${entry.file}: ${error.message}`);
         }
-    } catch (error) {
-        console.error('JavaScript error loading Question 7 graph:', error);
-        showError(`Failed to load Question 7 graph: ${error.message}`);
     }
-    
+
     console.log(`Total graphs loaded: ${Object.keys(allGraphs).length}`);
 }
 
@@ -183,44 +202,78 @@ async function displayGraph(graphId, graphDict, container) {
 
     const svgContainer = document.createElement('div');
     svgContainer.className = 'graph-svg';
-    svgContainer.innerHTML = `<div class="graph-title">${graphDict.title || graphId}</div>`;
+    // Dynamic per-graph heading/subtitle if provided
+    const meta = graphMeta[graphId] || {};
+    if (meta.heading || meta.subtitle) {
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'graph-header';
+        headerDiv.innerHTML = `
+            ${meta.heading ? `<h2>${meta.heading}</h2>` : ''}
+            ${meta.subtitle ? `<p class="subtitle">${meta.subtitle}</p>` : ''}
+        `;
+        svgContainer.appendChild(headerDiv);
+    }
+    svgContainer.innerHTML += `<div class="graph-title">${graphDict.title || graphId}</div>`;
 
     const jsonContainer = document.createElement('div');
     jsonContainer.className = 'graph-json';
-    jsonContainer.innerHTML = `<div class="graph-title">JSON Entry Point</div><pre>${JSON.stringify(graphDict, null, 2)}</pre>`;
+    jsonContainer.innerHTML = `<div class="graph-title" style="text-align: left;">JSON Entry Point</div><pre>${JSON.stringify(graphDict, null, 2)}</pre>`;
 
     row.appendChild(svgContainer);
     row.appendChild(jsonContainer);
     container.appendChild(row);
 
     try {
+        // Ensure a reasonable default margin for padding if not provided
+        try {
+            graphDict.settings = graphDict.settings || {};
+            if (typeof graphDict.settings.margin !== 'number') {
+                graphDict.settings.margin = 16; // default padding around plot
+            }
+        } catch {}
+
         const namespace = { __name__: `render_${graphId}_namespace` };
         const result = await manager.executeAsync(`render_${graphId}.py`, `
-import json
+import json, traceback
 from pca_graph_viz import graph_from_dict
-graph_dict = json.loads(${JSON.stringify(JSON.stringify(graphDict))})
-svg_output = graph_from_dict(graph_dict)
-missive({"svg": svg_output})
-print("Rendered ${graphId} successfully")
+try:
+    graph_dict = json.loads(${JSON.stringify(JSON.stringify(graphDict))})
+    svg_output = graph_from_dict(graph_dict)
+    missive({"svg": svg_output})
+    print("Rendered ${graphId} successfully")
+except Exception as e:
+    err = str(e)
+    tb = traceback.format_exc()
+    print("PY RENDER ERROR:", err)
+    print(tb)
+    missive({"error": err, "traceback": tb})
         `, namespace);
 
         if (result.error) {
             console.error('🔴 Render error details:', result);
             console.error('🔴 Render stderr:', result.stderr);
-            throw new Error(result.error.message);
+            throw new Error(result.error.message || 'Pyodide execution error');
         }
 
         console.log(result.stdout);
         const missiveData = typeof result.missive === 'string' ? JSON.parse(result.missive) : result.missive;
-        if (!missiveData || !missiveData.svg) {
+        if (!missiveData || (!missiveData.svg && !missiveData.error)) {
             console.error('🔴 No SVG in missive:', missiveData);
             console.error('🔴 Full render result:', result);
             throw new Error('No SVG output from graph_from_dict');
         }
+        if (missiveData && missiveData.error) {
+            console.error('🔴 Python render error:', missiveData.error);
+            if (missiveData.traceback) console.error(missiveData.traceback);
+            throw new Error(missiveData.error);
+        }
         const svg = missiveData.svg;
         const svgDiv = document.createElement('div');
         svgDiv.innerHTML = svg;
-        svgContainer.appendChild(svgDiv);
+        const frameDiv = document.createElement('div');
+        frameDiv.className = 'graph-svg-frame';
+        frameDiv.appendChild(svgDiv);
+        svgContainer.appendChild(frameDiv);
 
         setTimeout(() => {
             const foreignObjects = svgContainer.querySelectorAll('foreignObject');
@@ -269,7 +322,7 @@ async function displayAllGraphs() {
     }
 
     const graphCount = Object.keys(allGraphs).length;
-    const expectedCount = 1; // Only 1 Question 7 graph
+    const expectedCount = 2; // canonical + small
     if (graphCount !== expectedCount) {
         showError(`WARNING: Expected ${expectedCount} graph but found ${graphCount}!`);
         console.error('Graphs loaded:', Object.keys(allGraphs));

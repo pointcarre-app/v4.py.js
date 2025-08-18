@@ -11,6 +11,28 @@
       <meta http-equiv="Expires" content="0" />
       <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+
+
+      <script>
+          // Suppress Tailwind production warning for development
+          window.process = {
+              env: {
+                  NODE_ENV: 'development'
+              }
+          };
+      </script>
+      <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+      <script type="tailwind-config">
+          {
+              plugins: [
+                  tailwind.plugin.typography,
+              ],
+          }
+      </script>
+      <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+      <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+
+
       <style>
           body {
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -33,21 +55,37 @@
               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
               display: flex;
               overflow: hidden;
+              min-height: 420px;
           }
 
           .graph-svg {
-              width: 340px;
-              height: 340px;
+              width: 380px;
               padding: 20px;
+              padding-bottom: 30px;
               flex-shrink: 0;
               border-right: 1px solid #e0e0e0;
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-start;
+              align-items: center;
+          }
+
+          .graph-svg-frame {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border: 1px solid #e0e0e0;
+              border-radius: 8px;
+              padding: 8px;
+              background: white;
           }
 
           .graph-json {
               flex: 1;
               padding: 20px;
               overflow-y: auto;
-              max-height: 380px;
+              max-height: 420px;
               background: #f8f8f8;
           }
 
@@ -62,9 +100,39 @@
 
           .graph-title {
               font-weight: bold;
-              margin-bottom: 10px;
-              color: #1976d2;
+              margin-bottom: 15px;
               font-size: 16px;
+              flex-shrink: 0;
+              width: 100%;
+              text-align: center;
+          }
+
+          .graph-header {
+              width: 100%;
+              text-align: left;
+              margin-bottom: 8px;
+          }
+
+          .graph-header h2 {
+              font-size: 14px;
+              margin: 0 0 2px 0;
+              color: #374151;
+              /* neutral */
+          }
+
+          .graph-header .subtitle {
+              margin: 0 0 8px 0;
+              color: #6b7280;
+              font-size: 12px;
+          }
+
+          .graph-svg svg {
+              width: auto;
+              height: auto;
+              max-width: 340px;
+              max-height: 340px;
+              display: block;
+              flex-shrink: 0;
           }
 
           #loading {
@@ -113,14 +181,229 @@
               color: #666;
               margin-bottom: 20px;
           }
+
+          /**************** SVG colors (& Logo Zélie) ****************/
+
+
+          /********* Primary *********/
+
+          .stroke-primary {
+              stroke: var(--color-primary) !important;
+          }
+
+          .fill-primary {
+              fill: var(--color-primary) !important;
+          }
+
+          .text-primary {
+              color: var(--color-primary) !important;
+          }
+
+          /********* Primary content *********/
+          .stroke-primary-content {
+              stroke: var(--color-primary-content) !important;
+          }
+
+          .fill-primary-content {
+              fill: var(--color-primary-content) !important;
+          }
+
+          .text-primary-content {
+              color: var(--color-primary-content) !important;
+          }
+
+          /********* Secondary *********/
+
+          .stroke-secondary {
+              stroke: var(--color-secondary) !important;
+          }
+
+          .fill-secondary {
+              fill: var(--color-secondary) !important;
+          }
+
+          .text-secondary {
+              color: var(--color-secondary) !important;
+          }
+
+
+          /********* Secondary content *********/
+
+          .stroke-secondary-content {
+              stroke: var(--color-secondary-content) !important;
+          }
+
+          .fill-secondary-content {
+              fill: var(--color-secondary-content) !important;
+          }
+
+          .text-secondary-content {
+              color: var(--color-secondary-content) !important;
+          }
+
+
+
+
+
+          /********* Primary ghost *********/
+          .stroke-primary-ghost {
+              stroke: var(--color-primary-ghost) !important;
+          }
+
+          .fill-primary-ghost {
+              fill: var(--color-primary-ghost) !important;
+          }
+
+          .text-primary-ghost {
+              color: var(--color-primary-ghost) !important;
+          }
+
+          .text-primary-ghost {
+              color: var(--color-primary-ghost) !important;
+          }
+
+
+
+
+
+          /********* Secondary ghost *********/
+          .stroke-secondary-ghost {
+              stroke: var(--color-secondary-ghost) !important;
+          }
+
+          .fill-secondary-ghost {
+              fill: var(--color-secondary-ghost) !important;
+          }
+
+          .text-secondary-ghost {
+              color: var(--color-secondary-ghost) !important;
+          }
+
+
+
+
+
+          /********* Accent *********/
+
+
+          .stroke-accent {
+              stroke: var(--color-accent) !important;
+          }
+
+          .fill-accent {
+              fill: var(--color-accent) !important;
+          }
+
+          .text-accent {
+              color: var(--color-accent) !important;
+          }
+
+
+          /********* Accent content *********/
+
+
+          .stroke-accent-content {
+              stroke: var(--color-accent-content) !important;
+          }
+
+          .fill-accent-content {
+              fill: var(--color-accent-content) !important;
+          }
+
+          .text-accent-content {
+              color: var(--color-accent-content) !important;
+          }
+
+          /********* Base 100 *********/
+
+          .stroke-base-100 {
+              stroke: var(--color-base-100) !important;
+          }
+
+          .fill-base-100 {
+              fill: var(--color-base-100) !important;
+          }
+
+          .text-base-100 {
+              color: var(--color-base-100) !important;
+          }
+
+          /********* Base 200 *********/
+
+          .stroke-base-200 {
+              stroke: var(--color-base-200) !important;
+          }
+
+          .fill-base-200 {
+              fill: var(--color-base-200) !important;
+          }
+
+          .text-base-200 {
+              color: var(--color-base-200) !important;
+          }
+
+          /********* Base 300 *********/
+
+          .stroke-base-300 {
+              stroke: var(--color-base-300) !important;
+          }
+
+          .fill-base-300 {
+              fill: var(--color-base-300) !important;
+          }
+
+          .text-base-300 {
+              color: var(--color-base-300) !important;
+          }
+
+          /********* Base content *********/
+
+          .stroke-base-content {
+              stroke: var(--color-base-content) !important;
+          }
+
+          .fill-base-content {
+              fill: var(--color-base-content) !important;
+          }
+
+          .text-base-content {
+              color: var(--color-base-content) !important;
+          }
+
+          /********* Backgrounds *********/
+          /* TODO : no ... shouldbe fill so already exists or use above syntaxe for X50 */
+
+
+          .bg-base-100 {
+              fill: var(--color-base-100) !important;
+          }
+
+          .bg-base-200 {
+              fill: var(--color-base-200) !important;
+          }
+
+          .bg-base-300 {
+              fill: var(--color-base-300) !important;
+          }
+
+          .bg-base-150 {
+              fill: color-mix(in srgb,
+                      var(--color-base-100) 50%,
+                      var(--color-base-200) 50%);
+          }
+
+          .bg-base-250 {
+              fill: color-mix(in srgb,
+                      var(--color-base-200) 50%,
+                      var(--color-base-300) 50%);
+          }
       </style>
     </head>
     <body>
-      <h1>📊 Simple Parabola</h1>
-      <p class="subtitle">Parabola y = x² with y = 1</p>
+      <h1>SUJETS0 Graphs</h1>
       <div id="loading">Loading Pyodide and graph...</div>
       <div id="error-container"></div>
       <div id="graphs-container"></div>
-             <script type="module" src="sujets0-app.js?v=3.1.0"></script>
+      <script type="module" src="sujets0-app.js?v=3.1.0"></script>
     </body>
   </html>

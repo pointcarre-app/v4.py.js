@@ -94,7 +94,7 @@ The repository is organized following modern Python packaging standards.
 
 - **`src/pca_graph_viz`**: This is the main Python package, `pca_graph_viz`. It contains all the logic for parsing the graph dictionaries and generating SVG output.
 - **`scenery/index.html`**: A simple HTML file that uses the Nagini JS library to execute the Python code and display the generated graphs. It serves as the primary testbed for the visualization engine.
-- **`pyproject.toml`**: Defines all project dependencies and build configurations. `requirements.txt` is not needed, as all dependencies are managed here.
+- **`pyproject.toml`**: Defines all project dependencies and build conxzfigurations. `requirements.txt` is not needed, as all dependencies are managed here.
 
 ## 🔧 Dependencies
 
@@ -102,9 +102,9 @@ The repository is organized following modern Python packaging standards.
 
 The browser interface (`scenery/`) uses the following external libraries loaded from CDN:
 
-- **[Nagini](https://github.com/pointcarre-app/nagini) v0.0.17**: Python-in-browser execution wrapper for Pyodide
-  - Main library: `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/nagini.js`
-  - Worker script: `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.17/src/pyodide/worker/worker-dist.js`
+- **[Nagini](https://github.com/pointcarre-app/nagini) v0.0.21**: Python-in-browser execution wrapper for Pyodide
+  - Main library: `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.21/src/nagini.js`
+  - Worker script: `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@0.0.21/src/pyodide/worker/worker-dist.js`
 - **[KaTeX](https://katex.org/)**: Fast math typesetting library for LaTeX rendering
 - **[Pyodide](https://pyodide.org/)**: Python runtime in WebAssembly (loaded via Nagini)
 

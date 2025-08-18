@@ -12,7 +12,7 @@ class CORSRequestHandler(SimpleHTTPRequestHandler):
         # Enable SharedArrayBuffer and cross-origin isolation for Pyodide
         self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
         self.send_header("Cross-Origin-Opener-Policy", "same-origin")
-        # Allow this resource to be fetched from other origins (needed for importScripts in workers)
+        # Allow this resource to be  fetched from other origins (needed for importScripts in workers)
         self.send_header("Cross-Origin-Resource-Policy", "cross-origin")
         super().end_headers()
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     # Big red startup message with emojis and ASCII art
     print("\n" + "=" * 60)
-    print("🐍 " + "\033[1;31m" + "NAGINI SERVER STARTING" + "\033[0m" + " 🐍")
+    print("🐍 " + "\033[1;31m" + "V4.PY.JS SERVER STARTING" + "\033[0m" + " 🐍")
     print("=" * 60)
     print(
         "📡 "
@@ -58,6 +58,6 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             print("\n" + "=" * 60)
             print("🛑 " + "\033[1;31m" + "SERVER STOPPED" + "\033[0m" + " 🛑")
-            print("👋 " + "\033[1;33m" + "Thanks for using Nagini Server!" + "\033[0m" + " 👋")
+            print("👋 " + "\033[1;33m" + "Thanks for using V4.PY.JS Server!" + "\033[0m" + " 👋")
             print("=" * 60)
             httpd.shutdown()
