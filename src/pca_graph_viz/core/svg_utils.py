@@ -525,6 +525,9 @@ def create_svg_scene(
                     circle_elem["class"] = line.get("class")
                 else:
                     circle_elem["class"] = "stroke-base-content"
+                    # Ensure visible stroke even if CSS vars are missing
+                    if "stroke" not in circle_elem.attribs:
+                        circle_elem["stroke"] = "currentColor"
                 if line.get("id"):
                     circle_elem["id"] = line.get("id")
                 if line.get("style"):
@@ -553,6 +556,9 @@ def create_svg_scene(
                     path_elem["class"] = line.get("class")
                 else:
                     path_elem["class"] = "stroke-base-content"
+                    # Ensure visible stroke even if CSS vars are missing
+                    if "stroke" not in path_elem.attribs:
+                        path_elem["stroke"] = "currentColor"
                 if line.get("id"):
                     path_elem["id"] = line.get("id")
                 if line.get("style"):
@@ -587,6 +593,9 @@ def create_svg_scene(
                         line_elem["class"] = f"axis {axis_cls} stroke-base-content"
                     else:
                         line_elem["class"] = "line stroke-secondary"
+                    # Ensure visible stroke even if CSS vars are missing
+                    if "stroke" not in line_elem.attribs:
+                        line_elem["stroke"] = "currentColor"
                 if line.get("id"):
                     line_elem["id"] = line.get("id")
                 if line.get("style"):
@@ -611,6 +620,8 @@ def create_svg_scene(
         path_elem = dwg.path(d=path_data, stroke_width=2, fill="none")
         # Default curve class styling when not provided elsewhere
         path_elem["class"] = "curve stroke-primary"
+        # Ensure visible stroke even if CSS vars are missing
+        path_elem["stroke"] = "currentColor"
         plot_group.add(path_elem)
 
     # Add the plot group to the drawing

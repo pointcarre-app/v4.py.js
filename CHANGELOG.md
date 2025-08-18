@@ -7,6 +7,44 @@
 
 ---
 
+## v0.0.7-unstable
+
+⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️
+
+### Added
+- **Graph styles**: New `src/pca_graph_viz/core/graphs.css` with utility class `.text-2xs` for dense labels and CSS-driven SVG styling.
+
+### Changed
+- **SVG engine** (`src/pca_graph_viz/core/svg_utils.py`):
+  - Prefer CSS classes and `currentColor` to reduce inline styling
+  - More robust margins (uniform or per-side) with correct transforms
+  - Multi-curve rendering (`create_multi_curve_svg`) and class-based curve styling
+  - Better axis arrows (marker defs; orientation-aware usage)
+  - Safer `foreignObject` injection with margin offsets; optional point markers
+  - Helper `dict_from_graph_params` for standardized graph dictionaries
+- **Sujets 0 loader** (`scenery/sujets0-app.js`):
+  - Fetch-and-exec Python sources (base64) to avoid circular imports
+  - Cache-busting and improved local/GitHub Pages base-URL detection
+  - Framed SVG container, default margins, and richer error/traceback logging
+- **Main collection app** (`scenery/app.js`):
+  - Unified env detection (local vs Pages) and absolute worker URLs
+  - Full wiring for Première graph modules with diagnostics and counts
+- **Pages** (`scenery/index.html`, `scenery/sujets0.html`):
+  - Integrated Tailwind/DaisyUI + KaTeX
+  - Consistent two-column layout and SVG utility classes
+
+### Fixed
+- Local dev CORS/caching issues using `window.location.origin` and cache-busting
+- KaTeX color inheritance inside `foreignObject` content after render
+
+### Removed
+- Legacy Sujets 0 test files in favor of new naming scheme for Question 7
+
+### Notes
+- New Sujets 0 test graph files added under `src/pca_graph_viz/tests/graphs/` for Questions 7 and 8 (canonical and small variants)
+
+---
+
 ## v0.0.5-unstable
 
 ⚠️ **STILL HIGHLY UNSTABLE - EXPERIMENTAL RELEASE** ⚠️

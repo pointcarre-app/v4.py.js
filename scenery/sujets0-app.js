@@ -24,12 +24,13 @@ let manager;
 let allGraphs = {};
 // Per-graph headings/subtitles to render dynamically
 const graphMeta = {
-    graph_sujets0_spe_sujet1_automatismes_question7_canonical: {
-        heading: '[1ere][sujets0][spé][sujet-1][automatismes][question-7]',
+    // Optional per-graph headings for display; keys must match graphId used below (entry.key)
+    'spe_sujet1_auto_08_question_canonical.py': {
+        heading: '[1ere][sujets0][spé][sujet-1][automatismes][question-8]',
         subtitle: '_canonical.py',
     },
-    graph_sujets0_spe_sujet1_automatismes_question7_small: {
-        heading: '[1ere][sujets0][spé][sujet-1][automatismes][question-7]',
+    'spe_sujet1_auto_08_question_small.py': {
+        heading: '[1ere][sujets0][spé][sujet-1][automatismes][question-8]',
         subtitle: '_small.py',
     },
 };
@@ -89,16 +90,25 @@ async function loadAllGraphs() {
     allGraphs = {};
     
     // Load multiple graphs by fetching and executing the files directly (avoid circular imports)
-    console.log('Loading Question 7 graphs by fetching sources directly...');
+    console.log('Loading Question 8 graphs by fetching sources directly...');
 
     const graphsToLoad = [
+
         {
-            file: 'graph_sujets0_spe_sujet1_automatismes_question7_canonical.py',
-            key: 'graph_sujets0_spe_sujet1_automatismes_question7_canonical'
+            file: 'spe_sujet1_auto_07_question_canonical.py',
+            key: 'spe_sujet1_auto_07_question_canonical.py'
         },
         {
-            file: 'graph_sujets0_spe_sujet1_automatismes_question7_small.py',
-            key: 'graph_sujets0_spe_sujet1_automatismes_question7_small'
+            file: 'spe_sujet1_auto_07_question_small.py',
+            key: 'spe_sujet1_auto_07_question_small.py'
+        },
+        {
+            file: 'spe_sujet1_auto_08_question_canonical.py',
+            key: 'spe_sujet1_auto_08_question_canonical.py'
+        },
+        {
+            file: 'spe_sujet1_auto_08_question_small.py',
+            key: 'spe_sujet1_auto_08_question_small.py'
         }
     ];
 
@@ -322,7 +332,7 @@ async function displayAllGraphs() {
     }
 
     const graphCount = Object.keys(allGraphs).length;
-    const expectedCount = 2; // canonical + small
+    const expectedCount = 4; // canonical + small
     if (graphCount !== expectedCount) {
         showError(`WARNING: Expected ${expectedCount} graph but found ${graphCount}!`);
         console.error('Graphs loaded:', Object.keys(allGraphs));

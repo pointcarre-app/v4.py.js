@@ -37,7 +37,8 @@ async function main() {
             'src/pca_graph_viz/models/line_object.py',
             'src/pca_graph_viz/models/foreign_object.py',
             'src/pca_graph_viz/tests/graphs/__init__.py',
-            'src/pca_graph_viz/tests/graphs/graph_sujets0_spe_sujet1_automatismes_question7_canonical.py',
+            'src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_canonical.py',
+            'src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_small.py',
             'src/pca_graph_viz/tests/graphs/graph1.py',
             'src/pca_graph_viz/tests/graphs/graph2.py',
             'src/pca_graph_viz/tests/graphs/graph3.py',
@@ -318,7 +319,7 @@ async function displayGraph(graphId, graphDict, container) {
 
     const jsonContainer = document.createElement('div');
     jsonContainer.className = 'graph-json';
-    jsonContainer.innerHTML = `<div class="graph-title">JSON Entry Point</div><pre>${JSON.stringify(graphDict, null, 2)}</pre>`;
+    jsonContainer.innerHTML = `<div class="graph-title" style="text-align: left;">JSON Entry Point</div><pre>${JSON.stringify(graphDict, null, 2)}</pre>`;
 
     row.appendChild(svgContainer);
     row.appendChild(jsonContainer);

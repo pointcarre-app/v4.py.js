@@ -1,0 +1,9 @@
+/* Global styles for graph rendering */
+
+/* Extra-small text utility for dense tick labels */
+.text-2xs {
+	font-size: 0.625rem !important; /* ~10px */
+	line-height: 1 !important;
+}
+
+

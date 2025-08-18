@@ -1,10 +1,13 @@
 import numpy as np
 
+Y_LABEL_FOR_HORIZONTAL_LINE = 10
+
 # Simple parabola visualization: y = x² with y = 1 line (small 150x150)
 
 # Generate parabola: y = x²
 x = np.linspace(-4, 4, 1000)
 y = x**2
+
 
 # Using CSS classes instead of hard-coded colors
 # The classes are defined in sujets0.html and use DaisyUI CSS variables
@@ -56,8 +59,8 @@ lines = [
 foreign_objects = [
     # Parabola equation
     # {
-    #     "x": 2.5,
-    #     "y": 2.5,
+    #     "x": 3,
+    #     "y": 1.5,
     #     "latex": "y = x^2",
     #     "width": 80,
     #     "height": 25,
@@ -65,12 +68,12 @@ foreign_objects = [
     # },
     # Line equation
     {
-        "x": 0.75,
+        "x": 1.65,
         "y": 11,
-        "latex": "10",
+        "latex": f"y={Y_LABEL_FOR_HORIZONTAL_LINE}",
         "width": 50,
         "height": 20,
-        "class": "svg-latex text-secondary",
+        "class": "svg-latex text-secondary text-xs",
     },
     # X axis label
     {
