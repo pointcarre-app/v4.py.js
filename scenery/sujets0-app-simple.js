@@ -32,12 +32,27 @@ const ESSENTIAL_FILES = [
 // Hardcoded graph files - load these separately
 const GRAPH_FILES = {
   // Question 7
-//   "q7_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_canonical.py",
-//   "q7_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_small.py",
+  "q7_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_canonical.py",
+  "q7_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_small.py",
   
   // Question 8  
-//   "q8_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_08_question_canonical.py",
-//   "q8_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_08_question_small.py",
+  "q8_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_08_question_canonical.py",
+  "q8_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_08_question_small.py",
+  
+
+
+  // Question 11 - Case A 
+  "q11_case_a_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_11_case_a_question_canonical.py",
+  "q11_case_a_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_11_case_a_question_small.py",
+  
+  // Question 11 - Case B 
+  "q11_case_b_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_11_case_b_question_canonical.py",
+  "q11_case_b_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_11_case_b_question_small.py",
+
+  // Question 11 - Case C 
+  "q11_case_c_canonical": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_11_case_c_question_canonical.py",
+  "q11_case_c_small": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_11_case_c_question_small.py",
+
   
   // Dispatch module (needed by parabola graphs)
   "dispatch": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_dispatch.py",
@@ -51,6 +66,8 @@ const GRAPH_FILES = {
   "parabola_sm1_a0": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_0.py",
   "parabola_sm1_am5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m5.py",
   "parabola_sm1_ap10": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p10.py",
+
+
 };
 
 async function initializeNagini() {
@@ -213,9 +230,10 @@ async function loadAllGraphFiles() {
     failureCount++;
   }
   
-  // Load question 7 & 8 graphs
+  // Load question 7, 8, 11, and 12 graphs
   for (const [key, path] of Object.entries(GRAPH_FILES)) {
-    if (key.startsWith("q7") || key.startsWith("q8")) {
+    // Todo lol 
+    if (true===true) {
       try {
         if (await loadGraphFile(key, path)) {
           successCount++;
@@ -310,6 +328,12 @@ async function loadGraphs() {
     "spe_sujet1_auto_07_question_small",
     "spe_sujet1_auto_08_question_canonical",
     "spe_sujet1_auto_08_question_small",
+    "spe_sujet1_auto_11_case_a_question_canonical",
+    "spe_sujet1_auto_11_case_a_question_small",
+    "spe_sujet1_auto_11_case_b_question_canonical",
+    "spe_sujet1_auto_11_case_b_question_small",
+    "spe_sujet1_auto_11_case_c_question_canonical",
+    "spe_sujet1_auto_11_case_c_question_small",
     "spe_sujet1_auto_10_question_small_parabola_a_s1_a_0",
     "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m5",
     "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m10",
@@ -493,8 +517,8 @@ async function main() {
       await displayAllGraphs();
       
       // Show warning if some graphs failed
-      if (graphCount < 14) {
-        showError(`⚠️ Only ${graphCount} of 14 graphs loaded successfully. Some graphs may have import errors.`);
+      if (graphCount < 20) {
+        showError(`⚠️ Only ${graphCount} of 20 graphs loaded successfully. Some graphs may have import errors.`);
       }
     } else {
       showError("❌ No graphs were loaded! Check console for errors.");

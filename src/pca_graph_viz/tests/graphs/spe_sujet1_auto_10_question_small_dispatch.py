@@ -187,6 +187,11 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
     x = np.linspace(X_MIN, X_MAX, SAMPLES)
     y = parabola_sign * (x**2) + a_shift
 
+    # Find the vertex point (closest to x=0)
+    # For these parabolas, the vertex is at x=0
+    vertex_x = 0
+    vertex_y = parabola_sign * (vertex_x**2) + a_shift
+
     # Extract all values from params dict
 
     Y_MIN = params["Y_MIN"]
@@ -279,6 +284,18 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
         }
     )
 
+    # Add vertex dot (point closest to x=0)
+    lines.append(
+        {
+            "type": "circle",
+            "cx": vertex_x,
+            "cy": vertex_y,
+            "r": 4,  # radius of 4 pixels
+            "class": "fill-primary",
+            "stroke": "none",
+        }
+    )
+
     # ========================================
     # BUILD LABELS
     # ========================================
@@ -302,6 +319,16 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
             "width": 20,
             "height": 20,
             "class": "svg-latex fill-base-content",
+        },
+        # Vertex label M(0;a)
+        {
+            "x": vertex_x + 2.25,  # Move right by ~20px in graph units
+            "y": vertex_y - 0.3,  # Slightly above the dot
+            "latex": f"M(0;{int(a_shift)})",
+            "width": 60,
+            "height": 20,
+            "class": "svg-latex text-primary text-xs",
+            "style": "background: rgba(255, 255, 255, 0.7); padding: 2px 4px; border-radius: var(--radius-box, 4px);",
         },
     ]
 

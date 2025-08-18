@@ -51,15 +51,17 @@ async function main() {
       "spe_sujet1_auto_07_question_small",
       "spe_sujet1_auto_08_question_canonical",
       "spe_sujet1_auto_08_question_small",
+      "spe_sujet1_auto_11_case_a_question_canonical",
+      "spe_sujet1_auto_11_case_a_question_small",
+      "spe_sujet1_auto_11_case_b_question_canonical",
+      "spe_sujet1_auto_11_case_b_question_small",
+      "spe_sujet1_auto_11_case_c_question_canonical",
+      "spe_sujet1_auto_11_case_c_question_small",
       "spe_sujet1_auto_10_question_small_parabola_a_s1_a_0",
       "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m5",
-      "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m10",
       "spe_sujet1_auto_10_question_small_parabola_a_s1_a_p5",
-      "spe_sujet1_auto_10_question_small_parabola_a_s1_a_p10",
       "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_0",
       "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m5",
-      "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m10",
-      "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p5",
       "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p10",
     ];
 
@@ -314,14 +316,14 @@ async function displayAllGraphs() {
   }
 
   const graphCount = Object.keys(allGraphs).length;
-  const expectedCount = 14;
+  const expectedCount = 20;
   if (graphCount !== expectedCount) {
     showError(
-      `WARNING: Expected ${expectedCount} graph but found ${graphCount}!`
+      `WARNING: Expected ${expectedCount} graphs but found ${graphCount}!`
     );
     console.error("Graphs loaded:", Object.keys(allGraphs));
   } else {
-    console.log(`✅ Graph loaded successfully!`);
+    console.log(`✅ All ${expectedCount} graphs loaded successfully!`);
   }
 
   let successCount = 0;

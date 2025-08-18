@@ -61,7 +61,7 @@ lines = [
     # Right angle indicator
     {
         "type": "path",
-        "d": f"M {P2[0]-0.3} {P1[1]} L {P2[0]-0.3} {P1[1]+0.3} L {P2[0]} {P1[1]+0.3}",
+        "d": f"M {P2[0] - 0.3} {P1[1]} L {P2[0] - 0.3} {P1[1] + 0.3} L {P2[0]} {P1[1] + 0.3}",
         "stroke": triangle_color,
         "stroke-width": 1.5,
         "fill": "none",
@@ -151,7 +151,7 @@ foreign_objects = [
     },
     # Horizontal distance
     {
-        "x": (P1[0] + P2[0])/2 - 0.3,
+        "x": (P1[0] + P2[0]) / 2 - 0.3,
         "y": P1[1] - 0.3,
         "latex": f"{dx}",
         "width": 30,
@@ -162,7 +162,7 @@ foreign_objects = [
     # Vertical distance
     {
         "x": P2[0] + 0.2,
-        "y": (P1[1] + P2[1])/2 - 0.1,
+        "y": (P1[1] + P2[1]) / 2 - 0.1,
         "latex": f"{dy}",
         "width": 30,
         "height": 20,
@@ -171,8 +171,8 @@ foreign_objects = [
     },
     # Distance value
     {
-        "x": (P1[0] + P2[0])/2 - 0.5,
-        "y": (P1[1] + P2[1])/2 + 0.2,
+        "x": (P1[0] + P2[0]) / 2 - 0.5,
+        "y": (P1[1] + P2[1]) / 2 + 0.2,
         "latex": f"d = {distance:.1f}",
         "width": 60,
         "height": 20,
