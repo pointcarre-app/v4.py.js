@@ -84,7 +84,7 @@ foreign_objects = [
     # Y axis label
     {
         "x": 0.25,
-        "y": 16,
+        "y": 16.5,
         "latex": "y",
         "width": 20,
         "height": 20,

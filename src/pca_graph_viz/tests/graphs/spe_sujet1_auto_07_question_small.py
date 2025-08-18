@@ -47,9 +47,9 @@ lines = [
     {
         "type": "line",
         "x1": -4,
-        "y1": 10,
+        "y1": Y_LABEL_FOR_HORIZONTAL_LINE,
         "x2": 4,
-        "y2": 10,
+        "y2": Y_LABEL_FOR_HORIZONTAL_LINE,
         "stroke-width": 1.5,
         # "stroke-dasharray": "5,5",
         "class": "line stroke-secondary",
@@ -69,15 +69,16 @@ foreign_objects = [
     # Line equation
     {
         "x": 1.65,
-        "y": 11,
+        "y": 11.45,
         "latex": f"y={Y_LABEL_FOR_HORIZONTAL_LINE}",
         "width": 50,
         "height": 20,
         "class": "svg-latex text-secondary text-xs",
+        "style": "background-color: rgba(255, 255, 255, 0.7); border-radius: var(--rounded-box, 0.5rem); padding: 1px 3px;",
     },
     # X axis label
     {
-        "x": 4,
+        "x": 4.25,
         "y": -1,
         "latex": "x",
         "width": 20,
@@ -86,8 +87,8 @@ foreign_objects = [
     },
     # Y axis label
     {
-        "x": 0.75,
-        "y": 16,
+        "x": 0.5,
+        "y": 16.5,
         "latex": "y",
         "width": 20,
         "height": 20,
