@@ -78,7 +78,7 @@ def get_graph_dict():
     """Return the graph as a standardized dictionary."""
     return {
         "id": "affine-line",
-        "title": "Affine function y = a x + b",
+        "title": "spe_sujet1_auto_08_question_canonical.py",
         "description": "Visualization of an affine function with axes",
         "svg": {
             "width": 340,

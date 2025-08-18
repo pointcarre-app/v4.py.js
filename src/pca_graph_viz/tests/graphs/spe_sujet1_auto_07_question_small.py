@@ -100,7 +100,7 @@ def get_graph_dict():
     """Return the graph as a standardized dictionary."""
     return {
         "id": "simple-parabola-small",
-        "title": "Parabola y = x² with y = 1",
+        "title": "spe_sujet1_auto_07_question_small.py",
         "description": "Simple visualization of parabola with horizontal line (150x150)",
         "svg": {
             "width": 150,
