@@ -1,10 +1,31 @@
+"""
+Affine function visualization with configurable coefficients.
+
+When executed via Nagini from JavaScript (sujets0-app-simple.js),
+the A_FLOAT_FOR_AFFINE_LINE and B_FLOAT_FOR_AFFINE_LINE variables are
+injected into this module's namespace before execution, allowing dynamic
+configuration from the UI.
+
+The values can be changed using the control panel in sujets0-simple.html.
+"""
+
 import numpy as np
 
 # Affine function visualization: y = a x + b (canonical 340x340)
 
-# Assume these are produced by an external generator; we hardcode floats here
-A_FLOAT_FOR_AFFINE_LINE = 0.75
-B_FLOAT_FOR_AFFINE_LINE = 2.0
+# Try to get the values from the namespace injected by Nagini/Pyodide
+# If not found (e.g., when running locally without Nagini), use default values
+try:
+    # When executed via Nagini, these values are injected into globals()
+    # See sujets0-app-simple.js lines 209-210 for the injection code
+    A_FLOAT_FOR_AFFINE_LINE = globals()['A_FLOAT_FOR_AFFINE_LINE']
+    B_FLOAT_FOR_AFFINE_LINE = globals()['B_FLOAT_FOR_AFFINE_LINE']
+    print(f"✅ Using injected A_FLOAT_FOR_AFFINE_LINE = {A_FLOAT_FOR_AFFINE_LINE}, B_FLOAT_FOR_AFFINE_LINE = {B_FLOAT_FOR_AFFINE_LINE}")
+except KeyError:
+    # Default values when not running via Nagini or values not injected
+    A_FLOAT_FOR_AFFINE_LINE = 0.75  # Slope coefficient (float)
+    B_FLOAT_FOR_AFFINE_LINE = 2.0  # Y-intercept (integer as float)
+    print(f"⚠️ Using default A_FLOAT_FOR_AFFINE_LINE = {A_FLOAT_FOR_AFFINE_LINE}, B_FLOAT_FOR_AFFINE_LINE = {B_FLOAT_FOR_AFFINE_LINE}")
 
 # Generate line data over a symmetric range
 x = np.linspace(-8, 8, 1000)

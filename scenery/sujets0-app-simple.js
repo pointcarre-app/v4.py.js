@@ -12,6 +12,17 @@ const BASE_URL = IS_LOCAL
 console.log("📍 Running in:", IS_LOCAL ? "LOCAL mode" : "GITHUB PAGES mode");
 console.log("📍 Base URL:", BASE_URL);
 
+// ===== CONFIGURABLE GRAPH PARAMETERS =====
+// These variables can be passed to Python graph modules
+const GRAPH_CONFIG = {
+  // Question 7 - Parabola with horizontal line
+  Y_LABEL_FOR_HORIZONTAL_LINE: 10,  // Default value, can be changed
+  
+  // Question 8 - Affine function y = ax + b
+  A_FLOAT_FOR_AFFINE_LINE: 0.75,  // Slope (float)
+  B_FLOAT_FOR_AFFINE_LINE: 2.0,   // Y-intercept (integer displayed as float)
+};
+
 let manager;
 let allGraphs = {};
 
@@ -150,6 +161,11 @@ async function loadGraphFile(key, filepath) {
     // Convert to base64 to avoid escaping issues
     const codeBase64 = btoa(unescape(encodeURIComponent(code)));
     
+    // Get current configuration values (not interpolated, but passed as actual values)
+    const yLabel = GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE;
+    const aFloat = GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE;
+    const bFloat = GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE;
+    
     // Write the file using Python directly (more reliable than fs API)
     const result = await manager.executeAsync(`write_${key}.py`, `
 import os
@@ -186,13 +202,26 @@ module.__dict__['__file__'] = filepath
 module.__dict__['__name__'] = full_module_name
 module.__dict__['__package__'] = 'pca_graph_viz.tests.graphs'
 
+# Inject configuration variables into the module's namespace
+# These will override any default values in the Python code
+# Note: These values are dynamically passed from JavaScript
+module.__dict__['Y_LABEL_FOR_HORIZONTAL_LINE'] = ${yLabel}
+module.__dict__['A_FLOAT_FOR_AFFINE_LINE'] = ${aFloat}
+module.__dict__['B_FLOAT_FOR_AFFINE_LINE'] = ${bFloat}
+
 # Try to execute the code in the module's namespace
 try:
     exec(code, module.__dict__)
+    # After exec, re-inject config variables to ensure they override any defaults
+    module.__dict__['Y_LABEL_FOR_HORIZONTAL_LINE'] = ${yLabel}
+    module.__dict__['A_FLOAT_FOR_AFFINE_LINE'] = ${aFloat}
+    module.__dict__['B_FLOAT_FOR_AFFINE_LINE'] = ${bFloat}
+    
     # Register in sys.modules (both full name and short name for relative imports)
     sys.modules[full_module_name] = module
     sys.modules[module_name] = module  # Also register with short name for relative imports
     print(f"✅ Registered module: {full_module_name} and {module_name}")
+    print(f"   Injected configs: Y_LABEL={module.__dict__.get('Y_LABEL_FOR_HORIZONTAL_LINE', 'N/A')}, A_FLOAT={module.__dict__.get('A_FLOAT_FOR_AFFINE_LINE', 'N/A')}, B_FLOAT={module.__dict__.get('B_FLOAT_FOR_AFFINE_LINE', 'N/A')}")
 except Exception as e:
     print(f"⚠️ Warning: Failed to execute module {module_name}: {e}")
     # Still register the module even if exec failed, it might be importable later
@@ -494,6 +523,41 @@ async function displayAllGraphs() {
   console.log(`✅ Displayed ${Object.keys(allGraphs).length} graphs`);
 }
 
+// Function to reload graphs with new configuration
+async function reloadGraphsWithConfig() {
+  try {
+    // Clear existing graphs
+    document.getElementById("graphs-container").innerHTML = "";
+    allGraphs = {};
+    
+    // Reload all graph files with new configuration
+    await loadAllGraphFiles();
+    await loadGraphs();
+    
+    document.getElementById("loading").style.display = "none";
+    
+    const graphCount = Object.keys(allGraphs).length;
+    if (graphCount > 0) {
+      console.log(`📈 Displaying ${graphCount} graphs with new config...`);
+      console.log(`📊 Updated configuration values:`);
+      console.log(`   Q7: Y_LABEL_FOR_HORIZONTAL_LINE = ${GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE}`);
+      console.log(`   Q8: A_FLOAT_FOR_AFFINE_LINE = ${GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE}`);
+      console.log(`   Q8: B_FLOAT_FOR_AFFINE_LINE = ${GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE}`);
+      await displayAllGraphs();
+    } else {
+      showError("❌ No graphs were loaded after configuration change!");
+    }
+  } catch (error) {
+    console.error("Reload error:", error);
+    showError(`Reload error: ${error.message}`);
+    document.getElementById("loading").style.display = "none";
+  }
+}
+
+// Export configuration and reload function to window for HTML access
+window.GRAPH_CONFIG = GRAPH_CONFIG;
+window.reloadGraphsWithConfig = reloadGraphsWithConfig;
+
 async function main() {
   try {
     document.getElementById("loading").textContent = "Initializing Nagini...";
@@ -511,9 +575,45 @@ async function main() {
     
     document.getElementById("loading").style.display = "none";
     
+    // Show the control panel now that initialization is complete
+    const controlPanel = document.getElementById("control-panel");
+    if (controlPanel) {
+      controlPanel.style.display = "block";
+      
+      // Update all input values to match current config
+      const yLabelInput = document.getElementById("y-label-input");
+      if (yLabelInput) {
+        yLabelInput.value = GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE;
+      }
+      
+      const aFloatInput = document.getElementById("a-float-input");
+      if (aFloatInput) {
+        aFloatInput.value = GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE;
+      }
+      
+      const bFloatInput = document.getElementById("b-float-input");
+      if (bFloatInput) {
+        bFloatInput.value = GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE;
+      }
+      
+      // Update display values
+      const yLabelValue = document.getElementById("y-label-value");
+      if (yLabelValue) yLabelValue.textContent = GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE;
+      
+      const aFloatValue = document.getElementById("a-float-value");
+      if (aFloatValue) aFloatValue.textContent = GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE;
+      
+      const bFloatValue = document.getElementById("b-float-value");
+      if (bFloatValue) bFloatValue.textContent = GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE;
+    }
+    
     const graphCount = Object.keys(allGraphs).length;
     if (graphCount > 0) {
       console.log(`📈 Displaying ${graphCount} graphs...`);
+      console.log(`📊 Initial configuration values:`);
+      console.log(`   Q7: Y_LABEL_FOR_HORIZONTAL_LINE = ${GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE}`);
+      console.log(`   Q8: A_FLOAT_FOR_AFFINE_LINE = ${GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE}`);
+      console.log(`   Q8: B_FLOAT_FOR_AFFINE_LINE = ${GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE}`);
       await displayAllGraphs();
       
       // Show warning if some graphs failed

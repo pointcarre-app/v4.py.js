@@ -15,7 +15,7 @@ y_line = m * x + b
 
 # Two specific points on the line
 P1 = (-1, -1)  # When x = -1, y = 2(-1) + 1 = -1
-P2 = (1, 3)    # When x = 1, y = 2(1) + 1 = 3
+P2 = (1, 3)  # When x = 1, y = 2(1) + 1 = 3
 
 # Slope triangle vertices (showing rise over run)
 triangle_x = 0  # Start of triangle
@@ -196,7 +196,7 @@ foreign_objects = [
     # Rise label
     {
         "x": triangle_x + run + 0.1,
-        "y": triangle_y + rise/2,
+        "y": triangle_y + rise / 2,
         "latex": "2",
         "width": 20,
         "height": 20,
@@ -205,7 +205,7 @@ foreign_objects = [
     },
     # Run label
     {
-        "x": triangle_x + run/2,
+        "x": triangle_x + run / 2,
         "y": triangle_y - 0.3,
         "latex": "1",
         "width": 20,

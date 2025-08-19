@@ -9,15 +9,15 @@ import numpy as np
 
 # Define the curve: f(x) = x³ - 2x + 1
 x = np.linspace(-2, 2.5, 200)
-y_curve = x**3 - 2*x + 1
+y_curve = x**3 - 2 * x + 1
 
 # Point of tangency
 x0 = 1.0
-y0 = x0**3 - 2*x0 + 1  # f(1) = 0
+y0 = x0**3 - 2 * x0 + 1  # f(1) = 0
 
 # Derivative: f'(x) = 3x² - 2
 # At x=1: f'(1) = 3 - 2 = 1
-slope = 3*x0**2 - 2
+slope = 3 * x0**2 - 2
 
 # Tangent line: y - y0 = slope*(x - x0)
 x_tangent = np.linspace(-0.5, 2.5, 100)
@@ -147,7 +147,6 @@ foreign_objects = [
         "border_radius": "0.25rem",
     },
 ]
-
 
 
 def get_graph_dict():

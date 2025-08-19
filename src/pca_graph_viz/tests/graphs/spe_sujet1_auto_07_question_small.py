@@ -1,8 +1,28 @@
+"""
+Simple parabola visualization with configurable horizontal line.
+
+When executed via Nagini from JavaScript (sujets0-app-simple.js),
+the Y_LABEL_FOR_HORIZONTAL_LINE variable is injected into this module's namespace
+before execution, allowing dynamic configuration from the UI.
+
+The value can be changed using the control panel in sujets0-simple.html.
+"""
+
 import numpy as np
 
-Y_LABEL_FOR_HORIZONTAL_LINE = 10
+# Try to get the value from the namespace injected by Nagini/Pyodide
+# If not found (e.g., when running locally without Nagini), use default value
+try:
+    # When executed via Nagini, this value is injected into globals()
+    # See sujets0-app-simple.js lines 208-210 for the injection code
+    Y_LABEL_FOR_HORIZONTAL_LINE = globals()["Y_LABEL_FOR_HORIZONTAL_LINE"]
+    print(f"✅ Using injected Y_LABEL_FOR_HORIZONTAL_LINE = {Y_LABEL_FOR_HORIZONTAL_LINE}")
+except KeyError:
+    # Default value when not running via Nagini or value not injected
+    Y_LABEL_FOR_HORIZONTAL_LINE = 10
+    print(f"⚠️ Using default Y_LABEL_FOR_HORIZONTAL_LINE = {Y_LABEL_FOR_HORIZONTAL_LINE}")
 
-# Simple parabola visualization: y = x² with y = 1 line (small 150x150)
+# Simple parabola visualization: y = x² with horizontal line (small 150x150)
 
 # Generate parabola: y = x²
 x = np.linspace(-4, 4, 1000)
@@ -69,7 +89,7 @@ foreign_objects = [
     # Line equation
     {
         "x": 1.65,
-        "y": 11.45,
+        "y": Y_LABEL_FOR_HORIZONTAL_LINE + 1.45,
         "latex": f"y={Y_LABEL_FOR_HORIZONTAL_LINE}",
         "width": 50,
         "height": 20,
