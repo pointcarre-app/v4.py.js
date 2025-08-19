@@ -290,7 +290,7 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
             "type": "circle",
             "cx": vertex_x,
             "cy": vertex_y,
-            "r": 4,  # radius of 4 pixels
+            "r": 8,
             "class": "fill-primary",
             "stroke": "none",
         }

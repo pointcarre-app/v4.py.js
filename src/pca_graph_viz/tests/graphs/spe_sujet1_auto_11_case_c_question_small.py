@@ -110,7 +110,7 @@ foreign_objects = [
     # Root labels (positioned below dots with better control)
     {
         "x": ROOT1,  # Slightly offset for "-4"
-        "y": -9.75,  # Higher position
+        "y": -10,
         "latex": str(ROOT1),
         "width": 20,  # Smaller width for better control
         "height": 18,
@@ -119,7 +119,7 @@ foreign_objects = [
     },
     {
         "x": ROOT2,  # Slightly offset for "2"
-        "y": -9.75,  # Higher position
+        "y": -10,
         "latex": str(ROOT2),
         "width": 20,  # Smaller width for better control
         "height": 18,
@@ -128,7 +128,7 @@ foreign_objects = [
     },
     {
         "x": ROOT3,  # Slightly offset for "5"
-        "y": -9.75,  # Higher position
+        "y": -10,
         "latex": str(ROOT3),
         "width": 20,  # Smaller width for better control
         "height": 18,

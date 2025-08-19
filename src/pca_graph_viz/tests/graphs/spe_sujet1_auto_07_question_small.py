@@ -89,7 +89,7 @@ foreign_objects = [
     # Line equation
     {
         "x": 1.65,
-        "y": Y_LABEL_FOR_HORIZONTAL_LINE + 1.45,
+        "y": Y_LABEL_FOR_HORIZONTAL_LINE + 1.65,
         "latex": f"y={Y_LABEL_FOR_HORIZONTAL_LINE}",
         "width": 50,
         "height": 20,
