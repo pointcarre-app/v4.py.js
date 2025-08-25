@@ -4,169 +4,140 @@ import numpy as np
 SAMPLES = 1000
 
 
-def compute_parameters(parabola_sign: int, a_shift: float) -> dict:
-    """Compute ALL parameters for the parabola graph.
+# Direct configuration mapping based on graph ID
+# Each configuration is for a specific graph file
+GRAPH_CONFIGS = {
+    "s1_a_0": {  # y = x^2 (parabola_sign=1, a_shift=0)
+        "X_MIN": -4.0,
+        "X_MAX": 4.0,
+        "Y_MIN": -5,
+        "Y_MAX": 18,
+        "x_axis_x1": -4.5,
+        "x_axis_y1": 0,
+        "x_axis_x2": 4.5,
+        "x_axis_y2": 0,
+        "y_axis_x1": 0,
+        "y_axis_y1": -4.5,
+        "y_axis_x2": 0,
+        "y_axis_y2": 17,
+        "x_label_x": 4.75,
+        "x_label_y": -1,
+        "y_label_x": 0.5,
+        "y_label_y": 17,
+    },
+    "s1_a_m": {  # y = x^2 - 5 (parabola_sign=1, a_shift=-5)
+        "X_MIN": -4.0,
+        "X_MAX": 4.0,
+        "Y_MIN": -5,
+        "Y_MAX": 13,
+        "x_axis_x1": -3,
+        "x_axis_y1": 0,
+        "x_axis_x2": 3,
+        "x_axis_y2": 0,
+        "y_axis_x1": 0,
+        "y_axis_y1": -7,
+        "y_axis_x2": 0,
+        "y_axis_y2": 10.5,
+        "x_label_x": 3.5,
+        "x_label_y": -1,
+        "y_label_x": 0.5,
+        "y_label_y": 10.5,
+    },
+    "s1_a_p": {  # y = x^2 + 5 (parabola_sign=1, a_shift=5)
+        "X_MIN": -4.0,
+        "X_MAX": 4.0,
+        "Y_MIN": -10,
+        "Y_MAX": 19,
+        "x_axis_x1": -4,
+        "x_axis_y1": 4,
+        "x_axis_x2": 4,
+        "x_axis_y2": 4,
+        "y_axis_x1": 0,
+        "y_axis_y1": -6,
+        "y_axis_x2": 0,
+        "y_axis_y2": 22,
+        "x_label_x": 4.5,
+        "x_label_y": 3,
+        "y_label_x": 0.5,
+        "y_label_y": 22.5,
+    },
+    "sm1_a_0": {  # y = -x^2 (parabola_sign=-1, a_shift=0)
+        "X_MIN": -4.0,
+        "X_MAX": 4.0,
+        "Y_MIN": -20,
+        "Y_MAX": 4,
+        "x_axis_x1": -4,
+        "x_axis_y1": 0,
+        "x_axis_x2": 4,
+        "x_axis_y2": 0,
+        "y_axis_x1": 0,
+        "y_axis_y1": -21.5,
+        "y_axis_x2": 0,
+        "y_axis_y2": 1.25,
+        "x_label_x": 4,
+        "x_label_y": -1.0,
+        "y_label_x": 0.5,
+        "y_label_y": 1.5,
+    },
+    "sm1_a_m": {  # y = -x^2 - 5 (parabola_sign=-1, a_shift=-5)
+        "X_MIN": -4.0,
+        "X_MAX": 4.0,
+        "Y_MIN": -20,
+        "Y_MAX": 4,
+        "x_axis_x1": -4.2,
+        "x_axis_y1": -4.2,
+        "x_axis_x2": 4,
+        "x_axis_y2": -4,
+        "y_axis_x1": 0,
+        "y_axis_y1": -21.5,
+        "y_axis_x2": 0,
+        "y_axis_y2": -3.75,
+        "x_label_x": 4.5,
+        "x_label_y": -4.5,
+        "y_label_x": 0.5,
+        "y_label_y": -3.2,
+    },
+    "sm1_a_p": {  # y = -x^2 + 10 (parabola_sign=-1, a_shift=10)
+        "X_MIN": -5.0,
+        "X_MAX": 5.0,
+        "Y_MIN": -10,
+        "Y_MAX": 15,
+        "x_axis_x1": -4.7,
+        "x_axis_y1": 0,
+        "x_axis_x2": 4.7,
+        "x_axis_y2": 0,
+        "y_axis_x1": 0,
+        "y_axis_y1": -15,
+        "y_axis_x2": 0,
+        "y_axis_y2": 12,
+        "x_label_x": 5,
+        "x_label_y": -1.5,
+        "y_label_x": 0.75,
+        "y_label_y": 12,
+    },
+}
 
-    Returns a dict with all display parameters including ranges, axis positions,
-    label positions, tick marks, etc. Everything is hardcoded for each case.
+
+def compute_parameters(graph_id: str) -> dict:
+    """Get parameters for a specific graph by its ID.
+
+    Args:
+        graph_id: Graph identifier (e.g., 's1_a_0', 's1_a_m', 'sm1_a_p')
+
+    Returns:
+        Dictionary with all display parameters for the graph
+
+    Raises:
+        ValueError: If graph_id is not found in GRAPH_CONFIGS
     """
-    # Round a_shift to nearest reference value: -10, -5, 0, 5, or 10
-    reference_values = [-10, -5, 0, 5, 10]
-    closest_a = min(reference_values, key=lambda x: abs(x - a_shift))
+    if graph_id not in GRAPH_CONFIGS:
+        raise ValueError(f"Unknown graph ID: {graph_id}. Available: {list(GRAPH_CONFIGS.keys())}")
 
-    # Use match statement to handle all cases
-    match (parabola_sign, closest_a):
-        case (1, 0):  # y = x^2
-            params = {
-                "X_MIN": -4.0,
-                "X_MAX": 4.0,
-                "Y_MIN": -5,
-                "Y_MAX": 18,
-                "x_axis_x1": -4.5,  # X_MIN + 0.5
-                "x_axis_y1": 0,
-                "x_axis_x2": 4.5,  # X_MAX - 0.5
-                "x_axis_y2": 0,
-                "y_axis_x1": 0,
-                "y_axis_y1": -4.5,
-                "y_axis_x2": 0,
-                "y_axis_y2": 17,  # Y_MAX - 1
-                "x_label_x": 4.75,  # X_MAX - 0.25
-                "x_label_y": -1,
-                "y_label_x": 0.5,
-                "y_label_y": 17,  # Y_MAX - 1
-            }
-
-        case (1, -5):  # y = x^2 - 5
-            params = {
-                "X_MIN": -4.0,
-                "X_MAX": 4.0,
-                "Y_MIN": -5,
-                "Y_MAX": 13,
-                "x_axis_x1": -3,
-                "x_axis_y1": 0,
-                "x_axis_x2": 3,
-                "x_axis_y2": 0,
-                "y_axis_x1": 0,
-                "y_axis_y1": -7,  # MUST be >= Y_MIN (-6)
-                "y_axis_x2": 0,
-                "y_axis_y2": 10.5,  # MUST be <= Y_MAX (17)
-                "x_label_x": 3.5,  # MUST be <= X_MAX (5)
-                "x_label_y": -1,
-                "y_label_x": 0.5,
-                "y_label_y": 10.5,  # MUST be <= Y_MAX (17)
-            }
-
-        case (1, 5):  # y = x^2 + 5
-            # TODO: clean // enormous cheat: use cause -10 and move the x-axis
-            # case (1, -10):  # y = x^2 - 10
-            params = {
-                "X_MIN": -4.0,
-                "X_MAX": 4.0,
-                "Y_MIN": -10,
-                "Y_MAX": 19,
-                "x_axis_x1": -4,
-                "x_axis_y1": 4,  #### HACK
-                "x_axis_x2": 4,
-                "x_axis_y2": 4,  #### HACK
-                "y_axis_x1": 0,
-                "y_axis_y1": -6,
-                "y_axis_x2": 0,
-                "y_axis_y2": 22,  # MUST be <= Y_MAX
-                "x_label_x": 4,  # MUST be <= X_MAX
-                "x_label_y": 5,  ## HACK
-                "y_label_x": 0.5,
-                "y_label_y": 22,  # MUST be <= Y_MAX (10)
-            }
-
-        case (-1, 0):  # y = -x^2
-            params = {
-                "X_MIN": -4.0,
-                "X_MAX": 4.0,
-                "Y_MIN": -20,
-                "Y_MAX": 4,
-                "x_axis_x1": -4,
-                "x_axis_y1": 0,
-                "x_axis_x2": 4,
-                "x_axis_y2": 0,
-                "y_axis_x1": 0,
-                "y_axis_y1": -21.5,
-                "y_axis_x2": 0,
-                "y_axis_y2": 1.25,
-                "x_label_x": 4.5,
-                "x_label_y": -1.0,
-                "y_label_x": 0.5,
-                "y_label_y": 1.25,
-            }
-
-        case (-1, -5):  # y = -x^2
-            params = {
-                "X_MIN": -4.0,
-                "X_MAX": 4.0,
-                "Y_MIN": -20,
-                "Y_MAX": 4,
-                "x_axis_x1": -4.2,
-                "x_axis_y1": -4.2,
-                "x_axis_x2": 4,
-                "x_axis_y2": -4,
-                "y_axis_x1": 0,
-                "y_axis_y1": -21.5,
-                "y_axis_x2": 0,
-                "y_axis_y2": -3.75,
-                "x_label_x": 4.5,
-                "x_label_y": -4.5,
-                "y_label_x": 0.5,
-                "y_label_y": -3.3,
-            }
-
-        # ========== DOWNWARD PARABOLAS (y = -x^2 + a) ==========
-        case (-1, 10):  # y = -x^2 + 10
-            params = {
-                "X_MIN": -5.0,
-                "X_MAX": 5.0,
-                "Y_MIN": -10,
-                "Y_MAX": 12,
-                "x_axis_x1": -4.7,
-                "x_axis_y1": 0,
-                "x_axis_x2": 4.7,
-                "x_axis_y2": 0,
-                "y_axis_x1": 0,
-                "y_axis_y1": -18,
-                "y_axis_x2": 0,
-                "y_axis_y2": 7.5,
-                "x_label_x": 5,
-                "x_label_y": -1.5,
-                "y_label_x": 0.75,
-                "y_label_y": 12,
-            }
-
-        # # Default case (shouldn't happen but just in case)
-        # case _:
-        #     params = {
-        #         "X_MIN": -5.0,
-        #         "X_MAX": 5.0,
-        #         "Y_MIN": -10,
-        #         "Y_MAX": 10,
-        #         "x_axis_x1": -4.7,
-        #         "x_axis_y1": 0,
-        #         "x_axis_x2": 4.7,
-        #         "x_axis_y2": 0,
-        #         "y_axis_x1": 0,
-        #         "y_axis_y1": -9.5,
-        #         "y_axis_x2": 0,
-        #         "y_axis_y2": 9.5,
-        #         "x_label_x": 4.5,
-        #         "x_label_y": -1.2,
-        #         "y_label_x": 0.3,
-        #         "y_label_y": 8.5,
-        #         "x_ticks": [-4, -2, 2, 4],
-        #         "y_ticks": [],
-        #         "tick_length": 0.2,
-        #     }
-
-    return params
+    return GRAPH_CONFIGS[graph_id]
 
 
 def generate_parabola_graph(
+    graph_id: str,
     parabola_sign: int,
     a_shift: float,
     filename: str,
@@ -176,8 +147,9 @@ def generate_parabola_graph(
     """Generate a parabola graph with the given parameters.
 
     Args:
+        graph_id: Graph identifier for config lookup (e.g., 's1_a_0', 's1_a_m')
         parabola_sign: +1 for y = x^2 + a, -1 for y = -x^2 + a
-        a_shift: The vertical shift value 'a' (used for matching graph case)
+        a_shift: The vertical shift value 'a' (used for the actual curve position)
         filename: The filename to use as the title
         a_shift_for_label: The value to display in the M point label (if different from a_shift)
         a_adjust: Fine-tuning adjustment for curve position (default 0, not shown in labels)
@@ -185,8 +157,8 @@ def generate_parabola_graph(
     Returns:
         A dictionary containing the graph data
     """
-    # Get ALL parameters from the centralized function
-    params = compute_parameters(parabola_sign, a_shift)
+    # Get ALL parameters using the graph ID
+    params = compute_parameters(graph_id)
 
     # Use a_shift_for_label if provided, otherwise use a_shift
     label_value = a_shift_for_label if a_shift_for_label is not None else a_shift
@@ -194,16 +166,16 @@ def generate_parabola_graph(
     X_MIN = params["X_MIN"]
     X_MAX = params["X_MAX"]
 
-    # Generate data using the label_value (the dynamic value from UI) plus adjustment
-    # This makes the curve actually move with the slider, like Q7 and Q8
+    # Generate data using the fixed a_shift value (NOT the dynamic label_value)
+    # This keeps the curve position fixed regardless of slider changes
     # The a_adjust is for fine-tuning position without changing labels
     x = np.linspace(X_MIN, X_MAX, SAMPLES)
-    y = parabola_sign * (x**2) + label_value + a_adjust
+    y = parabola_sign * (x**2) + a_shift + a_adjust
 
     # Find the vertex point (closest to x=0)
     # For these parabolas, the vertex is at x=0
     vertex_x = 0
-    vertex_y = parabola_sign * (vertex_x**2) + label_value + a_adjust
+    vertex_y = parabola_sign * (vertex_x**2) + a_shift + a_adjust
 
     # Extract all values from params dict
 
@@ -370,4 +342,4 @@ def generate_parabola_graph(
 # For direct testing/usage
 def get_graph_dict():
     """Default graph for testing - can be overridden by importing modules."""
-    return generate_parabola_graph(1, 0, "spe_sujet1_auto_10_question_small_dispatch.py")
+    return generate_parabola_graph("s1_a_0", 1, 0, "spe_sujet1_auto_10_question_small_dispatch.py")

@@ -8,7 +8,7 @@ before execution, allowing dynamic configuration of the label display.
 The value can be changed using the control panel in sujets0-simple.html.
 """
 
-from spe_sujet1_auto_10_question_small_dispatch import generate_parabola_graph
+from .spe_sujet1_auto_10_question_small_dispatch import generate_parabola_graph
 
 # Try to get the value from the namespace injected by Nagini/Pyodide
 # If not found (e.g., when running locally without Nagini), use default value
@@ -18,7 +18,7 @@ try:
     print(f"✅ Using injected A_SHIFT_MAGNITUDE = {A_SHIFT_MAGNITUDE} for sm1_a_p label")
 except KeyError:
     # Default value when not running via Nagini or value not injected
-    A_SHIFT_MAGNITUDE = 10  # Default is 10 for this specific case
+    A_SHIFT_MAGNITUDE = 5  # Default value standardized to 5
     print(f"⚠️ Using default A_SHIFT_MAGNITUDE = {A_SHIFT_MAGNITUDE} for sm1_a_p label")
 
 # Configuration for this specific parabola
@@ -31,6 +31,7 @@ A_ADJUST = 0  # Fine-tuning adjustment for curve position (not shown in labels)
 def get_graph_dict():
     """Return the graph dictionary for this configuration."""
     return generate_parabola_graph(
+        "sm1_a_p",  # Graph ID
         PARABOLA_SIGN,
         A_SHIFT_FOR_CASE,
         "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p.py",

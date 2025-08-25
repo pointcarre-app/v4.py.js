@@ -3,9 +3,44 @@
 
 # Changelog
 
-## [Unreleased]
+## v0.0.8-unstable - 2024-12-19
 
----
+### Major Refactoring
+- **Simplified parabola graph dispatch system**
+  - Replaced complex match statement with direct graph ID lookup
+  - Removed confusing `closest_a` rounding logic
+  - Introduced clean `GRAPH_CONFIGS` dictionary mapping
+  - Graph IDs now directly map to configurations (e.g., `s1_a_m` → y = x² - 5)
+
+### Fixed
+- **Parabola curves now stay fixed while labels update dynamically**
+  - Curves use fixed `a_shift` value for positioning
+  - Labels use dynamic `A_SHIFT_FOR_LABEL` from UI controls
+  - Resolves issue where curves would move with slider adjustments
+  
+### Changed
+- **Graph parameter selection**
+  - Each parabola file now passes a graph ID to dispatch
+  - Direct configuration lookup instead of parameter matching
+  - Cleaner separation between curve position and label display
+- **Import statements**
+  - Updated all parabola files to use relative imports (`.module_name`)
+  - Fixes module resolution in Pyodide environment
+
+### Documentation
+- **Added comprehensive dispatch system documentation**
+  - Created `scenery/sujets0-simple.md` with full architecture explanation
+  - Documented variable flow from JavaScript UI to Python graphs
+  - Included troubleshooting guide and debug commands
+  - Added Mermaid diagram for configuration flow
+
+### Technical Details
+- Graph ID convention: `{sign}_{shift}` where:
+  - `s1` = upward parabola (y = x²)
+  - `sm1` = downward parabola (y = -x²)  
+  - `a_0` = no shift, `a_m` = negative shift, `a_p` = positive shift
+- Standardized default `A_SHIFT_MAGNITUDE` to 5 across all files
+- Fixed axis and label positioning in several graph configurations
 
 ## v0.0.7-unstable
 
