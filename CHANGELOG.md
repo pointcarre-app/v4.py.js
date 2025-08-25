@@ -3,6 +3,21 @@
 
 # Changelog
 
+## v0.0.11-unstable
+
+### Documentation
+- **Added CURRICULUM.md**
+  - Documents which graph files are actively used in sujets0 apps
+  - Clarifies difference between production files and construction features
+  - Maps graph files to French curriculum structure (Première Spé - Sujet 1)
+  - Provides clear enumeration of all question-specific graphs
+
+### Organized
+- **Graph file categorization**
+  - Production files: Used in generation engines and student apps
+  - Construction features: Commented files for development reference only
+  - Clear separation between canonical and small graph variants
+
 ## v0.0.10-unstable 
 
 ### Fixed
