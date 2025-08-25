@@ -94,7 +94,7 @@ GRAPH_CONFIGS = {
         "y_axis_y2": -3.75,
         "x_label_x": 4.4,
         "x_label_y": -4.75,
-        "y_label_x": 0.75s,
+        "y_label_x": 0.75,
         "y_label_y": -3.2,
     },
     "sm1_a_p": {  # y = -x^2 + 10 (parabola_sign=-1, a_shift=10)
