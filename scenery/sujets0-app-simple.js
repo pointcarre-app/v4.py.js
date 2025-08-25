@@ -21,6 +21,9 @@ const GRAPH_CONFIG = {
   // Question 8 - Affine function y = ax + b
   A_FLOAT_FOR_AFFINE_LINE: 0.75,  // Slope (float)
   B_FLOAT_FOR_AFFINE_LINE: 2.0,   // Y-intercept (integer displayed as float)
+  
+  // Question 10 - Parabola shifts (y = ±x^2 ± a)
+  A_SHIFT_MAGNITUDE: 5,  // Magnitude of vertical shift (1-10)
 };
 
 let manager;
@@ -70,13 +73,13 @@ const GRAPH_FILES = {
   
   // Parabola graphs with s=1
   "parabola_s1_a0": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_0.py",
-  "parabola_s1_am5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_m5.py",
-  "parabola_s1_ap5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_p5.py",
+  "parabola_s1_am5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_m.py",
+  "parabola_s1_ap5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_s1_a_p.py",
   
   // Parabola graphs with s=-1
   "parabola_sm1_a0": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_0.py",
-  "parabola_sm1_am5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m5.py",
-  "parabola_sm1_ap10": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p10.py",
+  "parabola_sm1_am5": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m.py",
+  "parabola_sm1_ap10": "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p.py",
 
 
 };
@@ -165,6 +168,7 @@ async function loadGraphFile(key, filepath) {
     const yLabel = GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE;
     const aFloat = GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE;
     const bFloat = GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE;
+    const aShiftMagnitude = GRAPH_CONFIG.A_SHIFT_MAGNITUDE;
     
     // Write the file using Python directly (more reliable than fs API)
     const result = await manager.executeAsync(`write_${key}.py`, `
@@ -208,6 +212,7 @@ module.__dict__['__package__'] = 'pca_graph_viz.tests.graphs'
 module.__dict__['Y_LABEL_FOR_HORIZONTAL_LINE'] = ${yLabel}
 module.__dict__['A_FLOAT_FOR_AFFINE_LINE'] = ${aFloat}
 module.__dict__['B_FLOAT_FOR_AFFINE_LINE'] = ${bFloat}
+module.__dict__['A_SHIFT_MAGNITUDE'] = ${aShiftMagnitude}
 
 # Try to execute the code in the module's namespace
 try:
@@ -216,12 +221,13 @@ try:
     module.__dict__['Y_LABEL_FOR_HORIZONTAL_LINE'] = ${yLabel}
     module.__dict__['A_FLOAT_FOR_AFFINE_LINE'] = ${aFloat}
     module.__dict__['B_FLOAT_FOR_AFFINE_LINE'] = ${bFloat}
+    module.__dict__['A_SHIFT_MAGNITUDE'] = ${aShiftMagnitude}
     
     # Register in sys.modules (both full name and short name for relative imports)
     sys.modules[full_module_name] = module
     sys.modules[module_name] = module  # Also register with short name for relative imports
     print(f"✅ Registered module: {full_module_name} and {module_name}")
-    print(f"   Injected configs: Y_LABEL={module.__dict__.get('Y_LABEL_FOR_HORIZONTAL_LINE', 'N/A')}, A_FLOAT={module.__dict__.get('A_FLOAT_FOR_AFFINE_LINE', 'N/A')}, B_FLOAT={module.__dict__.get('B_FLOAT_FOR_AFFINE_LINE', 'N/A')}")
+    print(f"   Injected configs: Y_LABEL={module.__dict__.get('Y_LABEL_FOR_HORIZONTAL_LINE', 'N/A')}, A_FLOAT={module.__dict__.get('A_FLOAT_FOR_AFFINE_LINE', 'N/A')}, B_FLOAT={module.__dict__.get('B_FLOAT_FOR_AFFINE_LINE', 'N/A')}, A_SHIFT={module.__dict__.get('A_SHIFT_MAGNITUDE', 'N/A')}")
 except Exception as e:
     print(f"⚠️ Warning: Failed to execute module {module_name}: {e}")
     # Still register the module even if exec failed, it might be importable later
@@ -364,15 +370,11 @@ async function loadGraphs() {
     "spe_sujet1_auto_11_case_c_question_canonical",
     "spe_sujet1_auto_11_case_c_question_small",
     "spe_sujet1_auto_10_question_small_parabola_a_s1_a_0",
-    "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m5",
-    "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m10",
-    "spe_sujet1_auto_10_question_small_parabola_a_s1_a_p5",
-    "spe_sujet1_auto_10_question_small_parabola_a_s1_a_p10",
+    "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m",
+    "spe_sujet1_auto_10_question_small_parabola_a_s1_a_p",
     "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_0",
-    "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m5",
-    "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m10",
-    "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p5",
-    "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p10",
+    "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m",
+    "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p",
   ];
   
   let successCount = 0;
@@ -543,6 +545,7 @@ async function reloadGraphsWithConfig() {
       console.log(`   Q7: Y_LABEL_FOR_HORIZONTAL_LINE = ${GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE}`);
       console.log(`   Q8: A_FLOAT_FOR_AFFINE_LINE = ${GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE}`);
       console.log(`   Q8: B_FLOAT_FOR_AFFINE_LINE = ${GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE}`);
+      console.log(`   Q10: A_SHIFT_MAGNITUDE = ${GRAPH_CONFIG.A_SHIFT_MAGNITUDE}`);
       await displayAllGraphs();
     } else {
       showError("❌ No graphs were loaded after configuration change!");
@@ -596,6 +599,11 @@ async function main() {
         bFloatInput.value = GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE;
       }
       
+      const aShiftInput = document.getElementById("a-shift-input");
+      if (aShiftInput) {
+        aShiftInput.value = GRAPH_CONFIG.A_SHIFT_MAGNITUDE;
+      }
+      
       // Update display values
       const yLabelValue = document.getElementById("y-label-value");
       if (yLabelValue) yLabelValue.textContent = GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE;
@@ -605,6 +613,9 @@ async function main() {
       
       const bFloatValue = document.getElementById("b-float-value");
       if (bFloatValue) bFloatValue.textContent = GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE;
+      
+      const aShiftValue = document.getElementById("a-shift-value");
+      if (aShiftValue) aShiftValue.textContent = GRAPH_CONFIG.A_SHIFT_MAGNITUDE;
     }
     
     const graphCount = Object.keys(allGraphs).length;
@@ -614,6 +625,7 @@ async function main() {
       console.log(`   Q7: Y_LABEL_FOR_HORIZONTAL_LINE = ${GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE}`);
       console.log(`   Q8: A_FLOAT_FOR_AFFINE_LINE = ${GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE}`);
       console.log(`   Q8: B_FLOAT_FOR_AFFINE_LINE = ${GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE}`);
+      console.log(`   Q10: A_SHIFT_MAGNITUDE = ${GRAPH_CONFIG.A_SHIFT_MAGNITUDE}`);
       await displayAllGraphs();
       
       // Show warning if some graphs failed

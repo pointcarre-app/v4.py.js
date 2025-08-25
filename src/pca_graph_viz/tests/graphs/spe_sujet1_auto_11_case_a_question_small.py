@@ -108,7 +108,7 @@ foreign_objects = [
         "x": ROOT1,  # Centered at root position
         "y": -9.75,  # Higher position (scaled for small version)
         "latex": str(ROOT1),
-        "width": 12,  # Appropriate width for small version
+        "width": 18,  # Appropriate width for small version
         "height": 12,
         "class": "svg-latex fill-base-content text-sm",
         "style": "overflow: visible; text-align: center; background: rgba(255, 255, 255, 0.8); border-radius: 2px;",

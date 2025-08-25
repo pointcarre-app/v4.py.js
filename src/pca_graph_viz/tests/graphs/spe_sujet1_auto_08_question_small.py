@@ -32,11 +32,11 @@ except KeyError:
     )
 
 # Match canonical range while keeping small display size
-x = np.linspace(-8, 8, 1000)
+x = np.linspace(-10, 10, 1000)
 y = A_FLOAT_FOR_AFFINE_LINE * x + B_FLOAT_FOR_AFFINE_LINE
 
 # Build subtle grid lines first so they render beneath axes and curve
-GRID_MIN, GRID_MAX = -8, 8
+GRID_MIN, GRID_MAX = -10, 10
 grid_lines = []
 for i in range(GRID_MIN, GRID_MAX + 1):
     if i == 0:
@@ -72,9 +72,9 @@ lines = grid_lines + [
     # X-axis
     {
         "type": "axis",
-        "x1": -8,
+        "x1": -10,
         "y1": 0,
-        "x2": 8,
+        "x2": 10,
         "y2": 0,
         "stroke-width": 1,
         "class": "axis x-axis stroke-base-content",
@@ -83,9 +83,9 @@ lines = grid_lines + [
     {
         "type": "axis",
         "x1": 0,
-        "y1": -8,
+        "y1": -10,
         "x2": 0,
-        "y2": 8,
+        "y2": 10,
         "stroke-width": 1,
         "class": "axis y-axis stroke-base-content",
     },
@@ -101,7 +101,7 @@ lines = grid_lines + [
 ]
 
 # Build tick labels for axes (exclude 0)
-TICK_MIN, TICK_MAX = -7, 7
+TICK_MIN, TICK_MAX = -9, 9
 y_tick_labels = []
 for yi in range(TICK_MIN, TICK_MAX + 1):
     if yi == 0:
@@ -143,7 +143,7 @@ foreign_objects = (
         #     "class": "svg-latex text-secondary",
         # },
         {
-            "x": 8,
+            "x": 10,
             "y": -0.75,
             "latex": "x",
             "width": 16,
@@ -153,7 +153,7 @@ foreign_objects = (
         # Y axis label
         {
             "x": 0.75,
-            "y": 8.25,
+            "y": 10,
             "latex": "y",
             "width": 16,
             "height": 16,
@@ -179,17 +179,17 @@ def get_graph_dict():
         },
         # Explicit domain prevents auto-padding that pushed grid lines beyond the plot box
         "domain": {
-            "x_min": -8,
-            "x_max": 8,
-            "y_min": -8,
-            "y_max": 8,
+            "x_min": -10,
+            "x_max": 10,
+            "y_min": -10,
+            "y_max": 10,
         },
         "settings": {
             "margin": {"top": 10, "right": 10, "bottom": 10, "left": 10},
             "show_axes": False,
             "show_grid": False,
-            "x_range": [-8, 8],
-            "y_range": [-8, 8],
+            "x_range": [-10, 10],
+            "y_range": [-10, 10],
         },
         "lines": lines,
         "foreign_objects": foreign_objects,

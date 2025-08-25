@@ -47,7 +47,7 @@ def compute_parameters(parabola_sign: int, a_shift: float) -> dict:
                 "x_axis_x2": 3,
                 "x_axis_y2": 0,
                 "y_axis_x1": 0,
-                "y_axis_y1": -5.5,  # MUST be >= Y_MIN (-6)
+                "y_axis_y1": -7,  # MUST be >= Y_MIN (-6)
                 "y_axis_x2": 0,
                 "y_axis_y2": 10.5,  # MUST be <= Y_MAX (17)
                 "x_label_x": 3.5,  # MUST be <= X_MAX (5)
@@ -130,9 +130,9 @@ def compute_parameters(parabola_sign: int, a_shift: float) -> dict:
                 "x_axis_x2": 4.7,
                 "x_axis_y2": 0,
                 "y_axis_x1": 0,
-                "y_axis_y1": -9.5,
+                "y_axis_y1": -18,
                 "y_axis_x2": 0,
-                "y_axis_y2": 11.5,
+                "y_axis_y2": 7.5,
                 "x_label_x": 5,
                 "x_label_y": -1.5,
                 "y_label_x": 0.75,
@@ -166,13 +166,21 @@ def compute_parameters(parabola_sign: int, a_shift: float) -> dict:
     return params
 
 
-def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
+def generate_parabola_graph(
+    parabola_sign: int,
+    a_shift: float,
+    filename: str,
+    a_shift_for_label: float = None,
+    a_adjust: float = 0,
+):
     """Generate a parabola graph with the given parameters.
 
     Args:
         parabola_sign: +1 for y = x^2 + a, -1 for y = -x^2 + a
-        a_shift: The vertical shift value 'a'
+        a_shift: The vertical shift value 'a' (used for matching graph case)
         filename: The filename to use as the title
+        a_shift_for_label: The value to display in the M point label (if different from a_shift)
+        a_adjust: Fine-tuning adjustment for curve position (default 0, not shown in labels)
 
     Returns:
         A dictionary containing the graph data
@@ -180,17 +188,22 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
     # Get ALL parameters from the centralized function
     params = compute_parameters(parabola_sign, a_shift)
 
+    # Use a_shift_for_label if provided, otherwise use a_shift
+    label_value = a_shift_for_label if a_shift_for_label is not None else a_shift
+
     X_MIN = params["X_MIN"]
     X_MAX = params["X_MAX"]
 
-    # Generate data
+    # Generate data using the label_value (the dynamic value from UI) plus adjustment
+    # This makes the curve actually move with the slider, like Q7 and Q8
+    # The a_adjust is for fine-tuning position without changing labels
     x = np.linspace(X_MIN, X_MAX, SAMPLES)
-    y = parabola_sign * (x**2) + a_shift
+    y = parabola_sign * (x**2) + label_value + a_adjust
 
     # Find the vertex point (closest to x=0)
     # For these parabolas, the vertex is at x=0
     vertex_x = 0
-    vertex_y = parabola_sign * (vertex_x**2) + a_shift
+    vertex_y = parabola_sign * (vertex_x**2) + label_value + a_adjust
 
     # Extract all values from params dict
 
@@ -290,7 +303,7 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
             "type": "circle",
             "cx": vertex_x,
             "cy": vertex_y,
-            "r": 8,
+            "r": 4,
             "class": "fill-primary",
             "stroke": "none",
         }
@@ -320,11 +333,11 @@ def generate_parabola_graph(parabola_sign: int, a_shift: float, filename: str):
             "height": 20,
             "class": "svg-latex fill-base-content",
         },
-        # Vertex label M(0;a)
+        # Vertex label M(0;a) - using the label value
         {
             "x": vertex_x + 2.25,  # Move right by ~20px in graph units
             "y": vertex_y - 0.3,  # Slightly above the dot
-            "latex": f"M(0;{int(a_shift)})",
+            "latex": f"M(0;{int(label_value)})",
             "width": 60,
             "height": 20,
             "class": "svg-latex text-primary text-xs",

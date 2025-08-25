@@ -58,11 +58,11 @@ async function main() {
       "spe_sujet1_auto_11_case_c_question_canonical",
       "spe_sujet1_auto_11_case_c_question_small",
       "spe_sujet1_auto_10_question_small_parabola_a_s1_a_0",
-      "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m5",
-      "spe_sujet1_auto_10_question_small_parabola_a_s1_a_p5",
+      "spe_sujet1_auto_10_question_small_parabola_a_s1_a_m",
+      "spe_sujet1_auto_10_question_small_parabola_a_s1_a_p",
       "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_0",
-      "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m5",
-      "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p10",
+      "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m",
+      "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p",
     ];
 
     // First load core modules and dispatch

@@ -594,7 +594,7 @@
         </div>
 
         <!-- Question 8: Affine Function -->
-        <div style="margin-bottom: 25px;">
+        <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb;">
           <h3 style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">
             Question 8: Affine Function y = ax + b
           </h3>
@@ -608,6 +608,22 @@
           </div>
           <div class="config-info" style="margin-top: 8px; font-size: 11px;">
             Current: A_FLOAT_FOR_AFFINE_LINE = <span id="a-float-value">0.75</span>, B_FLOAT_FOR_AFFINE_LINE = <span id="b-float-value">2</span>
+          </div>
+        </div>
+
+        <!-- Question 10: Parabola Shifts -->
+        <div style="margin-bottom: 25px;">
+          <h3 style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">
+            Question 10: Parabola Shifts y = ±x² ± a
+          </h3>
+          <div class="control-group">
+            <label for="a-shift-input">Shift Magnitude |a|:</label>
+            <input type="number" id="a-shift-input" value="5" min="1" max="10" step="1" />
+          </div>
+          <div class="config-info" style="margin-top: 8px; font-size: 11px;">
+            Current: A_SHIFT_MAGNITUDE = <span id="a-shift-value">5</span>
+            <br />
+            <span style="color: #6b7280;">Affects 4 parabola graphs: y = x² ± a and y = -x² ± a</span>
           </div>
         </div>
 
@@ -634,17 +650,22 @@
               const aFloatValue = parseFloat(document.getElementById('a-float-input').value);
               const bFloatValue = parseFloat(document.getElementById('b-float-input').value);
 
-              if (!isNaN(yLabelValue) && !isNaN(aFloatValue) && !isNaN(bFloatValue)) {
+              // Get Question 10 values
+              const aShiftValue = parseInt(document.getElementById('a-shift-input').value);
+
+              if (!isNaN(yLabelValue) && !isNaN(aFloatValue) && !isNaN(bFloatValue) && !isNaN(aShiftValue)) {
                   // Update the config object in the module
                   if (window.GRAPH_CONFIG) {
                       window.GRAPH_CONFIG.Y_LABEL_FOR_HORIZONTAL_LINE = yLabelValue;
                       window.GRAPH_CONFIG.A_FLOAT_FOR_AFFINE_LINE = aFloatValue;
                       window.GRAPH_CONFIG.B_FLOAT_FOR_AFFINE_LINE = bFloatValue;
+                      window.GRAPH_CONFIG.A_SHIFT_MAGNITUDE = aShiftValue;
 
                       // Update display values
                       document.getElementById('y-label-value').textContent = yLabelValue;
                       document.getElementById('a-float-value').textContent = aFloatValue;
                       document.getElementById('b-float-value').textContent = bFloatValue;
+                      document.getElementById('a-shift-value').textContent = aShiftValue;
 
                       // Trigger reload of graphs
                       document.getElementById('loading').style.display = 'block';

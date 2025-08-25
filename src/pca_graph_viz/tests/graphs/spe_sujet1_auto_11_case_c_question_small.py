@@ -110,29 +110,29 @@ foreign_objects = [
     # Root labels (positioned below dots with better control)
     {
         "x": ROOT1,  # Slightly offset for "-4"
-        "y": -10,
+        "y": -13,
         "latex": str(ROOT1),
-        "width": 20,  # Smaller width for better control
-        "height": 18,
-        "class": "svg-latex fill-base-content text-xs bg-base-100 bg-opacity-60",
+        "width": 28,  # Smaller width for better control
+        "height": 14,
+        "class": "svg-latex fill-base-content text-xs bg-base-100",
         "style": "overflow: visible; text-align: center;background: rgba(255, 255, 255, 0.7);",
     },
     {
         "x": ROOT2,  # Slightly offset for "2"
-        "y": -10,
+        "y": -13,
         "latex": str(ROOT2),
         "width": 20,  # Smaller width for better control
-        "height": 18,
-        "class": "svg-latex fill-base-content text-xs bg-opacity-60",
+        "height": 14,
+        "class": "svg-latex fill-base-content text-xs",
         "style": "overflow: visible; text-align: center;background: rgba(255, 255, 255, 0.7);",
     },
     {
         "x": ROOT3,  # Slightly offset for "5"
-        "y": -10,
+        "y": -13,
         "latex": str(ROOT3),
         "width": 20,  # Smaller width for better control
-        "height": 18,
-        "class": "svg-latex fill-base-content text-xs bg-opacity-60",
+        "height": 14,
+        "class": "svg-latex fill-base-content text-xs",
         "style": "overflow: visible; text-align: center;background: rgba(255, 255, 255, 0.7);",
     },
 ]
