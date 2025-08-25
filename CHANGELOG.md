@@ -3,6 +3,26 @@
 
 # Changelog
 
+## v0.0.10-unstable - 2024-12-19
+
+### Fixed
+- **Critical syntax error in dispatch system**
+  - Fixed typo `0.75s` → `0.75` in `sm1_a_m` configuration
+  - This error was preventing all parabola modules from loading
+  - Modules now load correctly with proper label display
+
+### Confirmed Behavior
+- **Label display working as intended**
+  - `_a_0` files: Always show M(0;0) (static)
+  - `_a_m` files: Show M(0;-value) based on slider (dynamic)
+  - `_a_p` files: Show M(0;+value) based on slider (dynamic)
+  - Curves remain fixed while labels update dynamically
+
+### Technical Details
+- Single character typo fix with major impact
+- Restored functionality for 6 parabola graph modules
+- No other code changes required
+
 ## v0.0.9-unstable - 2024-12-19
 
 ### Adjusted
@@ -23,7 +43,7 @@
 - No functional changes to graph logic or dispatch system
 - All changes are cosmetic parameter updates
 
-## v0.0.8-unstable - 2024-12-19
+## v0.0.8-unstable 
 
 ### Major Refactoring
 - **Simplified parabola graph dispatch system**
