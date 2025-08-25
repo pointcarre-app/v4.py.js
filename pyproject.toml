@@ -8,9 +8,9 @@ version = "0.2.0"
 description = "Mathematical visualizations with LaTeX annotations for Pyodide/browser"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = {text = "AGPL-3.0"}
 authors = [
-    {name = "PCA Nagini Project"},
+    {name = "pointcarre.app", email = "contact[vers:apply('justtranslateittofrenchtogettheemail')]pointcarre.app"},
 ]
 keywords = ["visualization", "mathematics", "education", "pyodide", "svg", "graphs"]
 classifiers = [

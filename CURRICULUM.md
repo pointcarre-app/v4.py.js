@@ -1,8 +1,3 @@
-
-
-
-
-
 # How to read this file
 
 

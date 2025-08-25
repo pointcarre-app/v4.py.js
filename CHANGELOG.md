@@ -3,6 +3,19 @@
 
 # Changelog
 
+## v0.0.12-unstable
+
+### Changed
+- **Updated project metadata** (`pyproject.toml`)
+  - Changed license from MIT to AGPL-3.0
+  - Updated author information to pointcarre.app with contact email
+  - Version bumped to 0.2.0 (from previous 0.1.0)
+
+### Cleaned up
+- **CURRICULUM.md formatting**
+  - Removed unnecessary blank lines at the beginning of the file
+  - Improved document structure and readability
+
 ## v0.0.11-unstable
 
 ### Documentation
