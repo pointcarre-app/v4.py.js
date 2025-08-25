@@ -62,7 +62,7 @@ async function main() {
       "spe_sujet1_auto_10_question_small_parabola_a_s1_a_p",
       "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_0",
       "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m",
-      "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p",
+      "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_p10",
     ];
 
     // First load core modules and dispatch

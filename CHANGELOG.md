@@ -3,6 +3,26 @@
 
 # Changelog
 
+## v0.0.9-unstable - 2024-12-19
+
+### Adjusted
+- **Fine-tuned graph display parameters**
+  - Adjusted axis and label positions in parabola configurations
+  - Improved visual balance for graph layouts
+  - Updated Y-axis ranges for better curve visibility
+  
+### Changed  
+- **Parameter refinements in dispatch system**
+  - Modified `s1_a_p` label positions (x: 4.5, y: 3)
+  - Updated `sm1_a_0` x-label position for consistency
+  - Adjusted `sm1_a_p` Y-axis range (-15 to 12) for complete curve display
+  - Fine-tuned label positions across multiple graph configurations
+
+### Technical Details
+- Minor coordinate adjustments for improved visual presentation
+- No functional changes to graph logic or dispatch system
+- All changes are cosmetic parameter updates
+
 ## v0.0.8-unstable - 2024-12-19
 
 ### Major Refactoring
