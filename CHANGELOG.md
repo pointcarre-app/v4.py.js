@@ -3,7 +3,7 @@
 
 # Changelog
 
-## v0.0.10-unstable - 2024-12-19
+## v0.0.10-unstable 
 
 ### Fixed
 - **Critical syntax error in dispatch system**
@@ -23,7 +23,7 @@
 - Restored functionality for 6 parabola graph modules
 - No other code changes required
 
-## v0.0.9-unstable - 2024-12-19
+## v0.0.9-unstable 
 
 ### Adjusted
 - **Fine-tuned graph display parameters**
