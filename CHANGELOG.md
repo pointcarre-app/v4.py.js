@@ -3,6 +3,63 @@
 
 # Changelog
 
+## v0.0.16-unstable
+
+### 🎨 Dynamic Configuration for Graph Rendering
+
+#### Major Enhancement
+- **`renderGraph()` Method Now Accepts Configuration Parameters**
+  - Added optional second parameter for temporary configuration overrides
+  - Matches the dynamic configuration behavior from `sujets0-app-simple.js`
+  - Configuration changes are applied only for that specific render
+  - Original configuration is automatically restored after rendering
+
+#### API Improvement
+```javascript
+// Before: Had to call updateConfig() separately
+loader.updateConfig({ A_FLOAT_FOR_AFFINE_LINE: 1.5 });
+const svg = await loader.renderGraph('q8_small');
+
+// Now: Pass config directly to renderGraph()
+const svg = await loader.renderGraph('q8_small', {
+  A_FLOAT_FOR_AFFINE_LINE: 1.5,
+  B_FLOAT_FOR_AFFINE_LINE: -2
+});
+```
+
+#### Use Cases
+- **Different Slopes for Same Graph**
+  ```javascript
+  const svg1 = await loader.renderGraph('q8_small');  // Default: a=0.75
+  const svg2 = await loader.renderGraph('q8_small', { A_FLOAT_FOR_AFFINE_LINE: 1.5 });
+  const svg3 = await loader.renderGraph('q8_small', { A_FLOAT_FOR_AFFINE_LINE: -0.5 });
+  ```
+
+- **Variable Parabola Shifts**
+  ```javascript
+  const svg1 = await loader.renderGraph('parabola_s1_ap');  // Default shift: 5
+  const svg2 = await loader.renderGraph('parabola_s1_ap', { A_SHIFT_MAGNITUDE: 3 });
+  const svg3 = await loader.renderGraph('parabola_s1_ap', { A_SHIFT_MAGNITUDE: 10 });
+  ```
+
+#### Technical Details
+- Configuration is temporarily applied before loading/rendering
+- Cache key includes configuration to prevent incorrect cached results
+- Original configuration restored in `finally` block for safety
+- No breaking changes - backward compatible (config parameter is optional)
+
+#### Testing
+- Created `test-config-params.html` to verify functionality
+- Tests confirm configs are temporary and don't persist between renders
+- Visual tests show different slopes and shifts render correctly
+
+#### Documentation
+- Updated `README.md` with new method signature
+- Updated `SIMPLE_USAGE.md` with usage examples
+- Added inline JSDoc comments for better IDE support
+
+---
+
 ## v0.0.15-unstable
 
 ### 🔧 Improved Loading Logic & Testing

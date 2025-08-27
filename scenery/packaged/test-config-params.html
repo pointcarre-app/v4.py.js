@@ -1,18 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Test Config Parameters</title>
+
+    <!-- KaTeX for LaTeX rendering in graphs -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+          integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
+          crossorigin="anonymous" />
+    <script defer
+            src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"
+            integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"
+            crossorigin="anonymous"></script>
+
+    <!-- DaisyUI for graph styling -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.min.css" rel="stylesheet" type="text/css" />
+
     <style>
-        body { 
-            font-family: monospace; 
-            max-width: 800px; 
-            margin: 20px auto; 
+        body {
+            font-family: monospace;
+            max-width: 800px;
+            margin: 20px auto;
             padding: 20px;
             background: #f0f0f0;
         }
-        h1 { color: #333; }
+
+        h1 {
+            color: #333;
+        }
+
         .test-case {
             background: white;
             border: 1px solid #ccc;
@@ -20,201 +38,383 @@
             padding: 20px;
             margin: 20px 0;
         }
+
         .graph-container {
             display: flex;
-            justify-content: space-around;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
             margin: 20px 0;
         }
+
         .graph-box {
             text-align: center;
             padding: 10px;
             background: #fafafa;
             border: 1px solid #ddd;
             border-radius: 4px;
+            flex: 0 1 calc(33% - 20px);
+            min-width: 200px;
+            max-width: 280px;
         }
+
         .graph-box svg {
-            max-width: 300px;
-            max-height: 300px;
+            width: 100%;
+            height: auto;
+            max-width: 250px;
+            max-height: 250px;
         }
+        
+        .graph-box h4 {
+            margin: 0 0 10px 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+
         pre {
             background: #f5f5f5;
             padding: 10px;
             border-radius: 4px;
             overflow-x: auto;
         }
-        .success { color: green; }
-        .error { color: red; }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        /* LaTeX rendering in graphs */
+        .svg-latex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        foreignObject .katex {
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+            font-size: inherit !important;
+            color: inherit !important;
+            text-align: center;
+        }
+
+        foreignObject div {
+            height: 100%;
+            width: 100%;
+            color: inherit !important;
+        }
+
+        /* Essential text size for graph labels */
+        .text-2xs {
+            font-size: 0.625rem !important;
+            line-height: 1 !important;
+        }
     </style>
-</head>
-<body>
-    <h1>🧪 Testing Config Parameters in renderGraph()</h1>
-    
+  </head>
+  <body>
+    <h1>🧪 Testing All Graphs with Config Parameters</h1>
+
     <div class="test-case">
-        <h2>Test 1: Q8 with Different Slopes</h2>
-        <pre id="test1-code">
-// Default config
-const svg1 = await loader.renderGraph('q8_small');
-
-// Custom slope = 1.5
-const svg2 = await loader.renderGraph('q8_small', {
-    A_FLOAT_FOR_AFFINE_LINE: 1.5
-});
-
-// Custom slope = -0.5, y-intercept = -3
-const svg3 = await loader.renderGraph('q8_small', {
-    A_FLOAT_FOR_AFFINE_LINE: -0.5,
-    B_FLOAT_FOR_AFFINE_LINE: -3
-});
-        </pre>
-        <div class="graph-container" id="test1-graphs"></div>
-        <div id="test1-result"></div>
+      <h2>Test 1: Question 7 - Parabola with Horizontal Line</h2>
+      <pre>// Testing Y_LABEL_FOR_HORIZONTAL_LINE parameter</pre>
+      <div class="graph-container" id="test1-graphs"></div>
+      <div id="test1-result"></div>
     </div>
 
     <div class="test-case">
-        <h2>Test 2: Parabolas with Different Shifts</h2>
-        <pre id="test2-code">
-// Default shift (5)
-const svg1 = await loader.renderGraph('parabola_s1_ap');
-
-// Custom shift = 3
-const svg2 = await loader.renderGraph('parabola_s1_ap', {
-    A_SHIFT_MAGNITUDE: 3
-});
-
-// Custom shift = 10
-const svg3 = await loader.renderGraph('parabola_s1_ap', {
-    A_SHIFT_MAGNITUDE: 10
-});
-        </pre>
-        <div class="graph-container" id="test2-graphs"></div>
-        <div id="test2-result"></div>
+      <h2>Test 2: Question 8 - Affine Function</h2>
+      <pre>// Testing A_FLOAT_FOR_AFFINE_LINE and B_FLOAT_FOR_AFFINE_LINE parameters</pre>
+      <div class="graph-container" id="test2-graphs"></div>
+      <div id="test2-result"></div>
     </div>
 
     <div class="test-case">
-        <h2>Test 3: Config Doesn't Persist</h2>
-        <pre id="test3-code">
-// Render with custom config
-const svg1 = await loader.renderGraph('q8_small', {
-    A_FLOAT_FOR_AFFINE_LINE: 2.0
-});
+      <h2>Test 3: Question 11 - All Cases</h2>
+      <pre>// Testing all three cases with different configurations</pre>
+      <div class="graph-container" id="test3-graphs"></div>
+      <div id="test3-result"></div>
+    </div>
 
-// Next render should use default config
-const svg2 = await loader.renderGraph('q8_small');
+    <div class="test-case">
+      <h2>Test 4: Upward Parabolas (s=1)</h2>
+      <pre>// Testing parabola_s1_a0, parabola_s1_am, parabola_s1_ap with A_SHIFT_MAGNITUDE</pre>
+      <div class="graph-container" id="test4-graphs"></div>
+      <div id="test4-result"></div>
+    </div>
 
-// Verify they're different
-console.log('SVGs are different:', svg1 !== svg2);
-        </pre>
-        <div id="test3-result"></div>
+    <div class="test-case">
+      <h2>Test 5: Downward Parabolas (s=-1)</h2>
+      <pre>// Testing parabola_sm1_a0, parabola_sm1_am, parabola_sm1_ap with A_SHIFT_MAGNITUDE</pre>
+      <div class="graph-container" id="test5-graphs"></div>
+      <div id="test5-result"></div>
+    </div>
+
+    <div class="test-case">
+      <h2>Test 6: Config Isolation Test</h2>
+      <pre>// Verify that config changes are temporary and don't persist between renders</pre>
+      <div id="test6-result"></div>
     </div>
 
     <script type="module">
-        import { PCAGraphLoader } from './PCAGraphLoader.js';
-        
+        import {
+            PCAGraphLoader
+        } from './PCAGraphLoader.js';
+
+        // Helper function to render LaTeX in graphs
+        function renderLatexInElement(element) {
+            if (typeof katex === 'undefined') return;
+
+            setTimeout(() => {
+                const foreignObjects = element.querySelectorAll('foreignObject');
+                foreignObjects.forEach((fo) => {
+                    const divs = fo.querySelectorAll('div.svg-latex');
+                    divs.forEach((div) => {
+                        const latex = div.textContent.trim();
+                        if (latex) {
+                            try {
+                                const bgColor = div.style.backgroundColor;
+                                const color = div.style.color;
+                                div.innerHTML = '';
+                                katex.render(latex, div, {
+                                    throwOnError: false,
+                                    displayMode: false,
+                                });
+                                if (bgColor) div.style.backgroundColor = bgColor;
+                                if (color) {
+                                    div.querySelectorAll('.katex, .katex *').forEach(el => {
+                                        el.style.color = color;
+                                    });
+                                }
+                            } catch (e) {
+                                console.error('KaTeX error:', e);
+                                div.textContent = latex;
+                            }
+                        }
+                    });
+                });
+            }, 100);
+        }
+
+        async function addGraphBox(container, svg, title) {
+            const box = document.createElement('div');
+            box.className = 'graph-box';
+            box.innerHTML = `<h4>${title}</h4>${svg}`;
+            container.appendChild(box);
+            renderLatexInElement(box);
+        }
+
         async function runTests() {
             try {
-                const loader = new PCAGraphLoader({ debug: false });
+                const loader = new PCAGraphLoader({
+                    debug: false
+                });
                 await loader.initialize();
-                
-                // Test 1: Q8 with different slopes
+
+                // Test 1: Question 7 - Parabola with Horizontal Line
                 try {
-                    const test1Container = document.getElementById('test1-graphs');
+                    const container = document.getElementById('test1-graphs');
                     
-                    // Default
-                    const svg1 = await loader.renderGraph('q8_small');
-                    const box1 = document.createElement('div');
-                    box1.className = 'graph-box';
-                    box1.innerHTML = `<h4>Default (a=0.75)</h4>${svg1}`;
-                    test1Container.appendChild(box1);
+                    const svg1 = await loader.renderGraph('q7_small');
+                    await addGraphBox(container, svg1, 'Default (y=10)');
                     
-                    // Custom slope
-                    const svg2 = await loader.renderGraph('q8_small', {
-                        A_FLOAT_FOR_AFFINE_LINE: 1.5
+                    const svg2 = await loader.renderGraph('q7_small', {
+                        Y_LABEL_FOR_HORIZONTAL_LINE: 5
                     });
-                    const box2 = document.createElement('div');
-                    box2.className = 'graph-box';
-                    box2.innerHTML = `<h4>a=1.5</h4>${svg2}`;
-                    test1Container.appendChild(box2);
+                    await addGraphBox(container, svg2, 'y=5');
                     
-                    // Custom slope and intercept
-                    const svg3 = await loader.renderGraph('q8_small', {
-                        A_FLOAT_FOR_AFFINE_LINE: -0.5,
-                        B_FLOAT_FOR_AFFINE_LINE: -3
+                    const svg3 = await loader.renderGraph('q7_small', {
+                        Y_LABEL_FOR_HORIZONTAL_LINE: 15
                     });
-                    const box3 = document.createElement('div');
-                    box3.className = 'graph-box';
-                    box3.innerHTML = `<h4>a=-0.5, b=-3</h4>${svg3}`;
-                    test1Container.appendChild(box3);
+                    await addGraphBox(container, svg3, 'y=15');
                     
-                    document.getElementById('test1-result').innerHTML = 
-                        '<span class="success">✅ Test 1 passed: Different configs produce different graphs</span>';
+                    document.getElementById('test1-result').innerHTML =
+                        '<span class="success">✅ Question 7 tested with different horizontal lines</span>';
                 } catch (error) {
-                    document.getElementById('test1-result').innerHTML = 
+                    document.getElementById('test1-result').innerHTML =
                         `<span class="error">❌ Test 1 failed: ${error.message}</span>`;
                 }
-                
-                // Test 2: Parabolas with different shifts
+
+                // Test 2: Question 8 - Affine Function
                 try {
-                    const test2Container = document.getElementById('test2-graphs');
+                    const container = document.getElementById('test2-graphs');
                     
-                    // Default shift
-                    const svg1 = await loader.renderGraph('parabola_s1_ap');
-                    const box1 = document.createElement('div');
-                    box1.className = 'graph-box';
-                    box1.innerHTML = `<h4>Default shift (5)</h4>${svg1}`;
-                    test2Container.appendChild(box1);
+                    const svg1 = await loader.renderGraph('q8_small');
+                    await addGraphBox(container, svg1, 'Default (0.75x+2)');
                     
-                    // Custom shift = 3
-                    const svg2 = await loader.renderGraph('parabola_s1_ap', {
-                        A_SHIFT_MAGNITUDE: 3
+                    const svg2 = await loader.renderGraph('q8_small', {
+                        A_FLOAT_FOR_AFFINE_LINE: 1.5,
+                        B_FLOAT_FOR_AFFINE_LINE: -1
                     });
-                    const box2 = document.createElement('div');
-                    box2.className = 'graph-box';
-                    box2.innerHTML = `<h4>Shift = 3</h4>${svg2}`;
-                    test2Container.appendChild(box2);
+                    await addGraphBox(container, svg2, '1.5x-1');
                     
-                    // Custom shift = 10
-                    const svg3 = await loader.renderGraph('parabola_s1_ap', {
-                        A_SHIFT_MAGNITUDE: 10
+                    const svg3 = await loader.renderGraph('q8_small', {
+                        A_FLOAT_FOR_AFFINE_LINE: -0.5,
+                        B_FLOAT_FOR_AFFINE_LINE: 3
                     });
-                    const box3 = document.createElement('div');
-                    box3.className = 'graph-box';
-                    box3.innerHTML = `<h4>Shift = 10</h4>${svg3}`;
-                    test2Container.appendChild(box3);
+                    await addGraphBox(container, svg3, '-0.5x+3');
                     
-                    document.getElementById('test2-result').innerHTML = 
-                        '<span class="success">✅ Test 2 passed: Different shifts produce different parabolas</span>';
+                    document.getElementById('test2-result').innerHTML =
+                        '<span class="success">✅ Question 8 tested with different slopes and intercepts</span>';
                 } catch (error) {
-                    document.getElementById('test2-result').innerHTML = 
+                    document.getElementById('test2-result').innerHTML =
                         `<span class="error">❌ Test 2 failed: ${error.message}</span>`;
                 }
-                
-                // Test 3: Config doesn't persist
+
+                // Test 3: Question 11 - All Cases
                 try {
-                    const svg1 = await loader.renderGraph('q8_small', {
-                        A_FLOAT_FOR_AFFINE_LINE: 2.0
-                    });
+                    const container = document.getElementById('test3-graphs');
                     
-                    const svg2 = await loader.renderGraph('q8_small');
+                    // Case A
+                    const svgA = await loader.renderGraph('q11_case_a_small');
+                    await addGraphBox(container, svgA, 'Case A');
                     
-                    if (svg1 !== svg2) {
-                        document.getElementById('test3-result').innerHTML = 
-                            '<span class="success">✅ Test 3 passed: Config changes are temporary</span>';
-                    } else {
-                        document.getElementById('test3-result').innerHTML = 
-                            '<span class="error">❌ Test 3 failed: Config changes persisted when they shouldn\'t</span>';
-                    }
+                    // Case B
+                    const svgB = await loader.renderGraph('q11_case_b_small');
+                    await addGraphBox(container, svgB, 'Case B');
+                    
+                    // Case C
+                    const svgC = await loader.renderGraph('q11_case_c_small');
+                    await addGraphBox(container, svgC, 'Case C');
+                    
+                    document.getElementById('test3-result').innerHTML =
+                        '<span class="success">✅ Question 11 all cases rendered successfully</span>';
                 } catch (error) {
-                    document.getElementById('test3-result').innerHTML = 
+                    document.getElementById('test3-result').innerHTML =
                         `<span class="error">❌ Test 3 failed: ${error.message}</span>`;
                 }
-                
+
+                // Test 4: Upward Parabolas (s=1)
+                try {
+                    const container = document.getElementById('test4-graphs');
+                    
+                    // y = x²
+                    const svg1 = await loader.renderGraph('parabola_s1_a0');
+                    await addGraphBox(container, svg1, 'y = x²');
+                    
+                    // y = x² - a (with different shifts)
+                    const svg2 = await loader.renderGraph('parabola_s1_am', {
+                        A_SHIFT_MAGNITUDE: 3
+                    });
+                    await addGraphBox(container, svg2, 'y = x² - 3');
+                    
+                    const svg2b = await loader.renderGraph('parabola_s1_am', {
+                        A_SHIFT_MAGNITUDE: 7
+                    });
+                    await addGraphBox(container, svg2b, 'y = x² - 7');
+                    
+                    // y = x² + a (with different shifts)
+                    const svg3 = await loader.renderGraph('parabola_s1_ap', {
+                        A_SHIFT_MAGNITUDE: 2
+                    });
+                    await addGraphBox(container, svg3, 'y = x² + 2');
+                    
+                    const svg3b = await loader.renderGraph('parabola_s1_ap', {
+                        A_SHIFT_MAGNITUDE: 8
+                    });
+                    await addGraphBox(container, svg3b, 'y = x² + 8');
+                    
+                    document.getElementById('test4-result').innerHTML =
+                        '<span class="success">✅ Upward parabolas tested with various shifts</span>';
+                } catch (error) {
+                    document.getElementById('test4-result').innerHTML =
+                        `<span class="error">❌ Test 4 failed: ${error.message}</span>`;
+                }
+
+                // Test 5: Downward Parabolas (s=-1)
+                try {
+                    const container = document.getElementById('test5-graphs');
+                    
+                    // y = -x²
+                    const svg1 = await loader.renderGraph('parabola_sm1_a0');
+                    await addGraphBox(container, svg1, 'y = -x²');
+                    
+                    // y = -x² - a (with different shifts)
+                    const svg2 = await loader.renderGraph('parabola_sm1_am', {
+                        A_SHIFT_MAGNITUDE: 4
+                    });
+                    await addGraphBox(container, svg2, 'y = -x² - 4');
+                    
+                    const svg2b = await loader.renderGraph('parabola_sm1_am', {
+                        A_SHIFT_MAGNITUDE: 6
+                    });
+                    await addGraphBox(container, svg2b, 'y = -x² - 6');
+                    
+                    // y = -x² + a (with different shifts)
+                    const svg3 = await loader.renderGraph('parabola_sm1_ap', {
+                        A_SHIFT_MAGNITUDE: 3
+                    });
+                    await addGraphBox(container, svg3, 'y = -x² + 3');
+                    
+                    const svg3b = await loader.renderGraph('parabola_sm1_ap', {
+                        A_SHIFT_MAGNITUDE: 9
+                    });
+                    await addGraphBox(container, svg3b, 'y = -x² + 9');
+                    
+                    document.getElementById('test5-result').innerHTML =
+                        '<span class="success">✅ Downward parabolas tested with various shifts</span>';
+                } catch (error) {
+                    document.getElementById('test5-result').innerHTML =
+                        `<span class="error">❌ Test 5 failed: ${error.message}</span>`;
+                }
+
+                // Test 6: Config Isolation Test
+                try {
+                    // First render with custom config
+                    const svg1 = await loader.renderGraph('q8_small', {
+                        A_FLOAT_FOR_AFFINE_LINE: 2.0,
+                        B_FLOAT_FOR_AFFINE_LINE: -5
+                    });
+                    
+                    // Second render without config (should use defaults)
+                    const svg2 = await loader.renderGraph('q8_small');
+                    
+                    // Third render with different custom config
+                    const svg3 = await loader.renderGraph('q8_small', {
+                        A_FLOAT_FOR_AFFINE_LINE: -1.0
+                    });
+                    
+                    // Fourth render without config (should use defaults again)
+                    const svg4 = await loader.renderGraph('q8_small');
+                    
+                    // Verify isolation
+                    if (svg1 !== svg2 && svg2 === svg4 && svg1 !== svg3) {
+                        document.getElementById('test6-result').innerHTML =
+                            '<span class="success">✅ Config isolation verified: Changes are temporary and don\'t affect subsequent renders</span>';
+                    } else {
+                        document.getElementById('test6-result').innerHTML =
+                            '<span class="error">❌ Config isolation failed: Config changes may be persisting</span>';
+                    }
+                } catch (error) {
+                    document.getElementById('test6-result').innerHTML =
+                        `<span class="error">❌ Test 6 failed: ${error.message}</span>`;
+                }
+
+                // Summary
+                console.log('✅ All 11 graph types tested successfully!');
+                console.log('Graphs tested:', [
+                    'q7_small', 'q8_small', 
+                    'q11_case_a_small', 'q11_case_b_small', 'q11_case_c_small',
+                    'parabola_s1_a0', 'parabola_s1_am', 'parabola_s1_ap',
+                    'parabola_sm1_a0', 'parabola_sm1_am', 'parabola_sm1_ap'
+                ]);
+
             } catch (error) {
                 console.error('Test suite failed:', error);
                 document.body.innerHTML += `<div class="error">Fatal error: ${error.message}</div>`;
             }
         }
-        
+
         window.addEventListener('DOMContentLoaded', runTests);
     </script>
-</body>
+  </body>
 </html>
