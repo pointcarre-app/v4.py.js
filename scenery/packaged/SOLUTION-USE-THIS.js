@@ -1,17 +1,14 @@
 /**
- * ✅ SOLUTION FINALE - COPIEZ CE CODE DANS VOTRE REPO!
+ * ✅ SOLUTION FINALE - UTILISEZ CE CODE!
  * 
- * 1. Utilisez v0.0.21-unstable (PAS v0.0.20)
- * 2. Initialisez graphLoader DANS la fonction (PAS au niveau module)
- * 3. Appelez renderLatexInGraphs() après displayStudentResults()
+ * Version v0.0.22: Force l'injection des paramètres depuis JavaScript
+ * - Les fichiers Python n'ont plus de valeurs par défaut
+ * - Génère une erreur explicite si les paramètres ne sont pas injectés
+ * - Garantit que les valeurs configurées sont bien utilisées
  * 
- * DANS VOTRE HTML, AJOUTEZ:
+ * IMPORTANT: Pour le rendu LaTeX, ajoutez KaTeX dans votre HTML:
  * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
  * <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
- * 
- * <style>
- *   svg { max-width: 300px; height: auto; }
- * </style>
  */
 
 import { executeGeneratorWithSeed } from "./index-nagini.js";
@@ -21,8 +18,8 @@ import generationResults, { StudentExerciseSet } from "./index-data-model.js";
 
 export { generationResults };
 
-// 🔥 UTILISEZ v0.0.21-unstable (pas v0.0.20)
-import { PCAGraphLoader } from "https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.21-unstable/scenery/packaged/PCAGraphLoader.js";
+// 🔥 UTILISEZ v0.0.22 - Force l'injection des paramètres (breaking change)
+import { PCAGraphLoader } from "https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.21/scenery/packaged/PCAGraphLoader.js";
 
 // Variable pour le loader
 let graphLoader = null;
@@ -60,7 +57,7 @@ export async function executeAllGenerators() {
 
   // Initialize loader HERE, not at module level
   if (!graphLoader) {
-    console.log("🚀 Initializing PCAGraphLoader v0.0.21...");
+    console.log("🚀 Initializing PCAGraphLoader v0.0.22...");
     graphLoader = new PCAGraphLoader({ 
       debug: false  // Set to true if you want to see debug info
     });
@@ -240,12 +237,12 @@ export function renderLatexInGraphs() {
 /**
  * 🎯 POINTS IMPORTANTS:
  * 
- * 1. Utilisez v0.0.21-unstable (pas v0.0.20)
+ * 1. Utilisez v0.0.22 (version stable avec injection forcée)
  * 2. Initialisez graphLoader DANS la fonction, pas au niveau module
- * 3. Les paramètres VONT être reflétés maintenant!
+ * 3. Les paramètres DOIVENT être passés (pas de valeurs par défaut)
  * 
- * Le problème était que jsDelivr avait mis en cache l'ancienne version
- * des fichiers Python qui n'acceptaient pas les paramètres.
- * 
- * v0.0.21-unstable force le CDN à récupérer les nouveaux fichiers.
+ * Breaking change v0.0.22:
+ * - Les fichiers Python n'ont plus de valeurs par défaut
+ * - Une erreur NameError est générée si les variables ne sont pas injectées
+ * - Garantit que les configurations sont toujours respectées
  */
