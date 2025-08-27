@@ -468,17 +468,20 @@
                 status.textContent = `Rendering graph: ${currentGraph}...`;
                 status.className = 'status';
 
-                const svg = await window.loader.renderGraph(currentGraph);
+                const result = await window.loader.renderGraph(currentGraph);
 
                 status.textContent = `✅ Graph rendered: ${currentGraph}`;
                 status.className = 'status success';
+                
+                // Log graph dict info
+                console.log(`Graph dict for ${currentGraph}:`, result.graphDict);
 
                 // Display the graph in the container with proper frame structure (matches sujets0-simple.html)
                 const graphDisplay = document.getElementById('graph-display');
 
                 // Create a wrapper div for the SVG
                 const svgDiv = document.createElement('div');
-                svgDiv.innerHTML = svg;
+                svgDiv.innerHTML = result.svg;
 
                 // Create the frame div that matches sujets0-simple.html structure
                 const frameDiv = document.createElement('div');

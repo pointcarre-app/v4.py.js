@@ -205,11 +205,17 @@
             }, 100);
         }
 
-        async function addGraphBox(container, svg, title) {
+        async function addGraphBox(container, result, title) {
             const box = document.createElement('div');
             box.className = 'graph-box';
+            // result is now {svg, graphDict}
+            const svg = typeof result === 'string' ? result : result.svg;
             box.innerHTML = `<h4>${title}</h4>${svg}`;
             container.appendChild(box);
+            // Store graph dict if available
+            if (result.graphDict) {
+                box.dataset.graphDict = JSON.stringify(result.graphDict);
+            }
             renderLatexInElement(box);
         }
 

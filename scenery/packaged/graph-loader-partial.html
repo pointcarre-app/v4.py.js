@@ -208,16 +208,19 @@
                 window._pcaLoader.updateConfig(config);
             }
 
-            // Render the graph
-            const svg = await window._pcaLoader.renderGraph(graphKey);
+            // Render the graph (returns {svg, graphDict})
+            const result = await window._pcaLoader.renderGraph(graphKey);
 
             // Create proper frame structure
             const frameDiv = document.createElement('div');
             frameDiv.className = 'pca-graph-frame';
-            frameDiv.innerHTML = svg;
+            frameDiv.innerHTML = result.svg;
 
             container.innerHTML = '';
             container.appendChild(frameDiv);
+            
+            // Store graph dictionary as data attribute for access if needed
+            container.dataset.graphDict = JSON.stringify(result.graphDict);
 
             // Render LaTeX if KaTeX is available
             if (typeof katex !== 'undefined') {

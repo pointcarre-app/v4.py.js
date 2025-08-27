@@ -378,11 +378,12 @@ ${isV4PyJsLocal ?
 
             try {
                 log(`Rendering ${selectedGraph}...`, 'info');
-                const svg = await window.testLoader.renderGraph(selectedGraph);
-                log(`SVG generated! Length: ${svg.length} characters`, 'success');
+                const result = await window.testLoader.renderGraph(selectedGraph);
+                log(`SVG generated! Length: ${result.svg.length} characters`, 'success');
+                log(`Graph dict keys: ${Object.keys(result.graphDict).join(', ')}`, 'info');
 
                 // Display the SVG
-                graphDisplay.innerHTML = svg;
+                graphDisplay.innerHTML = result.svg;
                 log('Graph displayed in the viewport!', 'success');
 
                 // Render LaTeX if KaTeX is available

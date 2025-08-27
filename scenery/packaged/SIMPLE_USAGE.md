@@ -48,8 +48,11 @@ Copy this into your HTML file:
         // Use it
         const loader = new PCAGraphLoader();
         await loader.initialize();
-        const svg = await loader.renderGraph('q7_small');
-        document.getElementById('my-graph').innerHTML = svg;
+        const result = await loader.renderGraph('q7_small');
+        document.getElementById('my-graph').innerHTML = result.svg;
+        
+        // Access graph metadata
+        console.log('Graph dict:', result.graphDict);
     </script>
 </body>
 </html>
@@ -104,16 +107,21 @@ const loader = new PCAGraphLoader();
 await loader.initialize();
 
 // Pass config directly to renderGraph (temporary override)
-const svg = await loader.renderGraph('q8_small', {
+const result = await loader.renderGraph('q8_small', {
     A_FLOAT_FOR_AFFINE_LINE: 1.5,
     B_FLOAT_FOR_AFFINE_LINE: -2
 });
+document.getElementById('graph').innerHTML = result.svg;
+console.log('Graph metadata:', result.graphDict);
 
 // Or update config permanently
 loader.updateConfig({
     A_SHIFT_MAGNITUDE: 8
 });
-const svg2 = await loader.renderGraph('parabola_s1_ap');
+const result2 = await loader.renderGraph('parabola_s1_ap');
+
+// For backward compatibility, use renderGraphSvg for SVG only
+const svgOnly = await loader.renderGraphSvg('q7_small');
 ```
 
 ## Files You Need

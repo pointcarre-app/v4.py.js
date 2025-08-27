@@ -3,6 +3,67 @@
 
 # Changelog
 
+## v0.0.17-unstable
+
+### 🔄 Breaking Change: renderGraph() Now Returns Graph Dictionary
+
+#### Major API Enhancement
+- **`renderGraph()` now returns both SVG and graph dictionary**
+  - Changed return type from `string` to `{svg: string, graphDict: Object}`
+  - Provides access to complete graph metadata alongside the rendered SVG
+  - Graph dictionary includes all parameters, settings, lines, foreign objects, etc.
+
+#### New Return Format
+```javascript
+// Before (v0.0.16 and earlier):
+const svg = await loader.renderGraph('q8_small');
+
+// Now (v0.0.17+):
+const result = await loader.renderGraph('q8_small');
+const svg = result.svg;           // SVG string
+const dict = result.graphDict;    // Complete graph dictionary
+```
+
+#### Graph Dictionary Contents
+The `graphDict` object contains:
+- `id`: Graph identifier
+- `title`: Graph title 
+- `description`: Graph description
+- `svg`: SVG configuration (width, height, viewBox, class)
+- `settings`: Graph settings (margins, ranges, axes, grid)
+- `lines`: Array of line definitions
+- `foreign_objects`: Array of LaTeX labels and annotations
+- All other graph-specific data from Python `get_graph_dict()`
+
+#### Backward Compatibility
+- Added `renderGraphSvg()` method for backward compatibility
+  - Returns only the SVG string (like old `renderGraph()`)
+  - Use when you don't need the graph dictionary
+
+```javascript
+// For backward compatibility
+const svg = await loader.renderGraphSvg('q8_small');
+```
+
+#### Files Updated
+- **PCAGraphLoader.js**: Core changes to return format
+- **graph-loader-partial.html**: Updated helper function, stores dict as data attribute
+- **test-config-params.html**: Updated to handle new format
+- **test-loading-logic.html**: Logs graph dict information
+- **test.html**: Logs graph dict to console
+- **README.md**: Updated API documentation
+- **SIMPLE_USAGE.md**: Updated usage examples
+- **test-graph-dict.html**: New test page for verifying functionality
+
+#### Benefits
+- Access to complete graph metadata without separate API call
+- Useful for debugging and introspection
+- Can extract configuration for reuse or modification
+- Enables advanced use cases like graph serialization
+- Consistent with Python `get_graph_dict()` pattern
+
+---
+
 ## v0.0.16-unstable
 
 ### 🎨 Dynamic Configuration for Graph Rendering

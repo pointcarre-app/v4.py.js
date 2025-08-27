@@ -411,9 +411,10 @@ except Exception as e:
   }
 
   /**
-   * Render a graph to SVG
+   * Render a graph to SVG and return both SVG and graph dictionary
    * @param {string} graphKey - The graph key to render
    * @param {Object} config - Optional configuration overrides for this render only
+   * @returns {Promise<{svg: string, graphDict: Object}>} Object containing SVG string and graph dictionary
    */
   async renderGraph(graphKey, config = null) {
     // If config is provided, temporarily update the configuration
@@ -462,7 +463,11 @@ except Exception as e:
           throw new Error(data.error);
         }
         
-        return data.svg;
+        // Return both SVG and graph dictionary
+        return {
+          svg: data.svg,
+          graphDict: graphDict
+        };
       }
       
       throw new Error("No SVG output");
@@ -481,6 +486,17 @@ except Exception as e:
         }
       }
     }
+  }
+  
+  /**
+   * Render a graph to SVG only (backward compatibility helper)
+   * @param {string} graphKey - The graph key to render
+   * @param {Object} config - Optional configuration overrides for this render only
+   * @returns {Promise<string>} SVG string only
+   */
+  async renderGraphSvg(graphKey, config = null) {
+    const result = await this.renderGraph(graphKey, config);
+    return result.svg;
   }
 
   /**

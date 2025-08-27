@@ -102,24 +102,43 @@ Returns: `Promise<Object>` - The graph dictionary/configuration
 
 #### `renderGraph(graphKey, config)`
 
-Load and render a graph to SVG.
+Load and render a graph, returning both SVG and graph dictionary.
 
 ```javascript
 // Basic usage
-const svg = await loader.renderGraph('q8_small');
+const result = await loader.renderGraph('q8_small');
+console.log(result.svg);        // SVG string
+console.log(result.graphDict);  // Graph dictionary with all parameters
 
 // With custom config for this render only
-const svg2 = await loader.renderGraph('q8_small', {
+const result2 = await loader.renderGraph('q8_small', {
   A_FLOAT_FOR_AFFINE_LINE: 1.5,
   B_FLOAT_FOR_AFFINE_LINE: -2
 });
+
+// Use the SVG
+document.getElementById('graph').innerHTML = result.svg;
+
+// Access graph metadata
+console.log('Graph title:', result.graphDict.title);
+console.log('Graph settings:', result.graphDict.settings);
 ```
 
 Parameters:
 - `graphKey` (string): The graph identifier
 - `config` (object, optional): Configuration overrides for this render only
 
-Returns: `Promise<string>` - The SVG output as a string
+Returns: `Promise<{svg: string, graphDict: Object}>` - Object containing:
+  - `svg`: The SVG output as a string
+  - `graphDict`: The complete graph dictionary with all parameters, settings, and metadata
+
+#### `renderGraphSvg(graphKey, config)` 
+
+Backward compatibility method that returns only the SVG string.
+
+```javascript
+const svg = await loader.renderGraphSvg('q8_small');
+```
 
 #### `updateConfig(config)`
 
