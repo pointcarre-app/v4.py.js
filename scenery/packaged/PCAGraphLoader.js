@@ -1,5 +1,10 @@
 /**
- * PCAGraphLoader - A modular, reusable graph loading system for PCA visualizations
+ * PCAGraphLoader v1.1.0 - A modular, reusable graph loading system for PCA visualizations
+ * 
+ * Changes in v1.1.0:
+ * - Fixed parameter injection into Python modules (injects into module namespace)
+ * - Default to v0.0.23 of pca-v4.py.js for globals() fix
+ * - Properly passes config parameters to Python graph functions
  * 
  * Usage:
  * ```javascript
@@ -14,7 +19,14 @@
  * });
  * 
  * await loader.initialize();
- * const svg = await loader.renderGraph('q8_small');
+ * 
+ * // Render with default config
+ * const result1 = await loader.renderGraph('q7_small');
+ * 
+ * // Render with overridden config for this render only
+ * const result2 = await loader.renderGraph('q7_small', {
+ *   Y_LABEL_FOR_HORIZONTAL_LINE: 15
+ * });
  * ```
  */
 
@@ -23,7 +35,7 @@ export class PCAGraphLoader {
     // Configuration options
     this.options = {
       naginiVersion: options.naginiVersion || '0.0.21',
-      pcaVersion: options.pcaVersion || 'v0.0.15-unstable',
+      pcaVersion: options.pcaVersion || 'v0.0.23', // Updated to use v0.0.23 with globals() fix
       baseUrl: options.baseUrl || 'auto',
       graphConfig: options.graphConfig || {},
       debug: options.debug !== undefined ? options.debug : true,
@@ -327,8 +339,19 @@ try:
     if full_module_name in sys.modules:
         del sys.modules[full_module_name]
     
-    # Import the module normally - no global tricks
+    # Import the module
     module = importlib.import_module(full_module_name)
+    
+    # CRITICAL: Inject configuration variables into module's global namespace
+    # This is what the Python files expect when checking globals()
+    if 'Y_LABEL_FOR_HORIZONTAL_LINE' in globals():
+        setattr(module, 'Y_LABEL_FOR_HORIZONTAL_LINE', globals()['Y_LABEL_FOR_HORIZONTAL_LINE'])
+    if 'A_FLOAT_FOR_AFFINE_LINE' in globals():
+        setattr(module, 'A_FLOAT_FOR_AFFINE_LINE', globals()['A_FLOAT_FOR_AFFINE_LINE'])
+    if 'B_FLOAT_FOR_AFFINE_LINE' in globals():
+        setattr(module, 'B_FLOAT_FOR_AFFINE_LINE', globals()['B_FLOAT_FOR_AFFINE_LINE'])
+    if 'A_SHIFT_MAGNITUDE' in globals():
+        setattr(module, 'A_SHIFT_MAGNITUDE', globals()['A_SHIFT_MAGNITUDE'])
     
     # Check if get_graph_dict accepts parameters
     if hasattr(module, 'get_graph_dict'):
@@ -352,7 +375,7 @@ try:
         if kwargs:
             print(f"Calling get_graph_dict with parameters: {kwargs}")
         else:
-            print(f"Calling get_graph_dict without parameters (using module defaults)")
+            print(f"Calling get_graph_dict without parameters")
         
         # Call with kwargs if any were matched, otherwise call without
         if kwargs:
@@ -428,15 +451,17 @@ except Exception as e:
   /**
    * Render a graph to SVG and return both SVG and graph dictionary
    * @param {string} graphKey - The graph key to render
-   * @param {Object} config - Optional configuration overrides for this render only
+   * @param {Object} config - Configuration parameters to inject into Python namespace
+   *                         (e.g., Y_LABEL_FOR_HORIZONTAL_LINE, A_FLOAT_FOR_AFFINE_LINE, etc.)
+   *                         These override the default graphConfig for this render only
    * @returns {Promise<{svg: string, graphDict: Object}>} Object containing SVG string and graph dictionary
    */
   async renderGraph(graphKey, config = null) {
     try {
-      // Load graph with config (if provided)
+      // Load graph with config (parameters will be injected into Python namespace)
       const graphDict = await this.loadGraph(graphKey, config);
       
-      // No namespace needed for rendering since config is already in graphDict
+      // Render the graph dictionary to SVG
       const result = await this.manager.executeAsync(`render_${graphKey}.py`, `
 import json
 from pca_graph_viz import graph_from_dict
