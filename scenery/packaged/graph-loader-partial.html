@@ -17,27 +17,6 @@
 <!-- Minimal CSS for PCA Graphs Only -->
 <style>
     /* Scoped styles for PCA graphs - minimal to avoid conflicts */
-    /* Container and frame styles are optional - uncomment if needed */
-    /*
-    .pca-graph-container {
-        padding: 20px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin: 20px 0;
-    }
-    
-    .pca-graph-frame {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 8px;
-        background: white;
-    }
-    */
-
     .pca-graph-container svg {
         width: auto;
         height: auto;
@@ -178,7 +157,7 @@
     // Import PCAGraphLoader from CDN
     import {
         PCAGraphLoader
-    } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable/scenery/packaged/PCAGraphLoader.js';
+    } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.18-unstable/scenery/packaged/PCAGraphLoader.js';
 
     // Make PCAGraphLoader available globally for use in your application
     window.PCAGraphLoader = PCAGraphLoader;
@@ -218,7 +197,7 @@
 
             container.innerHTML = '';
             container.appendChild(frameDiv);
-            
+
             // Store graph dictionary as data attribute for access if needed
             container.dataset.graphDict = JSON.stringify(result.graphDict);
 

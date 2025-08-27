@@ -36,7 +36,8 @@ export class PCAGraphLoader {
     // Initialize properties
     this.manager = null;
     this.initialized = false;
-    this.loadedGraphs = new Map();
+    this.loadedFiles = new Set(); // Track loaded files to avoid reloading
+    this.executionCounter = 0; // For unique namespace generation
     
     // Graph configuration with defaults
     this.graphConfig = {
@@ -120,6 +121,20 @@ export class PCAGraphLoader {
   }
 
   /**
+   * Generate a unique namespace object for isolated execution
+   */
+  _generateNamespace(configValues = null) {
+    // Use provided config or fall back to instance config
+    const config = configValues || this.graphConfig;
+    return {
+      Y_LABEL_FOR_HORIZONTAL_LINE: config.Y_LABEL_FOR_HORIZONTAL_LINE,
+      A_FLOAT_FOR_AFFINE_LINE: config.A_FLOAT_FOR_AFFINE_LINE,
+      B_FLOAT_FOR_AFFINE_LINE: config.B_FLOAT_FOR_AFFINE_LINE,
+      A_SHIFT_MAGNITUDE: config.A_SHIFT_MAGNITUDE
+    };
+  }
+
+  /**
    * Initialize the Nagini manager and load essential files
    */
   async initialize() {
@@ -154,7 +169,7 @@ export class PCAGraphLoader {
       await Nagini.waitForReady(this.manager);
       if (this.options.debug) console.log("✅ Nagini ready with essential files!");
       
-      // Initialize package structure
+      // Initialize package structure once (no namespace needed)
       await this.manager.executeAsync("init_packages.py", `
 import sys
 import types
@@ -175,12 +190,6 @@ for pkg in packages:
 # Add graphs directory to path for relative imports
 sys.path.insert(0, '/home/pyodide/pca_graph_viz/tests/graphs')
 
-# Also add to Python's import path for relative imports
-import os
-if os.path.exists('/home/pyodide/pca_graph_viz/tests/graphs'):
-    if '/home/pyodide/pca_graph_viz/tests/graphs' not in sys.path:
-        sys.path.insert(0, '/home/pyodide/pca_graph_viz/tests/graphs')
-        
 print("✅ Package structure initialized")
       `);
       
@@ -201,18 +210,24 @@ print("✅ Package structure initialized")
       ...config
     };
     
-    // Clear loaded graphs to force reload with new config
-    this.loadedGraphs.clear();
-    
     if (this.options.debug) {
       console.log("📊 Updated configuration:", this.graphConfig);
     }
   }
 
   /**
-   * Load a specific graph file
+   * Load a specific graph file (without configuration injection)
    */
   async _loadGraphFile(graphKey, filepath) {
+    const filename = filepath.split('/').pop();
+    const moduleName = filename.replace('.py', '');
+    
+    // Check if already loaded
+    if (this.loadedFiles.has(filepath)) {
+      if (this.options.debug) console.log(`✨ File already loaded: ${filepath}`);
+      return moduleName;
+    }
+    
     try {
       const url = `${this.baseUrl}/${filepath}`;
       if (this.options.debug) console.log(`📥 Loading ${graphKey} from ${url}`);
@@ -223,17 +238,11 @@ print("✅ Package structure initialized")
       }
       
       const code = await response.text();
-      const filename = filepath.split('/').pop();
-      const moduleName = filename.replace('.py', '');
       
       // Convert to base64 to avoid escaping issues
       const codeBase64 = btoa(unescape(encodeURIComponent(code)));
       
-      // Get current configuration values
-      const { Y_LABEL_FOR_HORIZONTAL_LINE, A_FLOAT_FOR_AFFINE_LINE, 
-              B_FLOAT_FOR_AFFINE_LINE, A_SHIFT_MAGNITUDE } = this.graphConfig;
-      
-      // Write the file using Python directly
+      // Write the file cleanly without any configuration injection (no namespace needed)
       const result = await this.manager.executeAsync(`write_${graphKey}.py`, `
 import os
 import base64
@@ -254,50 +263,20 @@ with open(filepath, 'w') as f:
 
 print(f"✅ Written {len(code)} bytes to {filepath}")
 
-# Make it importable by adding to sys.modules
+# Simply register the module name mapping for import
 module_name = '${moduleName}'
 full_module_name = f'pca_graph_viz.tests.graphs.{module_name}'
 
-# Create module object
-module = types.ModuleType(full_module_name)
-module.__file__ = filepath
-module.__name__ = full_module_name
-module.__package__ = 'pca_graph_viz.tests.graphs'
-
-# Add the module's directory to its namespace for relative imports
-module.__dict__['__file__'] = filepath
-module.__dict__['__name__'] = full_module_name
-module.__dict__['__package__'] = 'pca_graph_viz.tests.graphs'
-
-# Inject configuration variables into the module's namespace
-module.__dict__['Y_LABEL_FOR_HORIZONTAL_LINE'] = ${Y_LABEL_FOR_HORIZONTAL_LINE}
-module.__dict__['A_FLOAT_FOR_AFFINE_LINE'] = ${A_FLOAT_FOR_AFFINE_LINE}
-module.__dict__['B_FLOAT_FOR_AFFINE_LINE'] = ${B_FLOAT_FOR_AFFINE_LINE}
-module.__dict__['A_SHIFT_MAGNITUDE'] = ${A_SHIFT_MAGNITUDE}
-
-# Try to execute the code in the module's namespace
-try:
-    exec(code, module.__dict__)
-    # After exec, re-inject config variables to ensure they override any defaults
-    module.__dict__['Y_LABEL_FOR_HORIZONTAL_LINE'] = ${Y_LABEL_FOR_HORIZONTAL_LINE}
-    module.__dict__['A_FLOAT_FOR_AFFINE_LINE'] = ${A_FLOAT_FOR_AFFINE_LINE}
-    module.__dict__['B_FLOAT_FOR_AFFINE_LINE'] = ${B_FLOAT_FOR_AFFINE_LINE}
-    module.__dict__['A_SHIFT_MAGNITUDE'] = ${A_SHIFT_MAGNITUDE}
-    
-    # Register in sys.modules
-    sys.modules[full_module_name] = module
-    sys.modules[module_name] = module
-    print(f"✅ Registered module: {full_module_name}")
-except Exception as e:
-    print(f"⚠️ Warning: Failed to execute module {module_name}: {e}")
-    # Still register the module even if exec failed
-    sys.modules[full_module_name] = module
-    sys.modules[module_name] = module
+# Let Python handle the actual import when needed
+print(f"✅ File ready for import: {full_module_name}")
       `);
       
       if (result.error) {
         throw new Error(result.error.message || "Failed to write file");
       }
+      
+      // Mark as loaded
+      this.loadedFiles.add(filepath);
       
       if (this.options.debug) console.log(`✅ Loaded ${graphKey} -> ${filename}`);
       return moduleName;
@@ -308,40 +287,86 @@ except Exception as e:
   }
 
   /**
-   * Get graph dictionary from a loaded module
+   * Get graph dictionary from a loaded module with configuration passed via namespace
    */
-  async _getGraphDict(moduleName) {
+  async _getGraphDict(moduleName, config = {}) {
     try {
-      if (this.options.debug) console.log(`🔍 Getting graph from ${moduleName}`);
+      if (this.options.debug) {
+        console.log(`🔍 Getting graph from ${moduleName}`);
+        console.log('   Input config:', config);
+        console.log('   Default graphConfig:', this.graphConfig);
+      }
+      
+      // Merge default config with provided config
+      const fullConfig = { ...this.graphConfig, ...config };
+      
+      if (this.options.debug) {
+        console.log('   Merged fullConfig:', fullConfig);
+      }
+      
+      // Create namespace object with configuration values - use fullConfig!
+      const namespace = this._generateNamespace(fullConfig);
+      
+      if (this.options.debug) {
+        console.log('   Namespace to inject:', namespace);
+      }
       
       const result = await this.manager.executeAsync(`get_${moduleName}.py`, `
 import json
 import traceback
 import sys
+import importlib
+import inspect
 
 try:
-    # The module should already be in sys.modules from loadGraphFile
+    # Import the module cleanly
     module_name = '${moduleName}'
     full_module_name = f'pca_graph_viz.tests.graphs.{module_name}'
     
+    # Force reload to ensure clean state
     if full_module_name in sys.modules:
-        module = sys.modules[full_module_name]
-        print(f"Found module {full_module_name} in sys.modules")
-    else:
-        # Try to import it if not already loaded
-        from importlib import import_module
-        module = import_module(full_module_name)
-        print(f"Imported module {full_module_name}")
+        del sys.modules[full_module_name]
     
-    # Get graph dict
+    # Import the module normally - no global tricks
+    module = importlib.import_module(full_module_name)
+    
+    # Check if get_graph_dict accepts parameters
     if hasattr(module, 'get_graph_dict'):
-        graph_dict = module.get_graph_dict()
+        sig = inspect.signature(module.get_graph_dict)
+        params = list(sig.parameters.keys())
+        
+        # Build kwargs based on what the function accepts
+        kwargs = {}
+        param_mapping = {
+            'y_horizontal': 'Y_LABEL_FOR_HORIZONTAL_LINE',
+            'a_affine': 'A_FLOAT_FOR_AFFINE_LINE', 
+            'b_affine': 'B_FLOAT_FOR_AFFINE_LINE',
+            'a_shift': 'A_SHIFT_MAGNITUDE'
+        }
+        
+        for param, global_name in param_mapping.items():
+            if param in params and global_name in globals():
+                kwargs[param] = globals()[global_name]
+        
+        # Debug logging
+        if kwargs:
+            print(f"Calling get_graph_dict with parameters: {kwargs}")
+        else:
+            print(f"Calling get_graph_dict without parameters (using module defaults)")
+        
+        # Call with kwargs if any were matched, otherwise call without
+        if kwargs:
+            graph_dict = module.get_graph_dict(**kwargs)
+        else:
+            graph_dict = module.get_graph_dict()
+            
         missive({"graph": graph_dict, "title": graph_dict.get('title', '${moduleName}')})
     else:
         raise RuntimeError(f'get_graph_dict not found in {full_module_name}')
+        
 except Exception as e:
     missive({"error": str(e), "traceback": traceback.format_exc()})
-      `);
+      `, namespace);
       
       if (result.missive) {
         const data = typeof result.missive === "string" 
@@ -365,7 +390,7 @@ except Exception as e:
   /**
    * Load a specific graph by key
    */
-  async loadGraph(graphKey) {
+  async loadGraph(graphKey, config = null) {
     if (!this.initialized) {
       throw new Error("PCAGraphLoader not initialized. Call initialize() first.");
     }
@@ -374,19 +399,12 @@ except Exception as e:
       throw new Error(`Unknown graph key: ${graphKey}. Available: ${Object.keys(this.availableGraphs).join(', ')}`);
     }
 
-    // Check if already loaded with current config
-    const cacheKey = `${graphKey}_${JSON.stringify(this.graphConfig)}`;
-    if (this.loadedGraphs.has(cacheKey)) {
-      if (this.options.debug) console.log(`✨ Using cached graph: ${graphKey}`);
-      return this.loadedGraphs.get(cacheKey);
-    }
-
     try {
       // Determine if we need dispatch module (for parabola graphs)
       const needsDispatch = graphKey.startsWith("parabola");
       
       if (needsDispatch) {
-        // Load dispatch module first
+        // Load dispatch module first if not already loaded
         await this._loadGraphFile("dispatch", 
           "src/pca_graph_viz/tests/graphs/spe_sujet1_auto_10_question_small_dispatch.py");
       }
@@ -396,11 +414,8 @@ except Exception as e:
       const filepath = `src/pca_graph_viz/tests/graphs/${moduleName}.py`;
       await this._loadGraphFile(graphKey, filepath);
       
-      // Get the graph dictionary
-      const graphDict = await this._getGraphDict(moduleName);
-      
-      // Cache the result
-      this.loadedGraphs.set(cacheKey, graphDict);
+      // Get the graph dictionary with configuration
+      const graphDict = await this._getGraphDict(moduleName, config);
       
       if (this.options.debug) console.log(`✅ Loaded graph: ${graphKey}`);
       return graphDict;
@@ -417,23 +432,11 @@ except Exception as e:
    * @returns {Promise<{svg: string, graphDict: Object}>} Object containing SVG string and graph dictionary
    */
   async renderGraph(graphKey, config = null) {
-    // If config is provided, temporarily update the configuration
-    let originalConfig = null;
-    if (config && Object.keys(config).length > 0) {
-      // Save original config
-      originalConfig = { ...this.graphConfig };
-      
-      // Apply temporary config
-      this.updateConfig(config);
-      
-      if (this.options.debug) {
-        console.log(`📊 Rendering ${graphKey} with custom config:`, config);
-      }
-    }
-    
     try {
-      const graphDict = await this.loadGraph(graphKey);
+      // Load graph with config (if provided)
+      const graphDict = await this.loadGraph(graphKey, config);
       
+      // No namespace needed for rendering since config is already in graphDict
       const result = await this.manager.executeAsync(`render_${graphKey}.py`, `
 import json
 from pca_graph_viz import graph_from_dict
@@ -474,17 +477,6 @@ except Exception as e:
     } catch (error) {
       console.error(`❌ Render error for ${graphKey}:`, error);
       throw error;
-    } finally {
-      // Restore original config if it was temporarily changed
-      if (originalConfig) {
-        this.graphConfig = originalConfig;
-        // Clear cache since config changed back
-        this.loadedGraphs.clear();
-        
-        if (this.options.debug) {
-          console.log(`📊 Restored original config after rendering ${graphKey}`);
-        }
-      }
     }
   }
   

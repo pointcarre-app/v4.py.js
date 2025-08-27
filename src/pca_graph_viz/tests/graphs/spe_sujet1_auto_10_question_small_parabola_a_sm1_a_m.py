@@ -10,31 +10,31 @@ The value can be changed using the control panel in sujets0-simple.html.
 
 from .spe_sujet1_auto_10_question_small_dispatch import generate_parabola_graph
 
-# Try to get the value from the namespace injected by Nagini/Pyodide
-# If not found (e.g., when running locally without Nagini), use default value
-try:
-    # When executed via Nagini, this value is injected into globals()
-    A_SHIFT_MAGNITUDE = globals()["A_SHIFT_MAGNITUDE"]
-    print(f"✅ Using injected A_SHIFT_MAGNITUDE = {A_SHIFT_MAGNITUDE} for sm1_a_m label")
-except KeyError:
-    # Default value when not running via Nagini or value not injected
-    A_SHIFT_MAGNITUDE = 5
-    print(f"⚠️ Using default A_SHIFT_MAGNITUDE = {A_SHIFT_MAGNITUDE} for sm1_a_m label")
+# Default configuration value
+# This can be overridden by passing a parameter to get_graph_dict()
+A_SHIFT_MAGNITUDE = 5
 
 # Configuration for this specific parabola
 PARABOLA_SIGN = -1  # -1 for y = -x^2 + a
 A_SHIFT_FOR_CASE = -5  # Fixed value for matching graph case
-A_SHIFT_FOR_LABEL = -A_SHIFT_MAGNITUDE  # Dynamic value for label display
 A_ADJUST = 0  # Fine-tuning adjustment for curve position (not shown in labels)
 
 
-def get_graph_dict():
-    """Return the graph dictionary for this configuration."""
+def get_graph_dict(a_shift=None):
+    """Return the graph dictionary for this configuration.
+
+    Args:
+        a_shift: Shift magnitude for the label (optional, defaults to module value)
+    """
+    # Use parameter if provided, otherwise use module-level value
+    shift_magnitude = a_shift if a_shift is not None else A_SHIFT_MAGNITUDE
+    a_shift_for_label = -shift_magnitude  # Negative for this case
+
     return generate_parabola_graph(
         "sm1_a_m",  # Graph ID
         PARABOLA_SIGN,
         A_SHIFT_FOR_CASE,
         "spe_sujet1_auto_10_question_small_parabola_a_sm1_a_m.py",
-        A_SHIFT_FOR_LABEL,
+        a_shift_for_label,
         A_ADJUST,
     )

@@ -78,6 +78,10 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
+        .config-title {
+            margin-bottom: 1rem;
+        }
+
         .controls {
             display: flex;
             gap: 1rem;
@@ -400,7 +404,7 @@
       </header>
 
       <div class="control-panel">
-        <h3 style="margin-bottom: 1rem;">Configuration Parameters</h3>
+        <h3 class="config-title">Configuration Parameters</h3>
         <div class="controls">
           <div class="control-group">
             <label for="y-horizontal">Y Horizontal Line</label>
@@ -486,10 +490,19 @@
 
         // Get current config from inputs
         function getConfig() {
+            // Handle both comma and dot as decimal separator
+            const parseFloatFlexible = (value) => {
+                if (typeof value === 'string') {
+                    // Replace comma with dot for European format
+                    value = value.replace(',', '.');
+                }
+                return parseFloat(value);
+            };
+
             return {
-                Y_LABEL_FOR_HORIZONTAL_LINE: parseFloat(document.getElementById('y-horizontal').value),
-                A_FLOAT_FOR_AFFINE_LINE: parseFloat(document.getElementById('a-affine').value),
-                B_FLOAT_FOR_AFFINE_LINE: parseFloat(document.getElementById('b-affine').value),
+                Y_LABEL_FOR_HORIZONTAL_LINE: parseFloatFlexible(document.getElementById('y-horizontal').value),
+                A_FLOAT_FOR_AFFINE_LINE: parseFloatFlexible(document.getElementById('a-affine').value),
+                B_FLOAT_FOR_AFFINE_LINE: parseFloatFlexible(document.getElementById('b-affine').value),
                 A_SHIFT_MAGNITUDE: parseInt(document.getElementById('a-shift').value)
             };
         }
@@ -647,9 +660,10 @@
             updateStatus('Initializing PCAGraphLoader...', 'info');
 
             try {
-                // Initialize loader
+                // Initialize loader with current config from form
                 loader = new PCAGraphLoader({
-                    debug: false
+                    debug: false,
+                    graphConfig: config // Pass the form config to the loader
                 });
                 await loader.initialize();
 
@@ -670,8 +684,9 @@
                             }
                         });
 
-                        // Render graph
-                        const result = await loader.renderGraph(graphInfo.id, graphConfig);
+                        // Render graph with full config (not just configurable items)
+                        // Pass the entire config to ensure all values are available
+                        const result = await loader.renderGraph(graphInfo.id, config);
 
                         // Create and append card
                         const card = createGraphCard(graphInfo, result, config);
