@@ -58,7 +58,7 @@ loader.updateConfig({
 ### Option 1: Direct CDN Import
 
 ```javascript
-import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.12-unstable/scenery/packaged/PCAGraphLoader.js';
+import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable/scenery/packaged/PCAGraphLoader.js';
 
 const loader = new PCAGraphLoader();
 await loader.initialize();

@@ -1,0 +1,263 @@
+<!-- PCAGraphLoader Dependencies Partial - Include this in your Jinja template -->
+<!-- Usage: {% include 'graph-loader-partial.html' %} or {{ include('graph-loader-partial.html') }} -->
+
+<!-- DaisyUI for consistent styling and color system -->
+<link href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+<!-- KaTeX for LaTeX rendering in graphs -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+      integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
+      crossorigin="anonymous" />
+<script defer
+        src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"
+        integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"
+        crossorigin="anonymous"></script>
+
+<!-- Minimal CSS for PCA Graphs Only -->
+<style>
+    /* Scoped styles for PCA graphs - minimal to avoid conflicts */
+    /* Container and frame styles are optional - uncomment if needed */
+    /*
+    .pca-graph-container {
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+    }
+    
+    .pca-graph-frame {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 8px;
+        background: white;
+    }
+    */
+
+    .pca-graph-container svg {
+        width: auto;
+        height: auto;
+        max-width: 340px;
+        max-height: 340px;
+        display: block;
+    }
+
+    /* Essential text size for graph labels */
+    .pca-graph-container .text-2xs {
+        font-size: 0.625rem !important;
+        line-height: 1 !important;
+    }
+
+    /* LaTeX rendering in graphs */
+    .pca-graph-container .svg-latex {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        box-sizing: border-box;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    .pca-graph-container foreignObject .katex {
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1 !important;
+        font-size: inherit !important;
+        color: inherit !important;
+        text-align: center;
+    }
+
+    .pca-graph-container foreignObject div {
+        height: 100%;
+        width: 100%;
+        color: inherit !important;
+    }
+
+    /* Essential SVG color classes - DaisyUI compatible */
+    .pca-graph-container .stroke-primary {
+        stroke: hsl(var(--p, 221 83% 53%)) !important;
+    }
+
+    .pca-graph-container .fill-primary {
+        fill: hsl(var(--p, 221 83% 53%)) !important;
+    }
+
+    .pca-graph-container .text-primary {
+        color: hsl(var(--p, 221 83% 53%)) !important;
+    }
+
+    .pca-graph-container .stroke-secondary {
+        stroke: hsl(var(--s, 262 52% 46%)) !important;
+    }
+
+    .pca-graph-container .fill-secondary {
+        fill: hsl(var(--s, 262 52% 46%)) !important;
+    }
+
+    .pca-graph-container .text-secondary {
+        color: hsl(var(--s, 262 52% 46%)) !important;
+    }
+
+    .pca-graph-container .stroke-accent {
+        stroke: hsl(var(--a, 0 84% 60%)) !important;
+    }
+
+    .pca-graph-container .fill-accent {
+        fill: hsl(var(--a, 0 84% 60%)) !important;
+    }
+
+    .pca-graph-container .text-accent {
+        color: hsl(var(--a, 0 84% 60%)) !important;
+    }
+
+    .pca-graph-container .stroke-base-content {
+        stroke: hsl(var(--bc, 215 28% 17%)) !important;
+    }
+
+    .pca-graph-container .fill-base-content {
+        fill: hsl(var(--bc, 215 28% 17%)) !important;
+    }
+
+    .pca-graph-container .text-base-content {
+        color: hsl(var(--bc, 215 28% 17%)) !important;
+    }
+
+    .pca-graph-container .stroke-base-100 {
+        stroke: hsl(var(--b1, 0 0% 100%)) !important;
+    }
+
+    .pca-graph-container .fill-base-100 {
+        fill: hsl(var(--b1, 0 0% 100%)) !important;
+    }
+
+    .pca-graph-container .stroke-base-200 {
+        stroke: hsl(var(--b2, 0 0% 95%)) !important;
+    }
+
+    .pca-graph-container .fill-base-200 {
+        fill: hsl(var(--b2, 0 0% 95%)) !important;
+    }
+
+    .pca-graph-container .stroke-base-300 {
+        stroke: hsl(var(--b3, 0 0% 90%)) !important;
+    }
+
+    .pca-graph-container .fill-base-300 {
+        fill: hsl(var(--b3, 0 0% 90%)) !important;
+    }
+
+    /* Optional: Loading state */
+    .pca-graph-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        color: #6b7280;
+        font-style: italic;
+    }
+
+    /* Optional: Error state */
+    .pca-graph-error {
+        padding: 20px;
+        background: #fee;
+        color: #c00;
+        border-radius: 4px;
+        margin: 10px 0;
+    }
+</style>
+
+<!-- PCAGraphLoader Module -->
+<script type="module">
+    // Import PCAGraphLoader from CDN
+    import {
+        PCAGraphLoader
+    } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable/scenery/packaged/PCAGraphLoader.js';
+
+    // Make PCAGraphLoader available globally for use in your application
+    window.PCAGraphLoader = PCAGraphLoader;
+
+    // Helper function to render a graph into a container
+    window.renderPCAGraph = async function(containerId, graphKey, config = {}) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.error(`Container with id '${containerId}' not found`);
+            return;
+        }
+
+        // Add loading state
+        container.innerHTML = '<div class="pca-graph-loading">Loading graph...</div>';
+        container.className = 'pca-graph-container';
+
+        try {
+            // Create or reuse loader instance
+            if (!window._pcaLoader) {
+                window._pcaLoader = new PCAGraphLoader({
+                    debug: false,
+                    graphConfig: config
+                });
+                await window._pcaLoader.initialize();
+            } else if (config && Object.keys(config).length > 0) {
+                // Update config if provided
+                window._pcaLoader.updateConfig(config);
+            }
+
+            // Render the graph
+            const svg = await window._pcaLoader.renderGraph(graphKey);
+
+            // Create proper frame structure
+            const frameDiv = document.createElement('div');
+            frameDiv.className = 'pca-graph-frame';
+            frameDiv.innerHTML = svg;
+
+            container.innerHTML = '';
+            container.appendChild(frameDiv);
+
+            // Render LaTeX if KaTeX is available
+            if (typeof katex !== 'undefined') {
+                setTimeout(() => {
+                    const foreignObjects = container.querySelectorAll('foreignObject');
+                    foreignObjects.forEach((fo) => {
+                        const divs = fo.querySelectorAll('div.svg-latex');
+                        divs.forEach((div) => {
+                            const latex = div.textContent.trim();
+                            if (latex) {
+                                try {
+                                    const bgColor = div.style.backgroundColor;
+                                    const color = div.style.color;
+                                    div.innerHTML = '';
+                                    katex.render(latex, div, {
+                                        throwOnError: false,
+                                        displayMode: false,
+                                    });
+                                    if (bgColor) div.style.backgroundColor = bgColor;
+                                    if (color) {
+                                        div.querySelectorAll('.katex, .katex *').forEach(el => {
+                                            el.style.color = color;
+                                        });
+                                    }
+                                } catch (e) {
+                                    console.error('KaTeX error:', e);
+                                    div.textContent = latex;
+                                }
+                            }
+                        });
+                    });
+                }, 100);
+            }
+
+        } catch (error) {
+            container.innerHTML = `<div class="pca-graph-error">Error loading graph: ${error.message}</div>`;
+            console.error('PCA Graph Error:', error);
+        }
+    };
+
+    // Log availability
+    console.log('✅ PCAGraphLoader ready. Use window.renderPCAGraph(containerId, graphKey, config) to render graphs.');
+</script>

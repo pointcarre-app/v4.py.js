@@ -3,6 +3,62 @@
 
 # Changelog
 
+## v0.0.15-unstable
+
+### 🔧 Improved Loading Logic & Testing
+
+#### Major Changes
+- **Enhanced PCAGraphLoader Detection System**
+  - Changed from hostname-based to **port-based detection** (port 8022)
+  - Only v4.py.js local server uses local files
+  - All other environments (ports 3000, 5000, 5001, 8080, production) use jsDelivr CDN
+  - Fixes 404 errors when using from other local development servers
+
+- **Visual Test Page Enhancement** (`test-loading-logic.html`)
+  - Added **live graph rendering display** section
+  - Graph dropdown selector for all 11 available graph types
+  - Visual feedback with actual SVG rendering
+  - LaTeX mathematical formula rendering with KaTeX
+  - Quick Test All button for automated testing sequence
+  - Auto-run mode with `?auto` URL parameter
+  - Color-coded console output (green/yellow/red)
+  - Environment detection display
+
+- **DaisyUI Color System Integration**
+  - Fixed color system to use proper DaisyUI CSS variables
+  - Changed from custom `--pca-color-*` to DaisyUI's `--p`, `--s`, `--a`, `--bc`, `--b1`, `--b2`, `--b3`
+  - Uses `hsl(var(--p))` format for proper theme compatibility
+  - All graphs now respect DaisyUI theme settings
+
+#### Documentation Improvements
+- **Created `SIMPLE_USAGE.md`** - Minimal, copy-paste ready examples
+- **Created `LOADING_LOGIC.md`** - Detailed explanation of port detection system
+- **Created `ALL_GRAPHS_REFERENCE.md`** - Complete list of all graphs with examples
+- Removed `graph-loader-fragment.html` (keeping only `graph-loader-partial.html`)
+- Simplified documentation structure for easier onboarding
+
+#### Technical Details
+- **Port Detection Logic**:
+  ```javascript
+  const isV4PyJsLocal = window.location.port === "8022";
+  if (isV4PyJsLocal) {
+      // Use local files from http://localhost:8022
+  } else {
+      // Use CDN from jsDelivr
+  }
+  ```
+- Version updated from v0.0.14 to v0.0.15 across all CDN references
+- No breaking changes - backward compatible
+
+#### Benefits
+- ✅ No more 404 errors on non-8022 ports
+- ✅ Works seamlessly in any development environment
+- ✅ Visual testing with immediate feedback
+- ✅ Proper DaisyUI theme integration
+- ✅ Simpler, clearer documentation
+
+---
+
 ## v0.0.14-unstable
 
 ### 🎯 Major Feature: PCAGraphLoader Package
@@ -79,7 +135,7 @@ External App → PCAGraphLoader (JS) → Nagini Manager → Pyodide Worker → P
 
 4. **Simple API**
    ```javascript
-   import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.14-unstable/scenery/packaged/PCAGraphLoader.js';
+   import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable/scenery/packaged/PCAGraphLoader.js';
    
    const loader = new PCAGraphLoader();
    await loader.initialize();
@@ -129,7 +185,7 @@ External App → PCAGraphLoader (JS) → Nagini Manager → Pyodide Worker → P
 ### Usage Example
 ```html
 <script type="module">
-  import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.14-unstable/scenery/packaged/PCAGraphLoader.js';
+  import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable/scenery/packaged/PCAGraphLoader.js';
   
   const loader = new PCAGraphLoader();
   await loader.initialize();

@@ -6,3 +6,9 @@
 
 
 - [ ] Get rid of subfolde rin `/src`
+
+
+- [] document in `/scenery` 
+ - [] simple-app
+ - [] packaged 
+ - [] test-loading-logic.html

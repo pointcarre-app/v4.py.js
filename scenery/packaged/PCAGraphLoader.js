@@ -23,7 +23,7 @@ export class PCAGraphLoader {
     // Configuration options
     this.options = {
       naginiVersion: options.naginiVersion || '0.0.21',
-      pcaVersion: options.pcaVersion || 'v0.0.12-unstable',
+      pcaVersion: options.pcaVersion || 'v0.0.15-unstable',
       baseUrl: options.baseUrl || 'auto',
       graphConfig: options.graphConfig || {},
       debug: options.debug !== undefined ? options.debug : true,
@@ -85,21 +85,23 @@ export class PCAGraphLoader {
   }
 
   _setupUrls() {
-    const isLocal = window.location.hostname === "localhost" || 
-                   window.location.hostname === "127.0.0.1";
+    // Check if we're running on the v4.py.js local server (port 8022)
+    const isV4PyJsLocal = window.location.port === "8022";
     
     if (this.options.baseUrl === 'auto') {
-      if (isLocal) {
-        this.baseUrl = `${window.location.origin}`;
-        this.naginiCdnPath = `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@${this.options.naginiVersion}/src/nagini.js`;
-        this.workerCdnPath = `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@${this.options.naginiVersion}/src/pyodide/worker/worker-dist.js`;
+      if (isV4PyJsLocal) {
+        // We're in the v4.py.js repo served on port 8022
+        this.baseUrl = `http://localhost:8022`;
       } else {
-        // Use jsDelivr for GitHub-hosted content
+        // Use jsDelivr for everything else (including other local servers)
         this.baseUrl = `https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@${this.options.pcaVersion}`;
-        this.naginiCdnPath = `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@${this.options.naginiVersion}/src/nagini.js`;
-        this.workerCdnPath = `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@${this.options.naginiVersion}/src/pyodide/worker/worker-dist.js`;
       }
+      
+      // Always use CDN for Nagini dependencies
+      this.naginiCdnPath = `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@${this.options.naginiVersion}/src/nagini.js`;
+      this.workerCdnPath = `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@${this.options.naginiVersion}/src/pyodide/worker/worker-dist.js`;
     } else {
+      // Manual override
       this.baseUrl = this.options.baseUrl;
       this.naginiCdnPath = this.options.naginiCdnPath || 
         `https://cdn.jsdelivr.net/gh/pointcarre-app/nagini@${this.options.naginiVersion}/src/nagini.js`;
@@ -112,7 +114,8 @@ export class PCAGraphLoader {
       console.log("   Base URL:", this.baseUrl);
       console.log("   Nagini CDN:", this.naginiCdnPath);
       console.log("   Worker CDN:", this.workerCdnPath);
-      console.log("   Environment:", isLocal ? "LOCAL" : "PRODUCTION");
+      console.log("   PCA Version:", this.options.pcaVersion);
+      console.log("   Environment:", isV4PyJsLocal ? "LOCAL (v4.py.js:8022)" : "CDN (jsDelivr)");
     }
   }
 

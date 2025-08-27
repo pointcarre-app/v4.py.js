@@ -17,10 +17,10 @@ A modular, reusable JavaScript class for loading and rendering PCA mathematical 
 
 ```javascript
 // Latest version
-import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.12-unstable/scenery/packaged/PCAGraphLoader.js';
+import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable/scenery/packaged/PCAGraphLoader.js';
 
 // Specific version
-import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.12-unstable/scenery/packaged/PCAGraphLoader.js';
+import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable/scenery/packaged/PCAGraphLoader.js';
 ```
 
 ### Local Development
@@ -68,7 +68,7 @@ new PCAGraphLoader(options)
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `naginiVersion` | string | `'0.0.21'` | Nagini library version |
-| `pcaVersion` | string | `'v0.0.12-unstable'` | PCA library version for CDN |
+| `pcaVersion` | string | `'v0.0.15-unstable'` | PCA library version for CDN |
 | `baseUrl` | string | `'auto'` | Base URL for loading files. Use `'auto'` for automatic detection |
 | `graphConfig` | object | `{}` | Initial graph configuration parameters |
 | `debug` | boolean | `true` | Enable debug logging to console |

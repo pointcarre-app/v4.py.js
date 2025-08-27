@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test PCAGraphLoader Loading Logic</title>
+
+    <!-- KaTeX for LaTeX rendering in graphs -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+          integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
+          crossorigin="anonymous" />
+    <script defer
+            src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"
+            integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"
+            crossorigin="anonymous"></script>
+
+    <!-- DaisyUI for graph styling -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+
+        h1 {
+            color: #00ffff;
+        }
+
+        .status {
+            background: #000;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .error {
+            color: #ff0000;
+        }
+
+        .success {
+            color: #00ff00;
+        }
+
+        .info {
+            color: #ffff00;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            overflow-x: auto;
+            border: 1px solid #333;
+        }
+
+        button {
+            background: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        /* Graph display styles */
+        #graph-display svg {
+            width: auto;
+            height: auto;
+            max-width: 340px;
+            max-height: 340px;
+            display: block;
+        }
+
+        /* LaTeX rendering in graphs */
+        .svg-latex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        foreignObject .katex {
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+            font-size: inherit !important;
+            color: inherit !important;
+            text-align: center;
+        }
+
+        foreignObject div {
+            height: 100%;
+            width: 100%;
+            color: inherit !important;
+        }
+
+        /* DaisyUI color classes for graphs */
+        .stroke-primary {
+            stroke: hsl(var(--p, 221 83% 53%)) !important;
+        }
+
+        .fill-primary {
+            fill: hsl(var(--p, 221 83% 53%)) !important;
+        }
+
+        .text-primary {
+            color: hsl(var(--p, 221 83% 53%)) !important;
+        }
+
+        .stroke-secondary {
+            stroke: hsl(var(--s, 262 52% 46%)) !important;
+        }
+
+        .fill-secondary {
+            fill: hsl(var(--s, 262 52% 46%)) !important;
+        }
+
+        .text-secondary {
+            color: hsl(var(--s, 262 52% 46%)) !important;
+        }
+
+        .stroke-accent {
+            stroke: hsl(var(--a, 0 84% 60%)) !important;
+        }
+
+        .fill-accent {
+            fill: hsl(var(--a, 0 84% 60%)) !important;
+        }
+
+        .text-accent {
+            color: hsl(var(--a, 0 84% 60%)) !important;
+        }
+
+        .stroke-base-content {
+            stroke: hsl(var(--bc, 215 28% 17%)) !important;
+        }
+
+        .fill-base-content {
+            fill: hsl(var(--bc, 215 28% 17%)) !important;
+        }
+
+        .text-base-content {
+            color: hsl(var(--bc, 215 28% 17%)) !important;
+        }
+
+        .stroke-base-100 {
+            stroke: hsl(var(--b1, 0 0% 100%)) !important;
+        }
+
+        .fill-base-100 {
+            fill: hsl(var(--b1, 0 0% 100%)) !important;
+        }
+
+        .stroke-base-200 {
+            stroke: hsl(var(--b2, 0 0% 95%)) !important;
+        }
+
+        .fill-base-200 {
+            fill: hsl(var(--b2, 0 0% 95%)) !important;
+        }
+
+        .stroke-base-300 {
+            stroke: hsl(var(--b3, 0 0% 90%)) !important;
+        }
+
+        .fill-base-300 {
+            fill: hsl(var(--b3, 0 0% 90%)) !important;
+        }
+
+        /* Essential text size for graph labels */
+        .text-2xs {
+            font-size: 0.625rem !important;
+            line-height: 1 !important;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 PCAGraphLoader Loading Logic Test</h1>
+
+    <div class="status">
+      <h2>Current Environment</h2>
+      <pre id="env-info">Detecting...</pre>
+    </div>
+
+    <div class="status">
+      <h2>Test Controls</h2>
+      <button id="test-auto">Test Auto Detection</button>
+      <button id="test-manual-local">Test Manual Local</button>
+      <button id="test-manual-cdn">Test Manual CDN</button>
+      <br />
+      <br />
+      <label style="color: #00ff00;">Select Graph to Render:</label>
+      <select id="graph-select" style="background: #000; color: #00ff00; border: 1px solid #00ff00; padding: 5px">
+        <option value="q7_small">Question 7 (Small)</option>
+        <option value="q8_small">Question 8 (Small)</option>
+        <option value="q11_case_a_small">Question 11 - Case A</option>
+        <option value="q11_case_b_small">Question 11 - Case B</option>
+        <option value="q11_case_c_small">Question 11 - Case C</option>
+        <option value="parabola_s1_a0">Parabola: y = x²</option>
+        <option value="parabola_s1_am">Parabola: y = x² - a</option>
+        <option value="parabola_s1_ap">Parabola: y = x² + a</option>
+        <option value="parabola_sm1_a0">Parabola: y = -x²</option>
+        <option value="parabola_sm1_am">Parabola: y = -x² - a</option>
+        <option value="parabola_sm1_ap">Parabola: y = -x² + a</option>
+      </select>
+      <button id="test-render">Render Selected Graph</button>
+      <button id="quick-test" style="background: #00ff00; color: #000;">Quick Test All</button>
+    </div>
+
+    <div class="status">
+      <h2>Console Output</h2>
+      <pre id="console-output"></pre>
+    </div>
+
+    <div class="status">
+      <h2>Rendered Graph</h2>
+      <div id="graph-display"
+           style="min-height: 400px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  background: #000;
+                  border: 1px solid #00ff00">
+        <span style="color: #666;">No graph rendered yet</span>
+      </div>
+    </div>
+
+    <script type="module">
+        const output = document.getElementById('console-output');
+        const envInfo = document.getElementById('env-info');
+
+        function log(msg, type = 'info') {
+            const timestamp = new Date().toISOString().split('T')[1];
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : '📝';
+            const className = type;
+            const line = `[${timestamp}] ${prefix} ${msg}\n`;
+            output.innerHTML += `<span class="${className}">${line}</span>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        // Display environment info
+        const port = window.location.port;
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        const isV4PyJsLocal = port === "8022";
+
+        envInfo.innerHTML = `
+Location Info:
+--------------
+Protocol: ${protocol}
+Hostname: ${hostname}
+Port: ${port || '(default)'}
+Origin: ${window.location.origin}
+
+Detection Result:
+-----------------
+Is v4.py.js Local Server (port 8022): ${isV4PyJsLocal ? 'YES ✅' : 'NO ❌'}
+
+Expected Behavior:
+------------------
+${isV4PyJsLocal ? 
+    '✅ Will use LOCAL files from http://localhost:8022' : 
+    '📦 Will use CDN files from jsDelivr (v0.0.15-unstable)'}
+        `.trim();
+
+        // Dynamically import based on location
+        let PCAGraphLoader;
+
+        async function loadModule() {
+            try {
+                log('Loading PCAGraphLoader module...');
+
+                if (isV4PyJsLocal) {
+                    log('Using LOCAL import from /scenery/packaged/PCAGraphLoader.js', 'info');
+                    const module = await import('/scenery/packaged/PCAGraphLoader.js');
+                    PCAGraphLoader = module.PCAGraphLoader;
+                } else {
+                    log('Using CDN import from jsDelivr', 'info');
+                    const module = await import('https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable/scenery/packaged/PCAGraphLoader.js');
+                    PCAGraphLoader = module.PCAGraphLoader;
+                }
+
+                log('Module loaded successfully!', 'success');
+                window.PCAGraphLoader = PCAGraphLoader;
+
+            } catch (error) {
+                log(`Failed to load module: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        await loadModule();
+
+        // Test functions
+        async function testAutoDetection() {
+            log('\n=== Testing Auto Detection ===', 'info');
+            try {
+                const loader = new PCAGraphLoader({
+                    debug: true,
+                    // baseUrl: 'auto' is the default
+                });
+
+                log(`Base URL: ${loader.baseUrl}`, 'success');
+                log(`Nagini CDN: ${loader.naginiCdnPath}`, 'success');
+                log(`Worker CDN: ${loader.workerCdnPath}`, 'success');
+
+                log('Initializing loader...', 'info');
+                await loader.initialize();
+                log('Loader initialized successfully!', 'success');
+
+                window.testLoader = loader;
+
+            } catch (error) {
+                log(`Test failed: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        async function testManualLocal() {
+            log('\n=== Testing Manual Local ===', 'info');
+            try {
+                const loader = new PCAGraphLoader({
+                    debug: true,
+                    baseUrl: 'http://localhost:8022'
+                });
+
+                log(`Base URL: ${loader.baseUrl}`, 'success');
+                log('This should work only on port 8022', 'info');
+
+            } catch (error) {
+                log(`Test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testManualCDN() {
+            log('\n=== Testing Manual CDN ===', 'info');
+            try {
+                const loader = new PCAGraphLoader({
+                    debug: true,
+                    baseUrl: 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.15-unstable'
+                });
+
+                log(`Base URL: ${loader.baseUrl}`, 'success');
+                log('This should work from anywhere', 'info');
+
+            } catch (error) {
+                log(`Test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testRenderGraph() {
+            log('\n=== Testing Graph Rendering ===', 'info');
+
+            if (!window.testLoader) {
+                log('No test loader available. Run Auto Detection test first.', 'error');
+                return;
+            }
+
+            const graphDisplay = document.getElementById('graph-display');
+            const graphSelect = document.getElementById('graph-select');
+            const selectedGraph = graphSelect.value;
+
+            try {
+                log(`Rendering ${selectedGraph}...`, 'info');
+                const svg = await window.testLoader.renderGraph(selectedGraph);
+                log(`SVG generated! Length: ${svg.length} characters`, 'success');
+
+                // Display the SVG
+                graphDisplay.innerHTML = svg;
+                log('Graph displayed in the viewport!', 'success');
+
+                // Render LaTeX if KaTeX is available
+                if (typeof katex !== 'undefined') {
+                    setTimeout(() => {
+                        const foreignObjects = graphDisplay.querySelectorAll('foreignObject');
+                        let latexCount = 0;
+                        foreignObjects.forEach((fo) => {
+                            const divs = fo.querySelectorAll('div.svg-latex');
+                            divs.forEach((div) => {
+                                const latex = div.textContent.trim();
+                                if (latex) {
+                                    try {
+                                        const bgColor = div.style.backgroundColor;
+                                        const color = div.style.color;
+                                        div.innerHTML = '';
+                                        katex.render(latex, div, {
+                                            throwOnError: false,
+                                            displayMode: false,
+                                        });
+                                        if (bgColor) div.style.backgroundColor = bgColor;
+                                        if (color) {
+                                            div.querySelectorAll('.katex, .katex *').forEach(el => {
+                                                el.style.color = color;
+                                            });
+                                        }
+                                        latexCount++;
+                                    } catch (e) {
+                                        console.error('KaTeX error:', e);
+                                        div.textContent = latex;
+                                    }
+                                }
+                            });
+                        });
+                        if (latexCount > 0) {
+                            log(`Rendered ${latexCount} LaTeX expressions`, 'success');
+                        }
+                    }, 100);
+                }
+
+                // Scroll to the graph
+                graphDisplay.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+
+            } catch (error) {
+                log(`Render failed: ${error.message}`, 'error');
+                console.error(error);
+                graphDisplay.innerHTML = `<span style="color: #ff0000;">Error: ${error.message}</span>`;
+            }
+        }
+
+        async function quickTestAll() {
+            log('\n=== QUICK TEST ALL ===', 'info');
+            log('Running auto detection + rendering test graphs...', 'info');
+
+            // Run auto detection first
+            await testAutoDetection();
+
+            // Wait a bit for initialization
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Test a few different graphs
+            const testGraphs = ['q7_small', 'q8_small', 'parabola_s1_ap'];
+            const graphSelect = document.getElementById('graph-select');
+
+            for (const graph of testGraphs) {
+                log(`\n--- Testing ${graph} ---`, 'info');
+                graphSelect.value = graph;
+                await testRenderGraph();
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Show each graph for 2 seconds
+            }
+
+            log('\n✅ Quick test complete!', 'success');
+        }
+
+        // Wire up buttons
+        document.getElementById('test-auto').addEventListener('click', testAutoDetection);
+        document.getElementById('test-manual-local').addEventListener('click', testManualLocal);
+        document.getElementById('test-manual-cdn').addEventListener('click', testManualCDN);
+        document.getElementById('test-render').addEventListener('click', testRenderGraph);
+        document.getElementById('quick-test').addEventListener('click', quickTestAll);
+
+        // Initial log
+        log('Test page loaded. Click buttons to run tests.', 'info');
+        log(`Current port: ${port || '(default)'} | Is v4.py.js local: ${isV4PyJsLocal}`, 'info');
+
+        // Auto-run quick test if URL has ?auto parameter
+        if (window.location.search.includes('auto')) {
+            log('Auto-run detected! Starting quick test in 1 second...', 'info');
+            setTimeout(quickTestAll, 1000);
+        }
+    </script>
+  </body>
+</html>
