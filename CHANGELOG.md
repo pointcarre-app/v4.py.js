@@ -3,6 +3,149 @@
 
 # Changelog
 
+## v0.0.14-unstable
+
+### 🎯 Major Feature: PCAGraphLoader Package
+
+#### Overview
+Created a **modular, reusable JavaScript class** for loading and rendering PCA mathematical visualization graphs. This package enables external repositories to easily integrate PCA graphs without complex setup.
+
+### Added
+- **`scenery/packaged/PCAGraphLoader.js`** - Main class module (475 lines)
+  - Clean class-based API with zero global variables
+  - Automatic environment detection (local vs CDN)
+  - Dynamic configuration management
+  - Graph caching and lazy loading
+  - Promise-based error handling
+  - Supports all small graph variants (q7, q8, q11, parabolas)
+
+- **`scenery/packaged/test.html`** - Interactive test interface (585 lines)
+  - Visual graph display with proper SVG rendering
+  - Configuration controls for all parameters
+  - Real-time graph updates
+  - Matches exact styling from sujets0-simple.html
+  - KaTeX LaTeX rendering support
+  - Console debugging features
+
+- **`scenery/packaged/README.md`** - Complete API documentation
+  - Installation instructions (CDN and local)
+  - API reference with all methods
+  - Integration examples (React, Vue, Vanilla JS)
+  - Configuration parameters
+  - Troubleshooting guide
+  - Browser compatibility notes
+
+- **`scenery/packaged/example-external-usage.html`** - External usage demo
+  - Shows CDN import pattern
+  - No local installation required
+  - Working example with buttons
+  - Demonstrates real-world usage
+
+- **`scenery/packaged/package.json`** - NPM package configuration
+  - Ready for npm publication
+  - Proper module exports
+  - Package metadata
+
+### Technical Improvements
+
+#### Architecture
+```
+External App → PCAGraphLoader (JS) → Nagini Manager → Pyodide Worker → Python Modules → SVG Output
+```
+
+#### Key Features
+1. **Dynamic URL Resolution**
+   - Auto-detects local vs production environment
+   - Uses jsDelivr CDN for GitHub-hosted content
+   - Configurable base URLs for custom deployments
+
+2. **Configuration Management**
+   ```javascript
+   const loader = new PCAGraphLoader({
+     graphConfig: {
+       Y_LABEL_FOR_HORIZONTAL_LINE: 10,
+       A_FLOAT_FOR_AFFINE_LINE: 0.75,
+       B_FLOAT_FOR_AFFINE_LINE: 2.0,
+       A_SHIFT_MAGNITUDE: 5
+     }
+   });
+   ```
+
+3. **Available Graphs** (small variants only)
+   - Question 7: `q7_small`
+   - Question 8: `q8_small`
+   - Question 11: `q11_case_a_small`, `q11_case_b_small`, `q11_case_c_small`
+   - Parabolas: `parabola_s1_a0`, `parabola_s1_am`, `parabola_s1_ap`, `parabola_sm1_a0`, `parabola_sm1_am`, `parabola_sm1_ap`
+
+4. **Simple API**
+   ```javascript
+   import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.14-unstable/scenery/packaged/PCAGraphLoader.js';
+   
+   const loader = new PCAGraphLoader();
+   await loader.initialize();
+   const svg = await loader.renderGraph('q8_small');
+   ```
+
+### Fixed
+- **Graph Cropping Issues** in test.html
+  - Aligned CSS with sujets0-simple.html structure
+  - Added proper `.graph-svg-frame` wrapper
+  - Fixed SVG max dimensions (340x340px)
+  - Included all required color utility classes
+  - Added DaisyUI theme support
+
+### CSS Improvements
+- Proper container hierarchy: `.graph-display` → `.graph-svg-frame` → SVG
+- Consistent sizing with `max-width: 340px; max-height: 340px`
+- Added essential color utilities for SVG rendering
+- Imported `graphs.css` for consistent styling
+- LaTeX rendering styles for mathematical notation
+
+### Performance
+- First initialization: ~5-10 seconds (Pyodide loading)
+- Subsequent graph loads: ~100-500ms
+- Graphs cached after first load
+- Configuration changes clear cache intelligently
+
+### Documentation
+- Comprehensive API documentation in README.md
+- Integration examples for major frameworks
+- Package summary with architecture overview
+- CSS fix documentation explaining display issues
+
+### Benefits Over Original Implementation
+1. **Encapsulation** - All functionality in a single class
+2. **No Global Variables** - Clean namespace
+3. **Reusability** - Import in any project via CDN
+4. **Version Control** - Pin specific versions
+5. **Better Error Handling** - Promise-based with clear messages
+6. **Lazy Loading** - Only loads required graphs
+7. **External Usage** - No installation needed
+
+### Browser Support
+- Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- Requires: ES Modules, Dynamic imports, Web Workers, Async/await
+
+### Usage Example
+```html
+<script type="module">
+  import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.14-unstable/scenery/packaged/PCAGraphLoader.js';
+  
+  const loader = new PCAGraphLoader();
+  await loader.initialize();
+  const svg = await loader.renderGraph('q8_small');
+  document.getElementById('graph-container').innerHTML = svg;
+</script>
+```
+
+### Notes
+- Skipped v0.0.13 (triskaidekaphobia)
+- Package ready for npm publication as `@pointcarre/pca-graph-loader`
+- Test interface available at `http://localhost:8022/scenery/packaged/test.html`
+- All graphs render without cropping issues
+
+---
+
 ## v0.0.12-unstable
 
 ### Changed

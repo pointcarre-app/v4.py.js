@@ -1,0 +1,43 @@
+{
+  "name": "@pointcarre/pca-graph-loader",
+  "version": "0.0.1",
+  "description": "A modular, reusable graph loading system for PCA mathematical visualizations",
+  "main": "PCAGraphLoader.js",
+  "module": "PCAGraphLoader.js",
+  "type": "module",
+  "files": [
+    "PCAGraphLoader.js",
+    "README.md"
+  ],
+  "keywords": [
+    "pca",
+    "graph",
+    "visualization",
+    "mathematics",
+    "pyodide",
+    "svg",
+    "education"
+  ],
+  "author": "pointcarre.app",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pointcarre-app/v4.py.js"
+  },
+  "homepage": "https://github.com/pointcarre-app/v4.py.js/tree/main/scenery/packaged",
+  "bugs": {
+    "url": "https://github.com/pointcarre-app/v4.py.js/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Open test.html in a browser to test\""
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {}
+}

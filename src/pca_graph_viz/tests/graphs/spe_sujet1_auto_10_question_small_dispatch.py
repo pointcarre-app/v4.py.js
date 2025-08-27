@@ -39,7 +39,7 @@ GRAPH_CONFIGS = {
         "y_axis_x2": 0,
         "y_axis_y2": 10.5,
         "x_label_x": 3.5,
-        "x_label_y": -1,
+        "x_label_y": 0.75,
         "y_label_x": 0.5,
         "y_label_y": 10.5,
     },

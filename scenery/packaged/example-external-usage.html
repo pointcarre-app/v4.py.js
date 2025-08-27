@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>External Repository Usage Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .info {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .graph-container {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Using PCAGraphLoader from External Repository</h1>
+
+    <div class="info">
+      <h2>📦 This example shows how to use PCAGraphLoader from another project</h2>
+      <p>The loader is imported directly from jsDelivr CDN, no local installation needed!</p>
+      <pre><code>import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.12-unstable/scenery/packaged/PCAGraphLoader.js';</code></pre>
+    </div>
+
+    <div class="controls">
+      <button id="load-q7">Load Question 7</button>
+      <button id="load-q8">Load Question 8</button>
+      <button id="load-parabola">Load Parabola</button>
+    </div>
+
+    <div id="graph-container" class="graph-container">
+      <p>Click a button to load a graph</p>
+    </div>
+
+    <script type="module">
+        // ============================================
+        // EXTERNAL REPOSITORY USAGE EXAMPLE
+        // ============================================
+
+        // Import PCAGraphLoader from jsDelivr CDN
+        // In production, you might want to pin a specific version
+        import {
+            PCAGraphLoader
+        } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.12-unstable/scenery/packaged/PCAGraphLoader.js';
+
+        // For development, you could also use:
+        // import { PCAGraphLoader } from 'http://localhost:8000/scenery/packaged/PCAGraphLoader.js';
+
+        let loader = null;
+        const container = document.getElementById('graph-container');
+
+        // Initialize loader once
+        async function initLoader() {
+            if (loader) return loader;
+
+            container.innerHTML = '<p>Initializing loader...</p>';
+
+            try {
+                // Create loader with your desired configuration
+                loader = new PCAGraphLoader({
+                    debug: true, // Set to false in production
+                    graphConfig: {
+                        Y_LABEL_FOR_HORIZONTAL_LINE: 10,
+                        A_FLOAT_FOR_AFFINE_LINE: 0.75,
+                        B_FLOAT_FOR_AFFINE_LINE: 2.0,
+                        A_SHIFT_MAGNITUDE: 5
+                    }
+                });
+
+                // Initialize (this loads Pyodide and core modules)
+                await loader.initialize();
+
+                console.log('✅ PCAGraphLoader initialized');
+                console.log('Available graphs:', loader.getAvailableGraphs());
+
+                return loader;
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Failed to initialize: ${error.message}</p>`;
+                console.error('Initialization error:', error);
+                throw error;
+            }
+        }
+
+        // Helper function to display a graph
+        async function displayGraph(graphKey) {
+            try {
+                container.innerHTML = '<p>Loading graph...</p>';
+
+                // Ensure loader is initialized
+                await initLoader();
+
+                // Render the graph to SVG
+                const svg = await loader.renderGraph(graphKey);
+
+                // Display the SVG
+                container.innerHTML = svg;
+
+                console.log(`✅ Displayed graph: ${graphKey}`);
+
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                console.error(`Failed to display ${graphKey}:`, error);
+            }
+        }
+
+        // Wire up buttons
+        document.getElementById('load-q7').addEventListener('click', () => {
+            displayGraph('q7_small');
+        });
+
+        document.getElementById('load-q8').addEventListener('click', () => {
+            displayGraph('q8_small');
+        });
+
+        document.getElementById('load-parabola').addEventListener('click', () => {
+            displayGraph('parabola_s1_ap');
+        });
+
+        // Log usage info
+        console.log('🎯 PCAGraphLoader External Usage Example');
+        console.log('📦 Loaded from CDN: https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.12-unstable');
+        console.log('💡 Click any button to load a graph');
+    </script>
+
+    <!-- Alternative: Using async function in script tag -->
+    <script type="module">
+        // You can also use top-level await in modern browsers
+        /*
+        import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.12-unstable/scenery/packaged/PCAGraphLoader.js';
+        
+        const loader = new PCAGraphLoader();
+        await loader.initialize();
+        
+        // Now you can use loader anywhere
+        window.myLoader = loader;
+        */
+    </script>
+  </body>
+</html>

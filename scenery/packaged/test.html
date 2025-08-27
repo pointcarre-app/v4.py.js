@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PCAGraphLoader Test Console</title>
+
+    <!-- KaTeX for LaTeX rendering in graphs -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+    <!-- Optional: DaisyUI for enhanced graph styling (same as sujets0-simple.html) -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+
+    <!-- Import the graphs.css for consistent styling -->
+    <link href="../../src/pca_graph_viz/core/graphs.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            /* Increased to better accommodate graphs */
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        select,
+        input[type="number"],
+        button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+
+
+
+
+        .status {
+            font-family: monospace;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: white;
+            border: none;
+            margin-top: 10px;
+
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+
+        .info h3 {
+            margin-top: 0;
+            color: #004085;
+        }
+
+        .info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .info code {
+            background: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        /* Main graph display container - matches sujets0-simple.html structure */
+        .graph-display {
+            margin-top: 30px;
+            padding: 20px;
+            padding-bottom: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .graph-display.empty {
+            background: #f9f9f9;
+            border: 2px dashed #ddd;
+            justify-content: center;
+        }
+
+        .graph-display .placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Frame around the SVG - matches .graph-svg-frame from sujets0-simple.html */
+        .graph-svg-frame {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px;
+            background: white;
+        }
+
+        /* SVG sizing - exact same as sujets0-simple.html */
+        .graph-display svg {
+            width: auto;
+            height: auto;
+            max-width: 340px;
+            max-height: 340px;
+            display: block;
+            flex-shrink: 0;
+        }
+
+        /* LaTeX rendering styles - matches sujets0-simple.html */
+        .svg-latex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        foreignObject .katex {
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+            font-size: inherit !important;
+            color: inherit !important;
+            text-align: center;
+        }
+
+        foreignObject div {
+            height: 100%;
+            width: 100%;
+            color: inherit !important;
+        }
+
+        /* Essential color utilities for SVG graphs (from sujets0-simple.html) */
+        .stroke-primary {
+            stroke: var(--color-primary, #3b82f6) !important;
+        }
+
+        .fill-primary {
+            fill: var(--color-primary, #3b82f6) !important;
+        }
+
+        .text-primary {
+            color: var(--color-primary, #3b82f6) !important;
+        }
+
+        .stroke-secondary {
+            stroke: var(--color-secondary, #8b5cf6) !important;
+        }
+
+        .fill-secondary {
+            fill: var(--color-secondary, #8b5cf6) !important;
+        }
+
+        .text-secondary {
+            color: var(--color-secondary, #8b5cf6) !important;
+        }
+
+        .stroke-accent {
+            stroke: var(--color-accent, #ef4444) !important;
+        }
+
+        .fill-accent {
+            fill: var(--color-accent, #ef4444) !important;
+        }
+
+        .text-accent {
+            color: var(--color-accent, #ef4444) !important;
+        }
+
+        .stroke-base-content {
+            stroke: var(--color-base-content, #1f2937) !important;
+        }
+
+        .fill-base-content {
+            fill: var(--color-base-content, #1f2937) !important;
+        }
+
+        .text-base-content {
+            color: var(--color-base-content, #1f2937) !important;
+        }
+
+        .stroke-base-100 {
+            stroke: var(--color-base-100, #f3f4f6) !important;
+        }
+
+        .fill-base-100 {
+            fill: var(--color-base-100, #f3f4f6) !important;
+        }
+
+        .stroke-base-200 {
+            stroke: var(--color-base-200, #e5e7eb) !important;
+        }
+
+        .fill-base-200 {
+            fill: var(--color-base-200, #e5e7eb) !important;
+        }
+
+        .stroke-base-300 {
+            stroke: var(--color-base-300, #d1d5db) !important;
+        }
+
+        .fill-base-300 {
+            fill: var(--color-base-300, #d1d5db) !important;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>PCAGraphLoader Test Console</h1>
+
+    <div class="control-panel">
+      <h2>Graph Configuration</h2>
+
+      <div class="form-group">
+        <label for="graph-select">Select Graph:</label>
+        <select id="graph-select">
+          <option value="">-- Choose a graph --</option>
+          <option value="q7_small">Question 7 (Small)</option>
+          <option value="q8_small">Question 8 (Small)</option>
+          <option value="q11_case_a_small">Question 11 - Case A (Small)</option>
+          <option value="q11_case_b_small">Question 11 - Case B (Small)</option>
+          <option value="q11_case_c_small">Question 11 - Case C (Small)</option>
+          <option value="parabola_s1_a0">Parabola: y = x²</option>
+          <option value="parabola_s1_am">Parabola: y = x² - a</option>
+          <option value="parabola_s1_ap">Parabola: y = x² + a</option>
+          <option value="parabola_sm1_a0">Parabola: y = -x²</option>
+          <option value="parabola_sm1_am">Parabola: y = -x² - a</option>
+          <option value="parabola_sm1_ap">Parabola: y = -x² + a</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="y-label">Y Label for Horizontal Line (Q7):</label>
+        <input type="number" id="y-label" value="10" min="-50" max="50" />
+      </div>
+
+      <div class="form-group">
+        <label for="a-float">Affine Slope 'a' (Q8):</label>
+        <input type="number" id="a-float" value="0.75" min="-10" max="10" step="0.01" />
+      </div>
+
+      <div class="form-group">
+        <label for="b-float">Affine Y-intercept 'b' (Q8):</label>
+        <input type="number" id="b-float" value="2" min="-20" max="20" step="1" />
+      </div>
+
+      <div class="form-group">
+        <label for="a-shift">Parabola Shift Magnitude (Q10):</label>
+        <input type="number" id="a-shift" value="5" min="1" max="10" />
+      </div>
+
+      <button id="init-btn">Initialize Loader</button>
+      <button id="load-btn" disabled>Load Graph</button>
+      <button id="render-btn" disabled>Render Graph</button>
+      <button id="update-config-btn" disabled>Update Config</button>
+
+      <div id="status" class="status">Ready to initialize...</div>
+    </div>
+
+    <div class="info">
+      <h3>📖 Test Instructions</h3>
+      <ul>
+        <li>Click "Initialize Loader" to set up the system</li>
+        <li>Select a graph from the dropdown menu</li>
+        <li>Click "Load Graph" to fetch the graph data</li>
+        <li>Click "Render Graph" to display the SVG below</li>
+        <li>Adjust configuration values and click "Update Config" to change parameters</li>
+      </ul>
+      <p>
+        <strong>Developer Note:</strong> Open the browser console (F12) for detailed logs:
+      </p>
+      <ul>
+        <li>
+          The <code>loader</code> object is available globally
+        </li>
+        <li>Graph dictionary data is logged when loaded</li>
+        <li>Configuration changes are tracked</li>
+        <li>Error messages and debugging info appear in console</li>
+      </ul>
+    </div>
+
+    <div id="graph-display" class="graph-display empty">
+      <div class="placeholder">Rendered graph will appear here</div>
+    </div>
+
+    <script type="module">
+        import {
+            PCAGraphLoader
+        } from './PCAGraphLoader.js';
+
+        // Make loader globally accessible for console testing
+        window.loader = null;
+
+        // UI elements
+        const graphSelect = document.getElementById('graph-select');
+        const yLabelInput = document.getElementById('y-label');
+        const aFloatInput = document.getElementById('a-float');
+        const bFloatInput = document.getElementById('b-float');
+        const aShiftInput = document.getElementById('a-shift');
+        const initBtn = document.getElementById('init-btn');
+        const loadBtn = document.getElementById('load-btn');
+        const renderBtn = document.getElementById('render-btn');
+        const updateConfigBtn = document.getElementById('update-config-btn');
+        const status = document.getElementById('status');
+
+        let currentGraph = null;
+
+        // Initialize loader
+        initBtn.addEventListener('click', async () => {
+            try {
+                status.textContent = 'Initializing loader...';
+                status.className = 'status';
+
+                const config = {
+                    Y_LABEL_FOR_HORIZONTAL_LINE: parseFloat(yLabelInput.value),
+                    A_FLOAT_FOR_AFFINE_LINE: parseFloat(aFloatInput.value),
+                    B_FLOAT_FOR_AFFINE_LINE: parseFloat(bFloatInput.value),
+                    A_SHIFT_MAGNITUDE: parseInt(aShiftInput.value)
+                };
+
+                window.loader = new PCAGraphLoader({
+                    debug: true,
+                    graphConfig: config
+                });
+
+                console.log('🚀 Created PCAGraphLoader instance:', window.loader);
+                console.log('📊 Initial configuration:', config);
+
+                await window.loader.initialize();
+
+                status.textContent = '✅ Loader initialized successfully!';
+                status.className = 'status success';
+
+                // Enable other buttons
+                loadBtn.disabled = false;
+                updateConfigBtn.disabled = false;
+                initBtn.disabled = true;
+
+                console.log('✅ Loader ready! Available graphs:', window.loader.getAvailableGraphs());
+                console.log('💡 You can now use window.loader in the console');
+
+            } catch (error) {
+                status.textContent = `❌ Error: ${error.message}`;
+                status.className = 'status error';
+                console.error('Initialization failed:', error);
+            }
+        });
+
+        // Load selected graph
+        loadBtn.addEventListener('click', async () => {
+            const graphKey = graphSelect.value;
+            if (!graphKey) {
+                alert('Please select a graph first');
+                return;
+            }
+
+            try {
+                status.textContent = `Loading graph: ${graphKey}...`;
+                status.className = 'status';
+
+                const graphDict = await window.loader.loadGraph(graphKey);
+                currentGraph = graphKey;
+
+                status.textContent = `✅ Graph loaded: ${graphKey}`;
+                status.className = 'status success';
+                renderBtn.disabled = false;
+
+                // Clear the graph display when loading a new graph
+                const graphDisplay = document.getElementById('graph-display');
+                graphDisplay.innerHTML = '<div class="placeholder">Click "Render Graph" to display</div>';
+                graphDisplay.className = 'graph-display empty';
+
+                console.log(`📊 Graph dictionary for ${graphKey}:`, graphDict);
+
+            } catch (error) {
+                status.textContent = `❌ Error: ${error.message}`;
+                status.className = 'status error';
+                console.error('Load failed:', error);
+            }
+        });
+
+        // Render graph to SVG
+        renderBtn.addEventListener('click', async () => {
+            if (!currentGraph) {
+                alert('Please load a graph first');
+                return;
+            }
+
+            try {
+                status.textContent = `Rendering graph: ${currentGraph}...`;
+                status.className = 'status';
+
+                const svg = await window.loader.renderGraph(currentGraph);
+
+                status.textContent = `✅ Graph rendered: ${currentGraph}`;
+                status.className = 'status success';
+
+                // Display the graph in the container with proper frame structure (matches sujets0-simple.html)
+                const graphDisplay = document.getElementById('graph-display');
+
+                // Create a wrapper div for the SVG
+                const svgDiv = document.createElement('div');
+                svgDiv.innerHTML = svg;
+
+                // Create the frame div that matches sujets0-simple.html structure
+                const frameDiv = document.createElement('div');
+                frameDiv.className = 'graph-svg-frame';
+                frameDiv.appendChild(svgDiv);
+
+                // Clear and update the display
+                graphDisplay.innerHTML = '';
+                graphDisplay.appendChild(frameDiv);
+                graphDisplay.className = 'graph-display'; // Remove 'empty' class
+
+                // Scroll to the graph
+                graphDisplay.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+
+                // Also log to console for debugging
+                console.log(`🎨 SVG rendered for ${currentGraph}`);
+                console.log('📏 SVG length:', svg.length, 'characters');
+
+                // Render any LaTeX in the SVG (if KaTeX is available)
+                if (typeof katex !== 'undefined') {
+                    setTimeout(() => {
+                        const foreignObjects = graphDisplay.querySelectorAll('foreignObject');
+                        foreignObjects.forEach((fo) => {
+                            const divs = fo.querySelectorAll('div.svg-latex');
+                            divs.forEach((div) => {
+                                const latex = div.textContent.trim();
+                                if (latex) {
+                                    try {
+                                        const bgColor = div.style.backgroundColor;
+                                        const color = div.style.color;
+                                        div.innerHTML = '';
+                                        katex.render(latex, div, {
+                                            throwOnError: false,
+                                            displayMode: false,
+                                        });
+                                        if (bgColor) div.style.backgroundColor = bgColor;
+                                        if (color) {
+                                            div.querySelectorAll('.katex, .katex *').forEach(el => {
+                                                el.style.color = color;
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error('KaTeX error:', e);
+                                        div.textContent = latex;
+                                    }
+                                }
+                            });
+                        });
+                    }, 100);
+                }
+
+            } catch (error) {
+                status.textContent = `❌ Error: ${error.message}`;
+                status.className = 'status error';
+                console.error('Render failed:', error);
+
+                // Show error in display area too
+                const graphDisplay = document.getElementById('graph-display');
+                graphDisplay.innerHTML = `<div style="color: red; text-align: center;">
+                    <p><strong>Render Error:</strong></p>
+                    <p>${error.message}</p>
+                </div>`;
+                graphDisplay.className = 'graph-display';
+            }
+        });
+
+        // Update configuration
+        updateConfigBtn.addEventListener('click', () => {
+            const config = {
+                Y_LABEL_FOR_HORIZONTAL_LINE: parseFloat(yLabelInput.value),
+                A_FLOAT_FOR_AFFINE_LINE: parseFloat(aFloatInput.value),
+                B_FLOAT_FOR_AFFINE_LINE: parseFloat(bFloatInput.value),
+                A_SHIFT_MAGNITUDE: parseInt(aShiftInput.value)
+            };
+
+            window.loader.updateConfig(config);
+
+            status.textContent = '✅ Configuration updated';
+            status.className = 'status success';
+
+            // Reset render button since graphs need to be reloaded
+            renderBtn.disabled = true;
+            currentGraph = null;
+
+            // Clear the graph display
+            const graphDisplay = document.getElementById('graph-display');
+            graphDisplay.innerHTML = '<div class="placeholder">Rendered graph will appear here</div>';
+            graphDisplay.className = 'graph-display empty';
+
+            console.log('📊 Updated configuration:', config);
+            console.log('ℹ️ Graphs will be reloaded with new config on next load');
+        });
+
+        // Log initial message
+        console.log('🎯 PCAGraphLoader Test Console');
+        console.log('📖 Click "Initialize Loader" to begin');
+        console.log('💡 The loader will be available as window.loader');
+    </script>
+  </body>
+</html>
