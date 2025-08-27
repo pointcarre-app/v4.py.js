@@ -43,8 +43,8 @@ def get_graph_dict(a_affine=None, b_affine=None):
         )
 
     # Use parameters if provided, otherwise use injected values
-    a_value = a_affine if a_affine is not None else A_FLOAT_FOR_AFFINE_LINE
-    b_value = b_affine if b_affine is not None else B_FLOAT_FOR_AFFINE_LINE
+    a_value = a_affine if a_affine is not None else globals()["A_FLOAT_FOR_AFFINE_LINE"]
+    b_value = b_affine if b_affine is not None else globals()["B_FLOAT_FOR_AFFINE_LINE"]
 
     # Calculate the affine line with the configured values
     x = x_base

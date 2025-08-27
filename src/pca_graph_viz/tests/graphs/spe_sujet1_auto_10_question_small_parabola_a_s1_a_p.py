@@ -36,7 +36,7 @@ def get_graph_dict(a_shift=None):
         )
 
     # Use parameter if provided, otherwise use injected value
-    shift_magnitude = a_shift if a_shift is not None else A_SHIFT_MAGNITUDE
+    shift_magnitude = a_shift if a_shift is not None else globals()["A_SHIFT_MAGNITUDE"]
     a_shift_for_label = shift_magnitude  # Positive for this case
 
     return generate_parabola_graph(

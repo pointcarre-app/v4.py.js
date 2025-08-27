@@ -37,7 +37,7 @@ def get_graph_dict(y_horizontal=None):
         )
 
     # Use parameter if provided, otherwise use injected value
-    y_value = y_horizontal if y_horizontal is not None else Y_LABEL_FOR_HORIZONTAL_LINE
+    y_value = y_horizontal if y_horizontal is not None else globals()["Y_LABEL_FOR_HORIZONTAL_LINE"]
 
     # Build visual elements with the configured value
     lines = [

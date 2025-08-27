@@ -19,7 +19,7 @@ import generationResults, { StudentExerciseSet } from "./index-data-model.js";
 export { generationResults };
 
 // 🔥 UTILISEZ v0.0.22 - Force l'injection des paramètres (breaking change)
-import { PCAGraphLoader } from "https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.21/scenery/packaged/PCAGraphLoader.js";
+import { PCAGraphLoader } from "https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.22/scenery/packaged/PCAGraphLoader.js";
 
 // Variable pour le loader
 let graphLoader = null;
