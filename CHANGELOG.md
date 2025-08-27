@@ -3,6 +3,11 @@
 
 # Changelog
 
+## v0.0.19-unstable
+
+### Updating parameters injection in graphs (not so good)
+
+
 ## v0.0.18-unstable
 
 ### 📄 New Test Suite: tests_main.html
