@@ -1,10 +1,10 @@
 /**
  * ✅ SOLUTION FINALE - UTILISEZ CE CODE!
  * 
- * Version v0.0.23: CORRECTION CRITIQUE - Les paramètres fonctionnent maintenant!
- * - Corrige l'accès aux variables injectées via globals()
- * - Les paramètres sont maintenant correctement reflétés dans les graphiques
- * - Force l'injection depuis JavaScript (pas de valeurs par défaut)
+ * Version v0.0.24: CORRECTION COMPLÈTE - Les paramètres fonctionnent vraiment maintenant!
+ * - PCAGraphLoader v1.1.0 injecte correctement les configs dans le namespace Python
+ * - Les modules Python utilisent globals() pour accéder aux variables injectées
+ * - Les paramètres sont maintenant correctement reflétés dans TOUS les graphiques
  * 
  * IMPORTANT: Pour le rendu LaTeX, ajoutez KaTeX dans votre HTML:
  * <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -18,8 +18,8 @@ import generationResults, { StudentExerciseSet } from "./index-data-model.js";
 
 export { generationResults };
 
-// 🔥 UTILISEZ v0.0.23 - FIX CRITIQUE: Les paramètres fonctionnent maintenant!
-import { PCAGraphLoader } from "https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.23/scenery/packaged/PCAGraphLoader.js";
+// 🔥 UTILISEZ v0.0.24 - FIX COMPLET: PCAGraphLoader v1.1.0 avec injection correcte
+import { PCAGraphLoader } from "https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.24/scenery/packaged/PCAGraphLoader.js";
 
 // Variable pour le loader
 let graphLoader = null;
@@ -57,7 +57,7 @@ export async function executeAllGenerators() {
 
   // Initialize loader HERE, not at module level
   if (!graphLoader) {
-    console.log("🚀 Initializing PCAGraphLoader v0.0.23...");
+    console.log("🚀 Initializing PCAGraphLoader v0.0.24 (v1.1.0)...");
     graphLoader = new PCAGraphLoader({ 
       debug: false  // Set to true if you want to see debug info
     });
@@ -237,12 +237,13 @@ export function renderLatexInGraphs() {
 /**
  * 🎯 POINTS IMPORTANTS:
  * 
- * 1. Utilisez v0.0.23 (CORRECTION CRITIQUE - les paramètres fonctionnent!)
+ * 1. Utilisez v0.0.24 (PCAGraphLoader v1.1.0 avec injection correcte)
  * 2. Initialisez graphLoader DANS la fonction, pas au niveau module
- * 3. Les paramètres sont correctement reflétés dans les graphiques
+ * 3. Les paramètres sont maintenant VRAIMENT reflétés dans les graphiques
  * 
- * Correction v0.0.23:
- * - Corrige l'accès aux variables injectées via globals()
- * - Les paramètres Y_LABEL_FOR_HORIZONTAL_LINE, A_FLOAT_FOR_AFFINE_LINE, etc. fonctionnent maintenant
- * - Les graphiques reflètent correctement les valeurs configurées
+ * Corrections v0.0.24:
+ * - PCAGraphLoader injecte les configs dans le namespace du module Python
+ * - Les modules Python accèdent aux variables via globals()
+ * - Les paramètres Y_LABEL_FOR_HORIZONTAL_LINE, A_FLOAT_FOR_AFFINE_LINE, etc. fonctionnent
+ * - Compatible avec jsDelivr CDN pour une utilisation externe
  */
