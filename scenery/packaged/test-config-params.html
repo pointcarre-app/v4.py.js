@@ -55,7 +55,8 @@
             border-radius: 4px;
             flex: 0 1 calc(33% - 20px);
             min-width: 200px;
-            max-width: 360px;  /* Allow space for 340px SVG + padding */
+            max-width: 360px;
+            /* Allow space for 340px SVG + padding */
         }
 
         .graph-box svg {
@@ -66,7 +67,7 @@
             display: block;
             margin: 0 auto;
         }
-        
+
         .graph-box h4 {
             margin: 0 0 10px 0;
             font-size: 0.9em;
@@ -231,20 +232,20 @@
                 // Test 1: Question 7 - Parabola with Horizontal Line
                 try {
                     const container = document.getElementById('test1-graphs');
-                    
+
                     const svg1 = await loader.renderGraph('q7_small');
                     await addGraphBox(container, svg1, 'Default (y=10)');
-                    
+
                     const svg2 = await loader.renderGraph('q7_small', {
                         Y_LABEL_FOR_HORIZONTAL_LINE: 5
                     });
                     await addGraphBox(container, svg2, 'y=5');
-                    
+
                     const svg3 = await loader.renderGraph('q7_small', {
                         Y_LABEL_FOR_HORIZONTAL_LINE: 15
                     });
                     await addGraphBox(container, svg3, 'y=15');
-                    
+
                     document.getElementById('test1-result').innerHTML =
                         '<span class="success">✅ Question 7 tested with different horizontal lines</span>';
                 } catch (error) {
@@ -255,22 +256,22 @@
                 // Test 2: Question 8 - Affine Function
                 try {
                     const container = document.getElementById('test2-graphs');
-                    
+
                     const svg1 = await loader.renderGraph('q8_small');
                     await addGraphBox(container, svg1, 'Default (0.75x+2)');
-                    
+
                     const svg2 = await loader.renderGraph('q8_small', {
                         A_FLOAT_FOR_AFFINE_LINE: 1.5,
                         B_FLOAT_FOR_AFFINE_LINE: -1
                     });
                     await addGraphBox(container, svg2, '1.5x-1');
-                    
+
                     const svg3 = await loader.renderGraph('q8_small', {
                         A_FLOAT_FOR_AFFINE_LINE: -0.5,
                         B_FLOAT_FOR_AFFINE_LINE: 3
                     });
                     await addGraphBox(container, svg3, '-0.5x+3');
-                    
+
                     document.getElementById('test2-result').innerHTML =
                         '<span class="success">✅ Question 8 tested with different slopes and intercepts</span>';
                 } catch (error) {
@@ -281,19 +282,19 @@
                 // Test 3: Question 11 - All Cases
                 try {
                     const container = document.getElementById('test3-graphs');
-                    
+
                     // Case A
                     const svgA = await loader.renderGraph('q11_case_a_small');
                     await addGraphBox(container, svgA, 'Case A');
-                    
+
                     // Case B
                     const svgB = await loader.renderGraph('q11_case_b_small');
                     await addGraphBox(container, svgB, 'Case B');
-                    
+
                     // Case C
                     const svgC = await loader.renderGraph('q11_case_c_small');
                     await addGraphBox(container, svgC, 'Case C');
-                    
+
                     document.getElementById('test3-result').innerHTML =
                         '<span class="success">✅ Question 11 all cases rendered successfully</span>';
                 } catch (error) {
@@ -304,33 +305,33 @@
                 // Test 4: Upward Parabolas (s=1)
                 try {
                     const container = document.getElementById('test4-graphs');
-                    
+
                     // y = x²
                     const svg1 = await loader.renderGraph('parabola_s1_a0');
                     await addGraphBox(container, svg1, 'y = x²');
-                    
+
                     // y = x² - a (with different shifts)
                     const svg2 = await loader.renderGraph('parabola_s1_am', {
                         A_SHIFT_MAGNITUDE: 3
                     });
                     await addGraphBox(container, svg2, 'y = x² - 3');
-                    
+
                     const svg2b = await loader.renderGraph('parabola_s1_am', {
                         A_SHIFT_MAGNITUDE: 7
                     });
                     await addGraphBox(container, svg2b, 'y = x² - 7');
-                    
+
                     // y = x² + a (with different shifts)
                     const svg3 = await loader.renderGraph('parabola_s1_ap', {
                         A_SHIFT_MAGNITUDE: 2
                     });
                     await addGraphBox(container, svg3, 'y = x² + 2');
-                    
+
                     const svg3b = await loader.renderGraph('parabola_s1_ap', {
                         A_SHIFT_MAGNITUDE: 8
                     });
                     await addGraphBox(container, svg3b, 'y = x² + 8');
-                    
+
                     document.getElementById('test4-result').innerHTML =
                         '<span class="success">✅ Upward parabolas tested with various shifts</span>';
                 } catch (error) {
@@ -341,33 +342,33 @@
                 // Test 5: Downward Parabolas (s=-1)
                 try {
                     const container = document.getElementById('test5-graphs');
-                    
+
                     // y = -x²
                     const svg1 = await loader.renderGraph('parabola_sm1_a0');
                     await addGraphBox(container, svg1, 'y = -x²');
-                    
+
                     // y = -x² - a (with different shifts)
                     const svg2 = await loader.renderGraph('parabola_sm1_am', {
                         A_SHIFT_MAGNITUDE: 4
                     });
                     await addGraphBox(container, svg2, 'y = -x² - 4');
-                    
+
                     const svg2b = await loader.renderGraph('parabola_sm1_am', {
                         A_SHIFT_MAGNITUDE: 6
                     });
                     await addGraphBox(container, svg2b, 'y = -x² - 6');
-                    
+
                     // y = -x² + a (with different shifts)
                     const svg3 = await loader.renderGraph('parabola_sm1_ap', {
                         A_SHIFT_MAGNITUDE: 3
                     });
                     await addGraphBox(container, svg3, 'y = -x² + 3');
-                    
+
                     const svg3b = await loader.renderGraph('parabola_sm1_ap', {
                         A_SHIFT_MAGNITUDE: 9
                     });
                     await addGraphBox(container, svg3b, 'y = -x² + 9');
-                    
+
                     document.getElementById('test5-result').innerHTML =
                         '<span class="success">✅ Downward parabolas tested with various shifts</span>';
                 } catch (error) {
@@ -382,18 +383,18 @@
                         A_FLOAT_FOR_AFFINE_LINE: 2.0,
                         B_FLOAT_FOR_AFFINE_LINE: -5
                     });
-                    
+
                     // Second render without config (should use defaults)
                     const svg2 = await loader.renderGraph('q8_small');
-                    
+
                     // Third render with different custom config
                     const svg3 = await loader.renderGraph('q8_small', {
                         A_FLOAT_FOR_AFFINE_LINE: -1.0
                     });
-                    
+
                     // Fourth render without config (should use defaults again)
                     const svg4 = await loader.renderGraph('q8_small');
-                    
+
                     // Verify isolation
                     if (svg1 !== svg2 && svg2 === svg4 && svg1 !== svg3) {
                         document.getElementById('test6-result').innerHTML =
@@ -410,7 +411,7 @@
                 // Summary
                 console.log('✅ All 11 graph types tested successfully!');
                 console.log('Graphs tested:', [
-                    'q7_small', 'q8_small', 
+                    'q7_small', 'q8_small',
                     'q11_case_a_small', 'q11_case_b_small', 'q11_case_c_small',
                     'parabola_s1_a0', 'parabola_s1_am', 'parabola_s1_ap',
                     'parabola_sm1_a0', 'parabola_sm1_am', 'parabola_sm1_ap'

@@ -3,6 +3,34 @@
 
 # Changelog
 
+## v0.0.18-unstable
+
+### 📄 New Test Suite: tests_main.html
+
+#### Overview
+- **Comprehensive Test Suite for PCAGraphLoader**: This file serves as the main test suite for the PCAGraphLoader, covering all graph types with LaTeX rendering and dimension verification.
+
+#### Features
+- **LaTeX Rendering**: Utilizes KaTeX for rendering mathematical notation within graphs.
+- **Graph Styling**: Integrates DaisyUI for consistent graph styling.
+- **Configuration Parameters**: Provides a control panel for adjusting graph parameters such as Y Horizontal Line, Affine Slope, and Shift Magnitude.
+- **Dynamic Graph Rendering**: Dynamically inserts graphs into the document based on configuration.
+- **Dimension Verification**: Verifies the dimensions of rendered graphs against expected values.
+- **Graph Dictionary Display**: Displays a detailed graph dictionary for each rendered graph, including metadata and configuration.
+- **Responsive Design**: Adapts layout for different screen sizes, ensuring usability on mobile devices.
+- **Loading State and Error Handling**: Displays loading spinners and error messages during graph rendering.
+
+#### Technical Details
+- **JavaScript Module**: Imports and utilizes the PCAGraphLoader module for graph rendering.
+- **Event Listeners**: Includes event listeners for running tests and applying configurations.
+- **Auto-run Tests**: Automatically runs all tests on page load.
+
+#### Benefits
+- **Comprehensive Testing**: Ensures all graph types are tested with full feature verification.
+- **Debugging and Introspection**: Provides detailed information for debugging and introspection of graph rendering.
+
+---
+
 ## v0.0.17-unstable
 
 ### 🔄 Breaking Change: renderGraph() Now Returns Graph Dictionary
