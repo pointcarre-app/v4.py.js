@@ -58,6 +58,7 @@ export async function executeAllGenerators() {
   // Initialize loader HERE, not at module level
   if (!graphLoader) {
     console.log("🚀 Initializing PCAGraphLoader v0.0.24 (v1.1.0)...");
+    // NO graphConfig here - we pass values dynamically per graph!
     graphLoader = new PCAGraphLoader({ 
       debug: false  // Set to true if you want to see debug info
     });
@@ -159,6 +160,7 @@ export async function executeAllGenerators() {
         const yValue = parseInt(result.data.components.n);
         console.log(`📊 Q7: Y=${yValue} for student ${studentNum}`);
         
+        // Pass the dynamic value from the question
         const svgAndDict = await graphLoader.renderGraph("q7_small", {
           Y_LABEL_FOR_HORIZONTAL_LINE: yValue
         });
@@ -173,9 +175,29 @@ export async function executeAllGenerators() {
         const bValue = parseFloat(result.data.components.b);
         console.log(`📊 Q8: a=${aValue}, b=${bValue} for student ${studentNum}`);
         
+        // Pass the dynamic values from the question
         const svgAndDict = await graphLoader.renderGraph("q8_small", {
           A_FLOAT_FOR_AFFINE_LINE: aValue,
           B_FLOAT_FOR_AFFINE_LINE: bValue
+        });
+
+        result.graphSvg = svgAndDict.svg;
+        result.graphDict = svgAndDict.graphDict;
+      }
+      
+      // Handle Question 10 - Parabolas with shift
+      else if (generator === "spe_sujet1_auto_10_question.py") {
+        // Extract the shift value from the question data
+        const shiftValue = parseInt(result.data.components.a || result.data.components.n || 5);
+        console.log(`📊 Q10: Shift=${shiftValue} for student ${studentNum}`);
+        
+        // Determine which parabola type based on question variant
+        // This would need to be adjusted based on your actual question structure
+        const graphKey = result.data.components.variant || "parabola_s1_ap";
+        
+        // Pass the dynamic shift value from the question
+        const svgAndDict = await graphLoader.renderGraph(graphKey, {
+          A_SHIFT_MAGNITUDE: shiftValue
         });
 
         result.graphSvg = svgAndDict.svg;

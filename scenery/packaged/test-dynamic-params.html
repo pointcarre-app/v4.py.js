@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dynamic Parameters - PCAGraphLoader v0.0.24</title>
+    
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    
+    <!-- DaisyUI for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.min.css" rel="stylesheet" type="text/css">
+    
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .graph-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .graph-card {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .graph-card h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1rem;
+        }
+        .status {
+            padding: 1rem;
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+        }
+        .success {
+            background: #efe;
+            color: #060;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Dynamic Parameters - PCAGraphLoader v0.0.24</h1>
+    <p>This test demonstrates passing dynamic values to graphs at render time.</p>
+
+    <div id="status" class="status">Initializing...</div>
+
+    <div class="controls">
+        <button id="test-btn" class="btn btn-primary">Run Dynamic Test</button>
+    </div>
+
+    <div id="graphs" class="graph-container"></div>
+
+    <script type="module">
+        // Import PCAGraphLoader v0.0.24
+        import { PCAGraphLoader } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.24/scenery/packaged/PCAGraphLoader.js';
+        
+        async function runTest() {
+            const statusEl = document.getElementById('status');
+            const graphsEl = document.getElementById('graphs');
+            
+            try {
+                statusEl.textContent = 'Initializing PCAGraphLoader...';
+                
+                // Initialize WITHOUT default config - we'll pass values dynamically
+                const loader = new PCAGraphLoader({
+                    debug: true  // Enable debug for troubleshooting
+                });
+                
+                await loader.initialize();
+                statusEl.textContent = 'PCAGraphLoader initialized successfully!';
+                statusEl.className = 'status success';
+                
+                // Clear previous graphs
+                graphsEl.innerHTML = '';
+                
+                // Test 1: Q7 with different Y values
+                const yValues = [5, 10, 15];
+                for (const yValue of yValues) {
+                    try {
+                        const result = await loader.renderGraph('q7_small', {
+                            Y_LABEL_FOR_HORIZONTAL_LINE: yValue
+                        });
+                        
+                        const card = document.createElement('div');
+                        card.className = 'graph-card';
+                        card.innerHTML = `
+                            <h3>Q7: Y=${yValue}</h3>
+                            ${result.svg}
+                        `;
+                        graphsEl.appendChild(card);
+                    } catch (error) {
+                        console.error(`Failed Q7 with Y=${yValue}:`, error);
+                    }
+                }
+                
+                // Test 2: Q8 with different affine parameters
+                const affineTests = [
+                    { a: 0.5, b: 1 },
+                    { a: 1.0, b: -2 },
+                    { a: -0.75, b: 3 }
+                ];
+                
+                for (const params of affineTests) {
+                    try {
+                        const result = await loader.renderGraph('q8_small', {
+                            A_FLOAT_FOR_AFFINE_LINE: params.a,
+                            B_FLOAT_FOR_AFFINE_LINE: params.b
+                        });
+                        
+                        const card = document.createElement('div');
+                        card.className = 'graph-card';
+                        card.innerHTML = `
+                            <h3>Q8: a=${params.a}, b=${params.b}</h3>
+                            ${result.svg}
+                        `;
+                        graphsEl.appendChild(card);
+                    } catch (error) {
+                        console.error(`Failed Q8 with a=${params.a}, b=${params.b}:`, error);
+                    }
+                }
+                
+                // Test 3: Parabolas with different shifts
+                const shiftValues = [3, 5, 7];
+                const parabolaTypes = ['parabola_s1_ap', 'parabola_sm1_am'];
+                
+                for (const graphKey of parabolaTypes) {
+                    for (const shift of shiftValues) {
+                        try {
+                            const result = await loader.renderGraph(graphKey, {
+                                A_SHIFT_MAGNITUDE: shift
+                            });
+                            
+                            const card = document.createElement('div');
+                            card.className = 'graph-card';
+                            card.innerHTML = `
+                                <h3>${graphKey}: shift=${shift}</h3>
+                                ${result.svg}
+                            `;
+                            graphsEl.appendChild(card);
+                        } catch (error) {
+                            console.error(`Failed ${graphKey} with shift=${shift}:`, error);
+                        }
+                    }
+                }
+                
+                // Render LaTeX
+                setTimeout(() => {
+                    if (typeof katex !== 'undefined') {
+                        document.querySelectorAll('.svg-latex').forEach(el => {
+                            const latex = el.textContent.trim();
+                            if (latex) {
+                                try {
+                                    el.innerHTML = '';
+                                    katex.render(latex, el, {
+                                        throwOnError: false,
+                                        displayMode: false
+                                    });
+                                } catch (e) {
+                                    console.error('KaTeX error:', e);
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+                
+            } catch (error) {
+                statusEl.textContent = `Error: ${error.message}`;
+                statusEl.className = 'status error';
+                console.error('Test failed:', error);
+            }
+        }
+        
+        // Run test on button click
+        document.getElementById('test-btn').addEventListener('click', runTest);
+        
+        // Auto-run on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runTest, 500);
+        });
+    </script>
+</body>
+</html>
