@@ -3,6 +3,51 @@
 
 # Changelog
 
+## v0.0.20-unstable
+
+### Clean Parameter Passing Implementation - No More Global Tricks!
+
+#### Overview
+Complete refactor of parameter passing system to eliminate global state manipulation and implement clean, maintainable parameter passing to graphs.
+
+#### Key Changes
+
+**Python Graph Files** - Clean parameter acceptance:
+- `spe_sujet1_auto_07_question_small.py` - `get_graph_dict(y_horizontal=None)`
+- `spe_sujet1_auto_08_question_small.py` - `get_graph_dict(a_affine=None, b_affine=None)`
+- All parabola files - `get_graph_dict(a_shift=None)`
+- Removed all `globals()` and `builtins` tricks
+- Parameters now passed directly as function arguments
+
+**PCAGraphLoader.js** - Clean namespace usage:
+- Uses Python's `inspect.signature()` to detect function parameters
+- Passes values via Nagini's namespace object (not strings)
+- No more builtins manipulation or global injection
+- Automatic parameter mapping based on function signatures
+
+**New Files Added**:
+- `index-graphs.js` - Clean interface for building graphs with configuration
+- `example-generators-integration.js` - Documentation and examples
+
+**tests_main.html Improvements**:
+- Fixed decimal separator (accepts both comma and dot)
+- Proper form value extraction and passing
+- Removed debug console statements
+- Fixed inline style linter warnings
+
+#### Usage Example
+```javascript
+import { buildPCAGraph } from './index-graphs.js';
+
+// Build graph with dynamic configuration
+const result = await buildPCAGraph('q7_small', {
+    Y_LABEL_FOR_HORIZONTAL_LINE: 15
+});
+
+// result.svg contains the SVG markup
+// result.graphDict contains the graph metadata
+```
+
 ## v0.0.19-unstable
 
 ### Updating parameters injection in graphs (not so good)
