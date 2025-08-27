@@ -55,14 +55,16 @@
             border-radius: 4px;
             flex: 0 1 calc(33% - 20px);
             min-width: 200px;
-            max-width: 280px;
+            max-width: 360px;  /* Allow space for 340px SVG + padding */
         }
 
         .graph-box svg {
-            width: 100%;
+            width: auto;
             height: auto;
-            max-width: 250px;
-            max-height: 250px;
+            max-width: 340px;
+            max-height: 340px;
+            display: block;
+            margin: 0 auto;
         }
         
         .graph-box h4 {

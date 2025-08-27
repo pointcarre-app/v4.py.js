@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SVG Dimensions</title>
+    
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    
+    <!-- DaisyUI for graph styling -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.min.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        h1 {
+            color: #1976d2;
+        }
+        
+        .test-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .graph-info {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .graph-display {
+            flex: 0 0 auto;
+            border: 2px solid #e0e0e0;
+            padding: 10px;
+            background: white;
+        }
+        
+        /* Critical CSS - matches sujets0-simple.html */
+        .graph-display svg {
+            width: auto;
+            height: auto;
+            max-width: 340px;
+            max-height: 340px;
+            display: block;
+        }
+        
+        .info-box {
+            flex: 1;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+        
+        .info-box pre {
+            margin: 0;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .dimension-display {
+            font-size: 14px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .success { color: green; }
+        .warning { color: orange; }
+        .error { color: red; }
+        
+        /* Essential text size for graph labels */
+        .text-2xs {
+            font-size: 0.625rem !important;
+            line-height: 1 !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 SVG Dimensions Test</h1>
+    <p>This page verifies that SVG dimensions match the graph dictionary specifications.</p>
+    
+    <div id="tests-container"></div>
+
+    <script type="module">
+        import { PCAGraphLoader } from './PCAGraphLoader.js';
+        
+        async function testGraph(graphKey, expectedWidth, expectedHeight) {
+            const container = document.createElement('div');
+            container.className = 'test-container';
+            
+            const title = document.createElement('h2');
+            title.textContent = `Testing: ${graphKey}`;
+            container.appendChild(title);
+            
+            const graphInfo = document.createElement('div');
+            graphInfo.className = 'graph-info';
+            
+            const graphDisplay = document.createElement('div');
+            graphDisplay.className = 'graph-display';
+            
+            const infoBox = document.createElement('div');
+            infoBox.className = 'info-box';
+            
+            graphInfo.appendChild(graphDisplay);
+            graphInfo.appendChild(infoBox);
+            container.appendChild(graphInfo);
+            
+            try {
+                const loader = new PCAGraphLoader({ debug: false });
+                await loader.initialize();
+                
+                const result = await loader.renderGraph(graphKey);
+                
+                // Display the SVG
+                graphDisplay.innerHTML = result.svg;
+                
+                // Get the actual SVG element
+                const svgElement = graphDisplay.querySelector('svg');
+                
+                // Get dimensions from different sources
+                const dictWidth = result.graphDict.svg?.width;
+                const dictHeight = result.graphDict.svg?.height;
+                const svgWidth = svgElement?.getAttribute('width');
+                const svgHeight = svgElement?.getAttribute('height');
+                const clientWidth = svgElement?.clientWidth;
+                const clientHeight = svgElement?.clientHeight;
+                
+                // Create dimension display
+                const dimDisplay = document.createElement('div');
+                dimDisplay.className = 'dimension-display';
+                
+                // Check if dimensions match
+                const widthMatch = dictWidth == svgWidth && dictWidth == expectedWidth;
+                const heightMatch = dictHeight == svgHeight && dictHeight == expectedHeight;
+                const renderMatch = clientWidth == expectedWidth && clientHeight == expectedHeight;
+                
+                dimDisplay.innerHTML = `
+                    <strong>Dimension Verification:</strong><br>
+                    Expected: ${expectedWidth} × ${expectedHeight}<br>
+                    Graph Dict: ${dictWidth} × ${dictHeight} <span class="${dictWidth == expectedWidth ? 'success' : 'error'}">
+                        ${dictWidth == expectedWidth && dictHeight == expectedHeight ? '✓' : '✗'}
+                    </span><br>
+                    SVG Attributes: ${svgWidth} × ${svgHeight} <span class="${widthMatch && heightMatch ? 'success' : 'error'}">
+                        ${widthMatch && heightMatch ? '✓' : '✗'}
+                    </span><br>
+                    Rendered Size: ${clientWidth} × ${clientHeight} <span class="${renderMatch ? 'success' : 'warning'}">
+                        ${renderMatch ? '✓' : '(CSS constrained)'}
+                    </span>
+                `;
+                
+                container.appendChild(dimDisplay);
+                
+                // Display relevant parts of graph dict
+                infoBox.innerHTML = `
+                    <strong>Graph Dictionary (svg section):</strong>
+                    <pre>${JSON.stringify(result.graphDict.svg, null, 2)}</pre>
+                    <strong>Graph ID:</strong> ${result.graphDict.id || 'N/A'}
+                    <br><strong>Title:</strong> ${result.graphDict.title || 'N/A'}
+                `;
+                
+            } catch (error) {
+                infoBox.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+            }
+            
+            document.getElementById('tests-container').appendChild(container);
+        }
+        
+        // Run tests
+        async function runTests() {
+            // Test small graphs (should be 150x150)
+            await testGraph('q7_small', 150, 150);
+            await testGraph('q8_small', 150, 150);
+            
+            // Test parabola graphs (check their actual dimensions)
+            await testGraph('parabola_s1_ap', 150, 150);
+            
+            console.log('✅ Tests complete. Check visual output above.');
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>
