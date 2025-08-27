@@ -435,9 +435,10 @@
     </div>
 
     <script type="module">
+        // IMPORTANT: Use v0.0.21-unstable for parameter passing to work
         import {
             PCAGraphLoader
-        } from './PCAGraphLoader.js';
+        } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.21-unstable/scenery/packaged/PCAGraphLoader.js';
 
         // All small graphs to test
         const TEST_GRAPHS = [{
@@ -644,7 +645,10 @@
             card.appendChild(content);
 
             // Render LaTeX
-            renderLatexInElement(graphDisplay);
+            // Render LaTeX with a small delay to ensure DOM is updated
+            setTimeout(() => {
+                renderLatexInElement(graphDisplay);
+            }, 100);
 
             return card;
         }

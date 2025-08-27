@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Debug Test - Check Parameter Passing</title>
+    <meta charset="UTF-8" />
+    <style>
+        .test-case {
+            border: 2px solid #ccc;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .success {
+            border-color: green;
+        }
+
+        .failure {
+            border-color: red;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            overflow-x: auto;
+        }
+
+        svg {
+            max-width: 300px;
+            border: 1px solid #ddd;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Debug: Parameter Passing to Graphs</h1>
+
+    <div id="test1" class="test-case">
+      <h2>Test 1: LOCAL - Y=15</h2>
+      <p>Expected: Horizontal line at y=15</p>
+      <div id="result1"></div>
+      <pre id="log1"></pre>
+    </div>
+
+    <script type="module">
+        // Test with LOCAL files first
+        import {
+            PCAGraphLoader
+        } from './PCAGraphLoader.js';
+
+        async function testLocal() {
+            console.log("🔍 TESTING LOCAL VERSION");
+
+            const log1 = [];
+
+            // Override console.log for this test
+            const originalLog = console.log;
+            console.log = (...args) => {
+                originalLog(...args);
+                log1.push(args.join(' '));
+            };
+
+            try {
+                const loader = new PCAGraphLoader({
+                    debug: true,
+                    baseUrl: 'http://localhost:8022' // Force local
+                });
+
+                await loader.initialize();
+
+                // Test with Y=15
+                const result = await loader.renderGraph("q7_small", {
+                    Y_LABEL_FOR_HORIZONTAL_LINE: 15
+                });
+
+                document.getElementById('result1').innerHTML = result.svg;
+
+                // Check if the value is in the SVG
+                const hasY15 = result.svg.includes('y=15');
+                document.getElementById('test1').className = hasY15 ? 'test-case success' : 'test-case failure';
+
+                // Display the foreign objects to see what's actually rendered
+                log1.push('Foreign objects in graph:');
+                result.graphDict.foreign_objects?.forEach(obj => {
+                    if (obj.latex) {
+                        log1.push(`  LaTeX: ${obj.latex} at (${obj.x}, ${obj.y})`);
+                    }
+                });
+
+                // Check the horizontal line position
+                const horizontalLine = result.graphDict.lines?.find(l => l.y1 === l.y2 && l.x1 !== l.x2);
+                if (horizontalLine) {
+                    log1.push(`Horizontal line Y position: ${horizontalLine.y1}`);
+                }
+
+            } catch (error) {
+                log1.push(`ERROR: ${error.message}`);
+                document.getElementById('test1').className = 'test-case failure';
+            }
+
+            document.getElementById('log1').textContent = log1.join('\n');
+            console.log = originalLog;
+        }
+
+        testLocal();
+    </script>
+
+    <div id="test2" class="test-case">
+      <h2>Test 2: CDN - Y=15</h2>
+      <p>Expected: Horizontal line at y=15</p>
+      <div id="result2"></div>
+      <pre id="log2"></pre>
+    </div>
+
+    <script type="module">
+        // Test with CDN version
+        import {
+            PCAGraphLoader as PCAGraphLoaderCDN
+        } from 'https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.20-unstable/scenery/packaged/PCAGraphLoader.js';
+
+        async function testCDN() {
+            console.log("🔍 TESTING CDN VERSION");
+
+            const log2 = [];
+
+            // Override console.log for this test
+            const originalLog = console.log;
+            console.log = (...args) => {
+                originalLog(...args);
+                log2.push(args.join(' '));
+            };
+
+            // Wait a bit to ensure DOM is ready
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            try {
+                const loader = new PCAGraphLoaderCDN({
+                    debug: true
+                });
+
+                await loader.initialize();
+
+                // Test with Y=15
+                const result = await loader.renderGraph("q7_small", {
+                    Y_LABEL_FOR_HORIZONTAL_LINE: 15
+                });
+
+                document.getElementById('result2').innerHTML = result.svg;
+
+                // Check if the value is in the SVG
+                const hasY15 = result.svg.includes('y=15');
+                document.getElementById('test2').className = hasY15 ? 'test-case success' : 'test-case failure';
+
+                // Display what's actually in the graph
+                log2.push('Foreign objects in graph:');
+                result.graphDict.foreign_objects?.forEach(obj => {
+                    if (obj.latex) {
+                        log2.push(`  LaTeX: ${obj.latex} at (${obj.x}, ${obj.y})`);
+                    }
+                });
+
+                // Check the horizontal line position
+                const horizontalLine = result.graphDict.lines?.find(l => l.y1 === l.y2 && l.x1 !== l.x2);
+                if (horizontalLine) {
+                    log2.push(`Horizontal line Y position: ${horizontalLine.y1}`);
+                }
+
+            } catch (error) {
+                log2.push(`ERROR: ${error.message}`);
+                document.getElementById('test2').className = 'test-case failure';
+            }
+
+            document.getElementById('log2').textContent = log2.join('\n');
+            console.log = originalLog;
+        }
+
+        testCDN();
+    </script>
+
+    <div id="test3" class="test-case">
+      <h2>Test 3: Direct Python Check</h2>
+      <p>Check what the Python file actually contains</p>
+      <pre id="python-content"></pre>
+    </div>
+
+    <script>
+        // Check what's in the Python file on CDN
+        fetch('https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.20-unstable/src/pca_graph_viz/tests/graphs/spe_sujet1_auto_07_question_small.py')
+            .then(r => r.text())
+            .then(content => {
+                // Check if get_graph_dict accepts parameters
+                const hasParam = content.includes('def get_graph_dict(y_horizontal=None)');
+                const elem = document.getElementById('python-content');
+                elem.textContent = hasParam ?
+                    '✅ Python file has parameter support\n\n' + content.substring(3000, 3500) + '...' :
+                    '❌ Python file DOES NOT have parameter support\n\n' + content.substring(3000, 3500) + '...';
+
+                document.getElementById('test3').className = hasParam ? 'test-case success' : 'test-case failure';
+            })
+            .catch(err => {
+                document.getElementById('python-content').textContent = 'Failed to fetch: ' + err.message;
+            });
+    </script>
+  </body>
+</html>

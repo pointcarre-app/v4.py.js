@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test CDN Integration</title>
+    <meta charset="UTF-8" />
+    <!-- KaTeX for LaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  </head>
+  <body>
+    <h1>Testing CDN Parameter Passing</h1>
+
+    <div>
+      <h2>Test 1: Y=15 (should show horizontal line at y=15)</h2>
+      <div id="test1"></div>
+    </div>
+
+    <div>
+      <h2>Test 2: Y=5 (should show horizontal line at y=5)</h2>
+      <div id="test2"></div>
+    </div>
+
+    <div>
+      <h2>Test 3: Affine a=2, b=-3 (should show line with slope 2)</h2>
+      <div id="test3"></div>
+    </div>
+
+    <script type="module">
+        import {
+            PCAGraphLoader
+        } from "https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.20-unstable/scenery/packaged/PCAGraphLoader.js";
+
+        async function runTests() {
+            console.log("🚀 Starting tests...");
+
+            // Create a NEW loader instance
+            const graphLoader = new PCAGraphLoader({
+                debug: true // Enable debug to see what's happening
+            });
+
+            console.log("📦 Initializing loader...");
+            await graphLoader.initialize();
+            console.log("✅ Loader initialized");
+
+            // Test 1: Y=15
+            console.log("🧪 Test 1: Rendering q7_small with Y=15");
+            const result1 = await graphLoader.renderGraph("q7_small", {
+                Y_LABEL_FOR_HORIZONTAL_LINE: 15
+            });
+            document.getElementById("test1").innerHTML = result1.svg;
+            console.log("✅ Test 1 complete. Graph dict:", result1.graphDict);
+
+            // Test 2: Y=5
+            console.log("🧪 Test 2: Rendering q7_small with Y=5");
+            const result2 = await graphLoader.renderGraph("q7_small", {
+                Y_LABEL_FOR_HORIZONTAL_LINE: 5
+            });
+            document.getElementById("test2").innerHTML = result2.svg;
+            console.log("✅ Test 2 complete");
+
+            // Test 3: Affine
+            console.log("🧪 Test 3: Rendering q8_small with a=2, b=-3");
+            const result3 = await graphLoader.renderGraph("q8_small", {
+                A_FLOAT_FOR_AFFINE_LINE: 2,
+                B_FLOAT_FOR_AFFINE_LINE: -3
+            });
+            document.getElementById("test3").innerHTML = result3.svg;
+            console.log("✅ Test 3 complete");
+
+            // Render LaTeX
+            if (typeof katex !== 'undefined') {
+                document.querySelectorAll('.svg-latex').forEach(el => {
+                    const latex = el.textContent;
+                    el.innerHTML = '';
+                    katex.render(latex, el, {
+                        throwOnError: false
+                    });
+                });
+            }
+        }
+
+        // Run tests when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', runTests);
+        } else {
+            runTests();
+        }
+    </script>
+  </body>
+</html>

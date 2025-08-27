@@ -1,8 +1,8 @@
 """
 Affine function visualization with configurable coefficients (small version).
 
-The A_FLOAT_FOR_AFFINE_LINE and B_FLOAT_FOR_AFFINE_LINE values can be passed
-as parameters to get_graph_dict() for dynamic configuration from the UI.
+REQUIRED: The A_FLOAT_FOR_AFFINE_LINE and B_FLOAT_FOR_AFFINE_LINE variables MUST be
+injected into this module's namespace by Nagini from JavaScript before calling get_graph_dict().
 
 The values can be changed using the control panel in sujets0-simple.html.
 """
@@ -11,10 +11,10 @@ import numpy as np
 
 # Affine function visualization: y = a x + b (small 150x150)
 
-# Default configuration values
-# These can be overridden by passing parameters to get_graph_dict()
-A_FLOAT_FOR_AFFINE_LINE = 0.75  # Slope coefficient (float)
-B_FLOAT_FOR_AFFINE_LINE = 2.0  # Y-intercept (integer as float)
+# NO DEFAULT VALUES - Must be injected from JavaScript via Nagini
+# If these variables are not set, get_graph_dict() will raise an error
+# A_FLOAT_FOR_AFFINE_LINE = <must be injected>  # Slope coefficient (float)
+# B_FLOAT_FOR_AFFINE_LINE = <must be injected>  # Y-intercept (float)
 
 # Match canonical range while keeping small display size
 x_base = np.linspace(-10, 10, 1000)
@@ -24,10 +24,25 @@ def get_graph_dict(a_affine=None, b_affine=None):
     """Return the graph as a standardized dictionary.
 
     Args:
-        a_affine: Slope coefficient for affine line (optional, defaults to module value)
-        b_affine: Y-intercept for affine line (optional, defaults to module value)
+        a_affine: Slope coefficient for affine line (optional, uses injected value if not provided)
+        b_affine: Y-intercept for affine line (optional, uses injected value if not provided)
+
+    Raises:
+        NameError: If required variables are not injected into namespace
     """
-    # Use parameters if provided, otherwise use module-level values
+    # Check if variables were injected from JavaScript
+    if "A_FLOAT_FOR_AFFINE_LINE" not in globals():
+        raise NameError(
+            "A_FLOAT_FOR_AFFINE_LINE must be injected into module namespace by Nagini. "
+            "Ensure graphConfig is properly passed from JavaScript."
+        )
+    if "B_FLOAT_FOR_AFFINE_LINE" not in globals():
+        raise NameError(
+            "B_FLOAT_FOR_AFFINE_LINE must be injected into module namespace by Nagini. "
+            "Ensure graphConfig is properly passed from JavaScript."
+        )
+
+    # Use parameters if provided, otherwise use injected values
     a_value = a_affine if a_affine is not None else A_FLOAT_FOR_AFFINE_LINE
     b_value = b_affine if b_affine is not None else B_FLOAT_FOR_AFFINE_LINE
 

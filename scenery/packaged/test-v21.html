@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test v0.0.21 - This Should Work!</title>
+    <meta charset="UTF-8" />
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <style>
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        svg {
+            max-width: 300px;
+            border: 1px solid #ddd;
+            margin: 10px;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>🎯 Test avec v0.0.21-unstable (SANS CACHE)</h1>
+
+    <div id="status">Loading...</div>
+    <div id="graphs"></div>
+
+    <script type="module">
+        // UTILISE v0.0.21-unstable
+        import {
+            PCAGraphLoader
+        } from "https://cdn.jsdelivr.net/gh/pointcarre-app/v4.py.js@v0.0.21-unstable/scenery/packaged/PCAGraphLoader.js";
+
+        async function test() {
+            const status = document.getElementById('status');
+            const graphs = document.getElementById('graphs');
+
+            try {
+                status.textContent = 'Initializing loader...';
+
+                const loader = new PCAGraphLoader({
+                    debug: false
+                });
+                await loader.initialize();
+
+                status.textContent = 'Testing different values...';
+
+                // Test 1: Y=20
+                const test1 = await loader.renderGraph("q7_small", {
+                    Y_LABEL_FOR_HORIZONTAL_LINE: 20
+                });
+
+                // Test 2: Y=5
+                const test2 = await loader.renderGraph("q7_small", {
+                    Y_LABEL_FOR_HORIZONTAL_LINE: 5
+                });
+
+                // Test 3: Affine a=3, b=-2
+                const test3 = await loader.renderGraph("q8_small", {
+                    A_FLOAT_FOR_AFFINE_LINE: 3,
+                    B_FLOAT_FOR_AFFINE_LINE: -2
+                });
+
+                // Check if values are correct
+                const check1 = test1.svg.includes('y=20');
+                const check2 = test2.svg.includes('y=5');
+
+                graphs.innerHTML = `
+                    <h2>Test 1: Y=20 ${check1 ? '<span class="success">✅ WORKS!</span>' : '<span class="error">❌ FAILED</span>'}</h2>
+                    ${test1.svg}
+                    
+                    <h2>Test 2: Y=5 ${check2 ? '<span class="success">✅ WORKS!</span>' : '<span class="error">❌ FAILED</span>'}</h2>
+                    ${test2.svg}
+                    
+                    <h2>Test 3: Affine a=3, b=-2</h2>
+                    ${test3.svg}
+                `;
+
+                if (check1 && check2) {
+                    status.innerHTML = '<span class="success">🎉 SUCCESS! Parameters are working!</span>';
+                } else {
+                    status.innerHTML = '<span class="error">❌ Parameters not reflected</span>';
+                }
+
+                // Render LaTeX equations
+                setTimeout(() => {
+                    if (typeof katex !== 'undefined') {
+                        document.querySelectorAll('.svg-latex').forEach(el => {
+                            const latex = el.textContent;
+                            el.innerHTML = '';
+                            katex.render(latex, el, {
+                                throwOnError: false,
+                                displayMode: false
+                            });
+                        });
+                        console.log('✅ LaTeX rendered');
+                    } else {
+                        console.log('⚠️ KaTeX not loaded yet');
+                    }
+                }, 100);
+
+            } catch (error) {
+                status.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+                console.error(error);
+            }
+        }
+
+        test();
+    </script>
+  </body>
+</html>

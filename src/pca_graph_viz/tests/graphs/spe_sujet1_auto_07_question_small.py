@@ -1,17 +1,17 @@
 """
 Simple parabola visualization with configurable horizontal line.
 
-The Y_LABEL_FOR_HORIZONTAL_LINE value can be passed as a parameter to get_graph_dict()
-for dynamic configuration from the UI.
+REQUIRED: The Y_LABEL_FOR_HORIZONTAL_LINE variable MUST be injected into this module's
+namespace by Nagini from JavaScript before calling get_graph_dict().
 
 The value can be changed using the control panel in sujets0-simple.html.
 """
 
 import numpy as np
 
-# Default configuration value
-# This can be overridden by passing a parameter to get_graph_dict()
-Y_LABEL_FOR_HORIZONTAL_LINE = 10
+# NO DEFAULT VALUE - Must be injected from JavaScript via Nagini
+# If this variable is not set, get_graph_dict() will raise an error
+# Y_LABEL_FOR_HORIZONTAL_LINE = <must be injected>
 
 # Simple parabola visualization: y = x² with horizontal line (small 150x150)
 
@@ -24,9 +24,19 @@ def get_graph_dict(y_horizontal=None):
     """Return the graph as a standardized dictionary.
 
     Args:
-        y_horizontal: Y coordinate for horizontal line (optional, defaults to module value)
+        y_horizontal: Y coordinate for horizontal line (optional, uses injected value if not provided)
+
+    Raises:
+        NameError: If Y_LABEL_FOR_HORIZONTAL_LINE is not injected into namespace
     """
-    # Use parameter if provided, otherwise use module-level value
+    # Check if variable was injected from JavaScript
+    if "Y_LABEL_FOR_HORIZONTAL_LINE" not in globals():
+        raise NameError(
+            "Y_LABEL_FOR_HORIZONTAL_LINE must be injected into module namespace by Nagini. "
+            "Ensure graphConfig is properly passed from JavaScript."
+        )
+
+    # Use parameter if provided, otherwise use injected value
     y_value = y_horizontal if y_horizontal is not None else Y_LABEL_FOR_HORIZONTAL_LINE
 
     # Build visual elements with the configured value
