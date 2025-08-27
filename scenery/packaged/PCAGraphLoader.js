@@ -412,11 +412,27 @@ except Exception as e:
 
   /**
    * Render a graph to SVG
+   * @param {string} graphKey - The graph key to render
+   * @param {Object} config - Optional configuration overrides for this render only
    */
-  async renderGraph(graphKey) {
-    const graphDict = await this.loadGraph(graphKey);
+  async renderGraph(graphKey, config = null) {
+    // If config is provided, temporarily update the configuration
+    let originalConfig = null;
+    if (config && Object.keys(config).length > 0) {
+      // Save original config
+      originalConfig = { ...this.graphConfig };
+      
+      // Apply temporary config
+      this.updateConfig(config);
+      
+      if (this.options.debug) {
+        console.log(`📊 Rendering ${graphKey} with custom config:`, config);
+      }
+    }
     
     try {
+      const graphDict = await this.loadGraph(graphKey);
+      
       const result = await this.manager.executeAsync(`render_${graphKey}.py`, `
 import json
 from pca_graph_viz import graph_from_dict
@@ -453,6 +469,17 @@ except Exception as e:
     } catch (error) {
       console.error(`❌ Render error for ${graphKey}:`, error);
       throw error;
+    } finally {
+      // Restore original config if it was temporarily changed
+      if (originalConfig) {
+        this.graphConfig = originalConfig;
+        // Clear cache since config changed back
+        this.loadedGraphs.clear();
+        
+        if (this.options.debug) {
+          console.log(`📊 Restored original config after rendering ${graphKey}`);
+        }
+      }
     }
   }
 

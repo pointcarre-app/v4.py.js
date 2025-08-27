@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Config Parameters</title>
+    <style>
+        body { 
+            font-family: monospace; 
+            max-width: 800px; 
+            margin: 20px auto; 
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        h1 { color: #333; }
+        .test-case {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .graph-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .graph-box {
+            text-align: center;
+            padding: 10px;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .graph-box svg {
+            max-width: 300px;
+            max-height: 300px;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Testing Config Parameters in renderGraph()</h1>
+    
+    <div class="test-case">
+        <h2>Test 1: Q8 with Different Slopes</h2>
+        <pre id="test1-code">
+// Default config
+const svg1 = await loader.renderGraph('q8_small');
+
+// Custom slope = 1.5
+const svg2 = await loader.renderGraph('q8_small', {
+    A_FLOAT_FOR_AFFINE_LINE: 1.5
+});
+
+// Custom slope = -0.5, y-intercept = -3
+const svg3 = await loader.renderGraph('q8_small', {
+    A_FLOAT_FOR_AFFINE_LINE: -0.5,
+    B_FLOAT_FOR_AFFINE_LINE: -3
+});
+        </pre>
+        <div class="graph-container" id="test1-graphs"></div>
+        <div id="test1-result"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>Test 2: Parabolas with Different Shifts</h2>
+        <pre id="test2-code">
+// Default shift (5)
+const svg1 = await loader.renderGraph('parabola_s1_ap');
+
+// Custom shift = 3
+const svg2 = await loader.renderGraph('parabola_s1_ap', {
+    A_SHIFT_MAGNITUDE: 3
+});
+
+// Custom shift = 10
+const svg3 = await loader.renderGraph('parabola_s1_ap', {
+    A_SHIFT_MAGNITUDE: 10
+});
+        </pre>
+        <div class="graph-container" id="test2-graphs"></div>
+        <div id="test2-result"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>Test 3: Config Doesn't Persist</h2>
+        <pre id="test3-code">
+// Render with custom config
+const svg1 = await loader.renderGraph('q8_small', {
+    A_FLOAT_FOR_AFFINE_LINE: 2.0
+});
+
+// Next render should use default config
+const svg2 = await loader.renderGraph('q8_small');
+
+// Verify they're different
+console.log('SVGs are different:', svg1 !== svg2);
+        </pre>
+        <div id="test3-result"></div>
+    </div>
+
+    <script type="module">
+        import { PCAGraphLoader } from './PCAGraphLoader.js';
+        
+        async function runTests() {
+            try {
+                const loader = new PCAGraphLoader({ debug: false });
+                await loader.initialize();
+                
+                // Test 1: Q8 with different slopes
+                try {
+                    const test1Container = document.getElementById('test1-graphs');
+                    
+                    // Default
+                    const svg1 = await loader.renderGraph('q8_small');
+                    const box1 = document.createElement('div');
+                    box1.className = 'graph-box';
+                    box1.innerHTML = `<h4>Default (a=0.75)</h4>${svg1}`;
+                    test1Container.appendChild(box1);
+                    
+                    // Custom slope
+                    const svg2 = await loader.renderGraph('q8_small', {
+                        A_FLOAT_FOR_AFFINE_LINE: 1.5
+                    });
+                    const box2 = document.createElement('div');
+                    box2.className = 'graph-box';
+                    box2.innerHTML = `<h4>a=1.5</h4>${svg2}`;
+                    test1Container.appendChild(box2);
+                    
+                    // Custom slope and intercept
+                    const svg3 = await loader.renderGraph('q8_small', {
+                        A_FLOAT_FOR_AFFINE_LINE: -0.5,
+                        B_FLOAT_FOR_AFFINE_LINE: -3
+                    });
+                    const box3 = document.createElement('div');
+                    box3.className = 'graph-box';
+                    box3.innerHTML = `<h4>a=-0.5, b=-3</h4>${svg3}`;
+                    test1Container.appendChild(box3);
+                    
+                    document.getElementById('test1-result').innerHTML = 
+                        '<span class="success">✅ Test 1 passed: Different configs produce different graphs</span>';
+                } catch (error) {
+                    document.getElementById('test1-result').innerHTML = 
+                        `<span class="error">❌ Test 1 failed: ${error.message}</span>`;
+                }
+                
+                // Test 2: Parabolas with different shifts
+                try {
+                    const test2Container = document.getElementById('test2-graphs');
+                    
+                    // Default shift
+                    const svg1 = await loader.renderGraph('parabola_s1_ap');
+                    const box1 = document.createElement('div');
+                    box1.className = 'graph-box';
+                    box1.innerHTML = `<h4>Default shift (5)</h4>${svg1}`;
+                    test2Container.appendChild(box1);
+                    
+                    // Custom shift = 3
+                    const svg2 = await loader.renderGraph('parabola_s1_ap', {
+                        A_SHIFT_MAGNITUDE: 3
+                    });
+                    const box2 = document.createElement('div');
+                    box2.className = 'graph-box';
+                    box2.innerHTML = `<h4>Shift = 3</h4>${svg2}`;
+                    test2Container.appendChild(box2);
+                    
+                    // Custom shift = 10
+                    const svg3 = await loader.renderGraph('parabola_s1_ap', {
+                        A_SHIFT_MAGNITUDE: 10
+                    });
+                    const box3 = document.createElement('div');
+                    box3.className = 'graph-box';
+                    box3.innerHTML = `<h4>Shift = 10</h4>${svg3}`;
+                    test2Container.appendChild(box3);
+                    
+                    document.getElementById('test2-result').innerHTML = 
+                        '<span class="success">✅ Test 2 passed: Different shifts produce different parabolas</span>';
+                } catch (error) {
+                    document.getElementById('test2-result').innerHTML = 
+                        `<span class="error">❌ Test 2 failed: ${error.message}</span>`;
+                }
+                
+                // Test 3: Config doesn't persist
+                try {
+                    const svg1 = await loader.renderGraph('q8_small', {
+                        A_FLOAT_FOR_AFFINE_LINE: 2.0
+                    });
+                    
+                    const svg2 = await loader.renderGraph('q8_small');
+                    
+                    if (svg1 !== svg2) {
+                        document.getElementById('test3-result').innerHTML = 
+                            '<span class="success">✅ Test 3 passed: Config changes are temporary</span>';
+                    } else {
+                        document.getElementById('test3-result').innerHTML = 
+                            '<span class="error">❌ Test 3 failed: Config changes persisted when they shouldn\'t</span>';
+                    }
+                } catch (error) {
+                    document.getElementById('test3-result').innerHTML = 
+                        `<span class="error">❌ Test 3 failed: ${error.message}</span>`;
+                }
+                
+            } catch (error) {
+                console.error('Test suite failed:', error);
+                document.body.innerHTML += `<div class="error">Fatal error: ${error.message}</div>`;
+            }
+        }
+        
+        window.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

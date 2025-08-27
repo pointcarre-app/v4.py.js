@@ -90,11 +90,30 @@ await renderPCAGraph('container', 'parabola_sm1_ap'); // y = -x² + a
 
 ## With Configuration
 
+### Using the Helper Function
 ```javascript
 await renderPCAGraph('my-graph', 'q8_small', {
     A_FLOAT_FOR_AFFINE_LINE: 1.5,    // Slope
     B_FLOAT_FOR_AFFINE_LINE: -2      // Y-intercept
 });
+```
+
+### Direct API Usage
+```javascript
+const loader = new PCAGraphLoader();
+await loader.initialize();
+
+// Pass config directly to renderGraph (temporary override)
+const svg = await loader.renderGraph('q8_small', {
+    A_FLOAT_FOR_AFFINE_LINE: 1.5,
+    B_FLOAT_FOR_AFFINE_LINE: -2
+});
+
+// Or update config permanently
+loader.updateConfig({
+    A_SHIFT_MAGNITUDE: 8
+});
+const svg2 = await loader.renderGraph('parabola_s1_ap');
 ```
 
 ## Files You Need

@@ -100,16 +100,24 @@ Parameters:
 
 Returns: `Promise<Object>` - The graph dictionary/configuration
 
-#### `renderGraph(graphKey)`
+#### `renderGraph(graphKey, config)`
 
 Load and render a graph to SVG.
 
 ```javascript
+// Basic usage
 const svg = await loader.renderGraph('q8_small');
+
+// With custom config for this render only
+const svg2 = await loader.renderGraph('q8_small', {
+  A_FLOAT_FOR_AFFINE_LINE: 1.5,
+  B_FLOAT_FOR_AFFINE_LINE: -2
+});
 ```
 
 Parameters:
 - `graphKey` (string): The graph identifier
+- `config` (object, optional): Configuration overrides for this render only
 
 Returns: `Promise<string>` - The SVG output as a string
 
