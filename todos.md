@@ -1,4 +1,6 @@
+# High
 
+- Grid bigger on affine graph because else not always rendered base on zoom on safari
 
 
 - [ ] consider the redirection in /index.html using

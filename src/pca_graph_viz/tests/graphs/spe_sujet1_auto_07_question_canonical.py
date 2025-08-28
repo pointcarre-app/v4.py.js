@@ -38,7 +38,7 @@ lines = [
         "data": {"x": x.tolist(), "y": y.tolist()},
         "stroke-width": 2,
         "fill": "none",
-        "class": "curve stroke-primary",
+        "class": "curve stroke-base-content",
     },
     # Horizontal line y = 1
     {
@@ -49,7 +49,7 @@ lines = [
         "y2": 10,
         "stroke-width": 1.5,
         "stroke-dasharray": "5,5",
-        "class": "line stroke-secondary",
+        "class": "line stroke-base-content",
     },
 ]
 
@@ -61,7 +61,7 @@ foreign_objects = [
         "latex": "y = x^2",
         "width": 80,
         "height": 25,
-        "class": "svg-latex text-primary",
+        "class": "svg-latex text-base-content",
     },
     # Line equation
     {
@@ -70,7 +70,7 @@ foreign_objects = [
         "latex": "y = 10",
         "width": 50,
         "height": 20,
-        "class": "svg-latex text-secondary",
+        "class": "svg-latex text-base-content",
     },
     # X axis label
     {

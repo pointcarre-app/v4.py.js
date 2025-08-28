@@ -83,47 +83,84 @@ def get_graph_dict(a_affine=None, b_affine=None):
             }
         )
 
-    lines = grid_lines + [
-        # X-axis
-        {
-            "type": "axis",
-            "x1": -10,
-            "y1": 0,
-            "x2": 10,
-            "y2": 0,
-            "stroke-width": 1,
-            "class": "axis x-axis stroke-base-content",
-        },
-        # Y-axis
-        {
-            "type": "axis",
-            "x1": 0,
-            "y1": -10,
-            "x2": 0,
-            "y2": 10,
-            "stroke-width": 1,
-            "class": "axis y-axis stroke-base-content",
-        },
-        # Affine line with dynamic coefficients
-        {
-            "type": "curve",
-            "id": "affine-line",
-            "data": {"x": x.tolist(), "y": y.tolist()},
-            "stroke-width": 1,
-            "fill": "none",
-            "class": "curve stroke-primary",
-        },
-    ]
+    # Create tick marks for axes
+    tick_marks = []
+    # X-axis tick marks (small vertical lines)
+    x_tick_positions = [-8, -6, -4, -2, 2, 4, 6, 8]
+    for xi in x_tick_positions:
+        tick_marks.append(
+            {
+                "type": "line",
+                "x1": float(xi),
+                "y1": -0.15,
+                "x2": float(xi),
+                "y2": 0.15,
+                "stroke-width": 1,
+                "class": "tick-mark stroke-base-content",
+            }
+        )
+
+    # Y-axis tick marks (small horizontal lines)
+    y_tick_positions = [-8, -6, -4, -2, 2, 4, 6, 8]
+    for yi in y_tick_positions:
+        tick_marks.append(
+            {
+                "type": "line",
+                "x1": -0.15,
+                "y1": float(yi),
+                "x2": 0.15,
+                "y2": float(yi),
+                "stroke-width": 1,
+                "class": "tick-mark stroke-base-content",
+            }
+        )
+
+    lines = (
+        grid_lines
+        + [
+            # X-axis
+            {
+                "type": "axis",
+                "x1": -10,
+                "y1": 0,
+                "x2": 10,
+                "y2": 0,
+                "stroke-width": 1,
+                "class": "axis x-axis stroke-base-content",
+            },
+            # Y-axis
+            {
+                "type": "axis",
+                "x1": 0,
+                "y1": -10,
+                "x2": 0,
+                "y2": 10,
+                "stroke-width": 1,
+                "class": "axis y-axis stroke-base-content",
+            },
+        ]
+        + tick_marks
+        + [
+            # Affine line with dynamic coefficients
+            {
+                "type": "curve",
+                "id": "affine-line",
+                "data": {"x": x.tolist(), "y": y.tolist()},
+                "stroke-width": 1,
+                "fill": "none",
+                "class": "curve stroke-primary",
+            },
+        ]
+    )
 
     # Build tick labels for axes (exclude 0)
-    TICK_MIN, TICK_MAX = -9, 9
     y_tick_labels = []
-    for yi in range(TICK_MIN, TICK_MAX + 1):
-        if yi == 0:
-            continue
+    # Only show specific y-tick values
+    y_tick_values = [-8, -6, -4, -2, 2, 4, 6, 8]
+    for yi in y_tick_values:
         y_tick_labels.append(
             {
-                "x": -0.5,
+                "x": -0.9,  # Moved left for better spacing
                 "y": float(yi),
                 "latex": f"{yi}",
                 "width": 16,
@@ -133,13 +170,13 @@ def get_graph_dict(a_affine=None, b_affine=None):
         )
 
     x_tick_labels = []
-    for xi in range(TICK_MIN, TICK_MAX + 1):
-        if xi == 0:
-            continue
+    # Only show specific x-tick values
+    x_tick_values = [-8, -6, -4, -2, 2, 4, 6, 8]
+    for xi in x_tick_values:
         x_tick_labels.append(
             {
                 "x": float(xi),
-                "y": -0.5,
+                "y": -0.7,  # Moved down from -0.5
                 "latex": f"{xi}",
                 "width": 16,
                 "height": 12,
@@ -159,7 +196,7 @@ def get_graph_dict(a_affine=None, b_affine=None):
             #     "class": "svg-latex text-secondary",
             # },
             {
-                "x": 10,
+                "x": 10.5,
                 "y": -0.75,
                 "latex": "x",
                 "width": 16,
@@ -169,7 +206,7 @@ def get_graph_dict(a_affine=None, b_affine=None):
             # Y axis label
             {
                 "x": 0.75,
-                "y": 10,
+                "y": 10.25,
                 "latex": "y",
                 "width": 16,
                 "height": 16,
@@ -185,8 +222,8 @@ def get_graph_dict(a_affine=None, b_affine=None):
         "title": "spe_sujet1_auto_08_question_small.py",
         "description": "Small visualization of an affine function",
         "svg": {
-            "width": 300,
-            "height": 300,
+            "width": 220,
+            "height": 220,
             "viewBox": "0 0 150 150",
             "class": "fill-base-100",
         },

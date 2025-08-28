@@ -39,9 +39,9 @@ GRAPH_CONFIGS = {
         "y_axis_x2": 0,
         "y_axis_y2": 10.5,
         "x_label_x": 3.5,
-        "x_label_y": 0.75,
+        "x_label_y": -0.5,
         "y_label_x": 0.5,
-        "y_label_y": 10.5,
+        "y_label_y": 10.75,
     },
     "s1_a_p": {  # y = x^2 + 5 (parabola_sign=1, a_shift=5)
         "X_MIN": -4.0,
@@ -57,7 +57,7 @@ GRAPH_CONFIGS = {
         "y_axis_x2": 0,
         "y_axis_y2": 22,
         "x_label_x": 4.5,
-        "x_label_y": 3,
+        "x_label_y": 2,
         "y_label_x": 0.5,
         "y_label_y": 22.5,
     },
@@ -74,7 +74,7 @@ GRAPH_CONFIGS = {
         "y_axis_y1": -21.5,
         "y_axis_x2": 0,
         "y_axis_y2": 1.25,
-        "x_label_x": 4,
+        "x_label_x": 4.4,
         "x_label_y": -1.0,
         "y_label_x": 0.5,
         "y_label_y": 1.5,
@@ -94,7 +94,7 @@ GRAPH_CONFIGS = {
         "y_axis_y2": -3.75,
         "x_label_x": 4.4,
         "x_label_y": -4.75,
-        "y_label_x": 0.75,
+        "y_label_x": 0.5,
         "y_label_y": -3.2,
     },
     "sm1_a_p": {  # y = -x^2 + 10 (parabola_sign=-1, a_shift=10)
@@ -112,8 +112,8 @@ GRAPH_CONFIGS = {
         "y_axis_y2": 12,
         "x_label_x": 5,
         "x_label_y": -1.5,
-        "y_label_x": 0.75,
-        "y_label_y": 12,
+        "y_label_x": 0.5,
+        "y_label_y": 12.25,
     },
 }
 
@@ -308,12 +308,12 @@ def generate_parabola_graph(
         # Vertex label M(0;a) - using the label value
         {
             "x": vertex_x + 2.25,  # Move right by ~20px in graph units
-            "y": vertex_y - 0.3,  # Slightly above the dot
+            "y": vertex_y - 0.3 + parabola_sign * 0.75,  # Slightly above the dot
             "latex": f"M(0;{int(label_value)})",
             "width": 60,
             "height": 20,
             "class": "svg-latex text-primary text-xs",
-            "style": "background: rgba(255, 255, 255, 0.7); padding: 2px 4px; border-radius: var(--radius-box, 4px);",
+            "style": "background: rgba(255, 255, 255, 0.5); padding: 1px 1px; border-radius: var(--radius-box, 4px);",
         },
     ]
 

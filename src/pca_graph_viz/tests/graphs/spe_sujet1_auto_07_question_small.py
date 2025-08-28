@@ -68,7 +68,7 @@ def get_graph_dict(y_horizontal=None):
             "data": {"x": x.tolist(), "y": y.tolist()},
             "stroke-width": 2,
             "fill": "none",
-            "class": "curve stroke-primary",
+            "class": "curve stroke-base-content",
         },
         # Horizontal line with dynamic y value
         {
@@ -79,7 +79,7 @@ def get_graph_dict(y_horizontal=None):
             "y2": y_value,
             "stroke-width": 1.5,
             # "stroke-dasharray": "5,5",
-            "class": "line stroke-secondary",
+            "class": "line stroke-base-content",
         },
     ]
 
@@ -100,7 +100,7 @@ def get_graph_dict(y_horizontal=None):
             "latex": f"y={y_value}",
             "width": 50,
             "height": 20,
-            "class": "svg-latex text-secondary text-xs",
+            "class": "svg-latex text-base-content text-xs",
             "style": "background-color: rgba(255, 255, 255, 0.7); border-radius: var(--rounded-box, 0.5rem); padding: 1px 3px;",
         },
         # X axis label

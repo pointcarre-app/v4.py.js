@@ -3,6 +3,12 @@
 
 # Changelog
 
+
+## v0.0.21
+
+- Cleaned all graphs for sujets0/spe1
+
+
 ## v0.0.20-unstable
 
 ### Clean Parameter Passing Implementation - No More Global Tricks!
