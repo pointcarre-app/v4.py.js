@@ -4,7 +4,7 @@
 # Changelog
 
 
-## v0.0.21
+## v0.0.25
 
 - Cleaned all graphs for sujets0/spe1
 
