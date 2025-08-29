@@ -66,7 +66,7 @@ def get_graph_dict(a_affine=None, b_affine=None):
                 "y2": float(GRID_MAX),
                 "stroke-width": 0.5,
                 "stroke-opacity": 0.35,
-                "class": "grid-line stroke-base-content opacity-40",
+                "class": "grid-line stroke-base-content",
             }
         )
         # horizontal line y = i
@@ -79,7 +79,7 @@ def get_graph_dict(a_affine=None, b_affine=None):
                 "y2": float(i),
                 "stroke-width": 0.5,
                 "stroke-opacity": 0.35,
-                "class": "grid-line stroke-base-content opacity-40",
+                "class": "grid-line stroke-base-content",
             }
         )
 
@@ -146,9 +146,9 @@ def get_graph_dict(a_affine=None, b_affine=None):
                 "type": "curve",
                 "id": "affine-line",
                 "data": {"x": x.tolist(), "y": y.tolist()},
-                "stroke-width": 1,
+                "stroke-width": 0.75,
                 "fill": "none",
-                "class": "curve stroke-primary",
+                "class": "curve stroke-base-content",
             },
         ]
     )

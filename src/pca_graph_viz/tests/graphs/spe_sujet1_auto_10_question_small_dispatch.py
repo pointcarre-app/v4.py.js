@@ -265,7 +265,7 @@ def generate_parabola_graph(
             "data": {"x": x.tolist(), "y": y.tolist()},
             "stroke-width": 2,
             "fill": "none",
-            "class": "curve stroke-primary",
+            "class": "curve stroke-base-content",
         }
     )
 
@@ -276,7 +276,7 @@ def generate_parabola_graph(
             "cx": vertex_x,
             "cy": vertex_y,
             "r": 4,
-            "class": "fill-primary",
+            "class": "fill-base-content",
             "stroke": "none",
         }
     )
@@ -308,12 +308,12 @@ def generate_parabola_graph(
         # Vertex label M(0;a) - using the label value
         {
             "x": vertex_x + 2.25,  # Move right by ~20px in graph units
-            "y": vertex_y - 0.3 + parabola_sign * 0.75,  # Slightly above the dot
+            "y": vertex_y - 0.3 + parabola_sign * 1,  # Slightly above the dot
             "latex": f"M(0;{int(label_value)})",
             "width": 60,
             "height": 20,
-            "class": "svg-latex text-primary text-xs",
-            "style": "background: rgba(255, 255, 255, 0.5); padding: 1px 1px; border-radius: var(--radius-box, 4px);",
+            "class": "svg-latex text-base-content text-xs",
+            "style": "background: rgba(255, 255, 255, 0.8); padding: 1px 2px; border-radius: var(--radius-box, 4px);",
         },
     ]
 

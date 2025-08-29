@@ -101,7 +101,7 @@ def get_graph_dict(y_horizontal=None):
             "width": 50,
             "height": 20,
             "class": "svg-latex text-base-content text-xs",
-            "style": "background-color: rgba(255, 255, 255, 0.7); border-radius: var(--rounded-box, 0.5rem); padding: 1px 3px;",
+            "style": "background-color: rgba(255, 255, 255, 0.8); border-radius: var(--rounded-box, 0.5rem); padding: 1px 2px;",
         },
         # X axis label
         {

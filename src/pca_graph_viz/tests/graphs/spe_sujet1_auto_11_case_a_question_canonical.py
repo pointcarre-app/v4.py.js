@@ -83,7 +83,7 @@ foreign_objects = [
         "width": 20,
         "height": 25,
         "class": "svg-latex text-primary",
-        "style": "background-color: rgba(255, 255, 255, 0.7); border-radius: var(--rounded-box, 0.5rem); padding: 2px 6px;",
+        "style": "background-color: rgba(255, 255, 255, 0.7); border-radius: var(--rounded-box, 0.5rem); padding: 2px 2px;",
     },
     # X axis label
     {

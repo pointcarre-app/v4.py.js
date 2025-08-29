@@ -40,7 +40,7 @@ lines = [
         "data": {"x": x.tolist(), "y": y.tolist()},
         "stroke-width": 1.5,
         "fill": "none",
-        "class": "curve stroke-primary",
+        "class": "curve stroke-base-content",
     },
 ]
 
@@ -83,7 +83,7 @@ foreign_objects = [
         "width": 18,
         "height": 18,
         "class": "svg-latex text-primary text-sm",
-        "style": "background-color: rgba(255, 255, 255, 0.7); border-radius: var(--rounded-box, 0.5rem); padding: 1px 3px;",
+        "style": "background-color: rgba(255, 255, 255, 0.7); border-radius: var(--rounded-box, 0.5rem); padding: 1px 2px;",
     },
     # X axis label
     {
