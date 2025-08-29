@@ -4,9 +4,21 @@
 # Changelog
 
 
+
+## v0.0.26
+
+- Monochrome for sujets0-spe-sujet_1
+
+
 ## v0.0.25
 
 - Cleaned all graphs for sujets0/spe1
+
+
+```python
+def was():
+  return mess_then_safe_versioning
+```
 
 
 ## v0.0.20-unstable
