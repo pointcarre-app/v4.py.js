@@ -5,6 +5,10 @@
 
 
 
+## v0.0.27
+
+- max width 200px for sujets0
+
 ## v0.0.26
 
 - Monochrome for sujets0-spe-sujet_1

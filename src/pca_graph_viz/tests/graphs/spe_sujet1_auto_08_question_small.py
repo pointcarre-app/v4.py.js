@@ -222,8 +222,8 @@ def get_graph_dict(a_affine=None, b_affine=None):
         "title": "spe_sujet1_auto_08_question_small.py",
         "description": "Small visualization of an affine function",
         "svg": {
-            "width": 220,
-            "height": 220,
+            "width": 200,
+            "height": 200,
             "viewBox": "0 0 150 150",
             "class": "fill-base-100",
         },
